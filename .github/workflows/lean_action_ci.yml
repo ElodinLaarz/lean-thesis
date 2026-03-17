@@ -22,4 +22,4 @@ jobs:
           lake-package-directory: singular_moduli
       - uses: leanprover-community/docgen-action@v1
         with:
-          lake-package-directory: singular_moduli
+          lake_package_directory: singular_moduli
