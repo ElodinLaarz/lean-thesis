@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: leanprover/lean-action@v1
         with:
-          directory: singular_moduli
+          lake-package-directory: singular_moduli
       - uses: leanprover-community/docgen-action@v1
         with:
-          directory: singular_moduli
+          lake-package-directory: singular_moduli

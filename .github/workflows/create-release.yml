@@ -16,7 +16,7 @@ jobs:
       contents: write
     steps:
     - name: checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v4
     - name: lean-release-tag action
       uses: leanprover-community/lean-release-tag@v1
       with:
