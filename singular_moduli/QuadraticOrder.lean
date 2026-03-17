@@ -1,2 +1,1 @@
-import QuadraticOrder.Verification
 import QuadraticOrder.Basic
