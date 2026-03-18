@@ -2,6 +2,10 @@ import Mathlib.RingTheory.AdjoinRoot
 
 open scoped Polynomial
 
+/-- The defining polynomial of `QuadraticOrder d`. -/
+noncomputable def poly (d : ℤ) : ℤ[X] :=
+  Polynomial.X ^ 2 - Polynomial.C d * Polynomial.X + Polynomial.C ((d ^ 2 - d) / 4)
+
 /--
 `QuadraticOrder d` is the quadratic `ℤ`-algebra
 `ℤ[x] / (x^2 - d * x + (d^2 - d) / 4)`, where the constant term is formed
@@ -14,8 +18,7 @@ definition should simply be understood as this explicit quadratic
 quotient ring over `ℤ`.
 -/
 abbrev QuadraticOrder (d : ℤ) : Type :=
-  AdjoinRoot (Polynomial.X ^ 2 - Polynomial.C d * Polynomial.X +
-              Polynomial.C ((d ^ 2 - d) / 4))
+  AdjoinRoot (poly d)
 
 namespace QuadraticOrder
 
@@ -23,10 +26,6 @@ namespace QuadraticOrder
 
 We define `poly` before the `variable` command so the auto-binder does not
 add a second implicit `d` to its signature. -/
-
-/-- The defining polynomial of `QuadraticOrder d`. -/
-noncomputable def poly (d : ℤ) : ℤ[X] :=
-  Polynomial.X ^ 2 - Polynomial.C d * Polynomial.X + Polynomial.C ((d ^ 2 - d) / 4)
 
 /-- The defining polynomial is monic of degree 2. -/
 lemma poly_monic (d : ℤ) : (poly d).Monic := by
@@ -48,6 +47,7 @@ noncomputable def tau : QuadraticOrder d :=
   AdjoinRoot.root _
 
 /-! ### Layer 1: Basic algebraic properties -/
+
 
 /-- `τ` is a root of the defining polynomial `X² - dX + (d²-d)/4`.
 
