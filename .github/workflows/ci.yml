@@ -15,12 +15,4 @@ jobs:
       - name: Set up Lean
         uses: leanprover/lean-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get Mathlib Cache
-        working-directory: ./singular_moduli
-        run: lake exe cache get
-
-      - name: Build Project
-        working-directory: ./singular_moduli
-        run: lake build
+          lake-package-directory: singular_moduli
