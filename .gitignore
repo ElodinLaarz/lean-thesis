@@ -1,0 +1,8 @@
+# Lean / Lake
+.lake/
+lake-manifest.json
+lean-toolchain
+
+# Other
+*.pdf
+.DS_Store

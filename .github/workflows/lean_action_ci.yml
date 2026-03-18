@@ -1,0 +1,38 @@
+name: Lean Action CI
+
+on:
+  workflow_dispatch:
+
+# Default: read-only permissions for all jobs (safe for PRs)
+permissions:
+  contents: read # Read access to repository contents
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: singular_moduli
+
+  deploy:
+    # Only deploy on pushes to the default branch
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build
+    # Elevated permissions only for deployment
+    permissions:
+      contents: read # Read access to repository contents
+      pages: write # Write access to GitHub Pages
+      id-token: write # Write access to ID tokens
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: singular_moduli
+      - uses: leanprover-community/docgen-action@v1
+        with:
+          lake_package_directory: singular_moduli
