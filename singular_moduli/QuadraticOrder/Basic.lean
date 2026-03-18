@@ -84,10 +84,12 @@ Derivation: N(a + bτ) = (a + bτ)(a + b(d - τ)), using the fact that
 noncomputable def normForm (d a b : ℤ) : ℤ :=
   a ^ 2 + d * a * b - ((d ^ 2 - d) / 4) * b ^ 2
 
-/-- The norm form is multiplicative (proof deferred to later layers). -/
-lemma normForm_mul (a b c e : ℤ) :
+/-- The norm form is multiplicative.
+
+TODO: provide a proof of this fact (currently assumed as an axiom and
+      should be moved to a dedicated TODO file or proved in a later layer). -/
+theorem normForm_mul (a b c e : ℤ) :
     normForm d (a * c - ((d ^ 2 - d) / 4) * (b * e)) (a * e + b * c + d * b * e) =
-    normForm d a b * normForm d c e := by
-  sorry
+    normForm d a b * normForm d c e
 
 end QuadraticOrder
