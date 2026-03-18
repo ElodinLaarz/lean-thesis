@@ -56,7 +56,9 @@ Proof sketch: `aeval τ (poly d) = mk (poly d) (poly d) = 0` by
 lemma tau_minimal_poly :
     tau ^ 2 - d • tau + ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) = 0 := by
   have h : Polynomial.aeval (tau (d := d)) (poly d) = 0 := by
-    simp only [tau, poly, AdjoinRoot.aeval_eq, AdjoinRoot.mk_self]
+    unfold tau
+    rw [AdjoinRoot.aeval_eq]
+    exact AdjoinRoot.mk_self
   simp only [poly, map_sub, map_add, map_mul, map_pow,
              Polynomial.aeval_X, Polynomial.aeval_C,
              Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul] at h
@@ -77,19 +79,24 @@ instance : Module.Finite ℤ (QuadraticOrder d) :=
 /-! ### Norm form -/
 
 /-- The norm form on `QuadraticOrder d`: the norm of `a + b·τ` is
-`a² + d·a·b - ((d²-d)/4)·b²`.
+`a² + d·a·b + ((d²-d)/4)·b²`.
 
 Derivation: N(a + bτ) = (a + bτ)(a + b(d - τ)), using the fact that
-`τ` and `d - τ` are the two roots of `X² - dX + (d²-d)/4`. -/
+`τ` and `d - τ` are the two roots of `X² - dX + (d²-d)/4`.
+Expanding: a² + ab(d - τ) + abτ + b²τ(d - τ) = a² + abd + b²·τ(d-τ).
+Since τ² - dτ + (d²-d)/4 = 0, we have τ(d - τ) = (d²-d)/4, giving the formula. -/
 noncomputable def normForm (d a b : ℤ) : ℤ :=
-  a ^ 2 + d * a * b - ((d ^ 2 - d) / 4) * b ^ 2
+  a ^ 2 + d * a * b + ((d ^ 2 - d) / 4) * b ^ 2
 
-/-- The norm form is multiplicative.
+/-- The norm form is multiplicative: N(αβ) = N(α)·N(β).
 
-TODO: provide a proof of this fact (currently assumed as an axiom and
-      should be moved to a dedicated TODO file or proved in a later layer). -/
+This follows from the ring-identity that holds for any integers a, b, c, e, d,
+and any integer q substituted for (d²-d)/4. -/
 theorem normForm_mul (a b c e : ℤ) :
     normForm d (a * c - ((d ^ 2 - d) / 4) * (b * e)) (a * e + b * c + d * b * e) =
-    normForm d a b * normForm d c e
+    normForm d a b * normForm d c e := by
+  simp only [normForm]
+  set q := (d ^ 2 - d) / 4
+  ring
 
 end QuadraticOrder
