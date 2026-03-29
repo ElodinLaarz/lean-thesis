@@ -6,3 +6,7 @@ lean-toolchain
 # Other
 *.pdf
 .DS_Store
+
+# LLMs
+GEMINI.md
+CLAUDE.md
