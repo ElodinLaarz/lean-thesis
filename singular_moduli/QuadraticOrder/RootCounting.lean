@@ -76,11 +76,11 @@ theorem cardSqrts_prime_pow_coprime (n : ℕ) (hn : 0 < n)
   sorry -- requires discrete Hensel lifting for ZMod
 
 /-- When `c = p^{2r} · u` with `p ∤ u` and `2r < n`, the substitution `x = p^r · y`
-bijects solutions of `x² ≡ p^{2r}u (mod p^n)` with solutions of `y² ≡ u (mod p^{n-2r})`.
+reduces the problem to solving `y² ≡ u (mod p^{n-2r})`.
 Each solution for `y` gives `p^r` values of `x`, yielding `2 · p^r` or `0` total. -/
 theorem cardSqrts_prime_pow_even_val (n r : ℕ)
     (u : ℤ) (hr : 2 * r < n) (hu : ¬ (p : ℤ) ∣ u) :
-    cardSqrts (p ^ n) ((↑(p ^ (2 * r) * u) : ℤ) : ZMod (p ^ n)) =
+    cardSqrts (p ^ n) ((p ^ (2 * r) * u : ℤ) : ZMod (p ^ n)) =
       if legendreSym p u = 1 then 2 * p ^ r else 0 := by
   sorry -- requires substitution argument + cardSqrts_prime_pow_coprime
 
@@ -88,7 +88,7 @@ theorem cardSqrts_prime_pow_even_val (n r : ℕ)
 has no solutions, because `v_p(x²)` is always even while `v_p(c)` is odd. -/
 theorem cardSqrts_odd_val_eq_zero (n r : ℕ)
     (u : ℤ) (hr : 2 * r + 1 < n) (hu : ¬ (p : ℤ) ∣ u) :
-    cardSqrts (p ^ n) ((↑(p ^ (2 * r + 1) * u) : ℤ) : ZMod (p ^ n)) = 0 := by
+    cardSqrts (p ^ n) ((p ^ (2 * r + 1) * u : ℤ) : ZMod (p ^ n)) = 0 := by
   sorry -- valuation parity argument
 
 /-- When `c ≡ 0 (mod p^n)`, every multiple of `p^{⌈n/2⌉}` is a solution,
@@ -132,11 +132,11 @@ theorem cardSqrts_two_pow_coprime (n : ℕ) (hn : 3 ≤ n) (u : ℤ) (hu : ¬ (2
       if (u : ZMod 8) = 1 then 4 else 0 := by
   sorry -- uses structure of (ZMod (2^n))ˣ ≅ ℤ/2 × ℤ/2^{n-2}
 
-/-- For `n ≥ 3` and `c = 2^{2r} · u` with `u` odd and `2r < n`,
+/-- For `c = 2^{2r} · u` with `u` odd and `n - 2r ≥ 3`,
 the count is `4 · 2^r` when `u ≡ 1 (mod 8)`, else 0. -/
 theorem cardSqrts_two_pow_even_val (n r : ℕ) (hn : 3 ≤ n - 2 * r)
-    (u : ℤ) (hr : 2 * r < n) (hu : ¬ (2 : ℤ) ∣ u) :
-    cardSqrts (2 ^ n) ((↑(2 ^ (2 * r) * u) : ℤ) : ZMod (2 ^ n)) =
+    (u : ℤ) (hu : ¬ (2 : ℤ) ∣ u) :
+    cardSqrts (2 ^ n) ((2 ^ (2 * r) * u : ℤ) : ZMod (2 ^ n)) =
       if (u : ZMod 8) = 1 then 4 * 2 ^ r else 0 := by
   sorry -- substitution x = 2^r · y + cardSqrts_two_pow_coprime
 
