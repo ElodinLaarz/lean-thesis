@@ -664,7 +664,12 @@ theorem cardSqrts_prime_pow_even_val (hp2 : p ≠ 2) (n r : ℕ)
         rw [Nat.sub_mul, one_mul, ← pow_add]
         have h_add2 : r + (n - r) = n := by omega
         rw [h_add2]
-      omega
+      rw [h_sub] at h1
+      have h_le : p ^ (n - r) ≤ p ^ n := Nat.pow_le_pow_right hp.out.pos (by omega)
+      calc p ^ r * y1.val + k1 * p ^ (n - r)
+        _ < p ^ (n - r) + k1 * p ^ (n - r) := Nat.add_lt_add_right h2 _
+        _ ≤ p ^ (n - r) + (p ^ n - p ^ (n - r)) := Nat.add_le_add_left h1 _
+        _ = p ^ n := Nat.add_sub_cancel' h_le
     sorry
 
 
