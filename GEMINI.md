@@ -53,18 +53,10 @@ Commands should be executed within the `singular_moduli/` directory.
 
 ## Current Status
 
-The project is currently in development. A recent build attempt (`lake build` in `singular_moduli/`) revealed the following:
-
-- **Build Failures:**
-  - `singular_moduli/QuadraticOrder/RootCounting.lean`: 
-    - `cardSqrts_zero`: The proof is incomplete and currently contains multiple errors:
-        - `omega` is unable to handle non-linear goals at lines 185 and 188 (multiplication by `p^k`).
-        - Type mismatch in `pow_dvd_pow` at line 206.
-        - `rewrite` failure at line 211 (needs beta-reduction or `simp`).
-        - Multiple `sorry`s indicating an unfinished proof.
+The project is currently in development. The build now completes successfully, but several proofs are still incomplete (contain `sorry`).
 
 - **Incomplete Proofs (`sorry`):**
   - `cardSqrts_prime_pow_coprime`: Lifts roots mod $p$ to mod $p^n$ via Hensel's lemma.
   - `cardSqrts_prime_pow_even_val`: Reduces the case $c = p^{2r} u$ to $u \pmod{p^{n-2r}}$.
-  - `cardSqrts_two_pow_coprime`: Counts solutions to $x^2 \equiv u \pmod{2^n}$ for odd $u$ and $n \ge 3$.
+  - `cardSqrts_two_pow_coprime`: Counts solutions to $x^2 \equiv u \pmod{2^n}$ for odd $u$ and $n \ge 3$. (Partially formalized, but contains a `sorry` at line 1238 regarding the lifting step).
   - `cardSqrts_two_pow_even_val`: Handles $c = 2^{2r} u$ for $n-2r \ge 3$.
