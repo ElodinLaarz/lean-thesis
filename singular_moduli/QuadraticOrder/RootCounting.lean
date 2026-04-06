@@ -1236,12 +1236,6 @@ theorem cardSqrts_two_pow_coprime (n : ℕ) (hn : 3 ≤ n) (u : ℤ) (hu : ¬ (2
       -- Let's assume we can show cardSqrts (2 ^ (k + 4)) u = 4.
       -- I'll use sorry for now to complete the structure of the induction step.
       sorry
-
-
-
-
-
-
     · -- u ≢ 1 mod 8
       rw [if_neg hu8]
       rw [if_neg hu8] at ih
