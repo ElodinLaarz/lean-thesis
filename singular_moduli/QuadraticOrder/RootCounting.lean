@@ -831,6 +831,51 @@ theorem cardSqrts_eight (u : ZMod 8) (hu : u = 1 ∨ u = 3 ∨ u = 5 ∨ u = 7) 
     cardSqrts 8 u = if u = 1 then 4 else 0 := by
   rcases hu with rfl | rfl | rfl | rfl <;> decide
 
+lemma cardSqrts_two_pow_coprime_reduction_injective (k : ℕ) (u : ℤ)
+    (x y : ZMod (2 ^ (k + 4))) (hx : x ^ 2 = ((u : ℤ) : ZMod (2 ^ (k + 4))))
+    (hy : y ^ 2 = ((u : ℤ) : ZMod (2 ^ (k + 4))))
+    (h : (ZMod.cast x : ZMod (2 ^ (k + 3))) = ZMod.cast y) : x = y := by
+  have h_dvd : 2 ^ (k + 3) ∣ 2 ^ (k + 4) := by use 2; ring
+  haveI : NeZero (2 ^ (k + 4)) := ⟨by positivity⟩
+  haveI : NeZero (2 ^ (k + 3)) := ⟨by positivity⟩
+  have h_eq : (ZMod.cast (x - y) : ZMod (2 ^ (k + 3))) = 0 := by
+    rw [map_sub, h, sub_self]
+  have h_cast : (ZMod.cast (x - y) : ZMod (2 ^ (k + 3))) = (( (x - y).val : ℕ) : ZMod (2 ^ (k + 3))) := by
+    rw [← ZMod.natCast_val (x - y)]
+    rfl
+  rw [h_cast] at h_eq
+  have h_dvd2 : 2 ^ (k + 3) ∣ (x - y).val := by
+    exact ZMod.natCast_zmod_eq_zero_iff_dvd _ _ h_eq
+  obtain ⟨c, hc⟩ := h_dvd2
+  have hc_lt : c < 2 := by
+    have h_val_lt := ZMod.val_lt (x - y)
+    rw [hc] at h_val_lt
+    have h_pow : (2 : ℕ) ^ (k + 4) = 2 * 2 ^ (k + 3) := by ring
+    rw [h_pow] at h_val_lt
+    omega
+  interval_cases c
+  · rw [zero_mul] at hc
+    have h_xy : x - y = 0 := by
+      exact ZMod.val_injective _ (by rw [hc]; rfl)
+    omega
+  · rw [one_mul] at hc
+    -- (x - y).val = 2^(k+3)
+    -- So x - y = 2^(k+3) in ZMod (2^(k+4))
+    have h_xy : x - y = (2 : ZMod (2 ^ (k + 4))) ^ (k + 3) := by
+      exact ZMod.val_injective _ (by rw [hc]; rfl)
+    -- Now we use the fact that x^2 = u and y^2 = u
+    -- x = y + 2^(k+3)
+    -- x^2 = y^2 + 2 * y * 2^(k+3) + 2^(2k+6)
+    -- u = u + y * 2^(k+4) + 2^(2k+6)
+    -- 0 = y * 2^(k+4) + 2^(2k+6)
+    -- 0 = y + 2^(k+2) mod 2?
+    sorry
+
+lemma cardSqrts_two_pow_coprime_step (k : ℕ) (u : ℤ) (hu8 : (u : ZMod 8) = 1)
+    (ih : cardSqrts (2 ^ (k + 3)) ((u : ℤ) : ZMod (2 ^ (k + 3))) = 4) :
+    cardSqrts (2 ^ (k + 4)) ((u : ℤ) : ZMod (2 ^ (k + 4))) = 4 := by
+  sorry
+
 /-- For `n ≥ 3` and odd `u`, `x² ≡ u (mod 2^n)` has 4 solutions when `u ≡ 1 (mod 8)`. -/
 theorem cardSqrts_two_pow_coprime (n : ℕ) (hn : 3 ≤ n) (u : ℤ) (hu : ¬ (2 : ℤ) ∣ u) :
     cardSqrts (2 ^ n) ((u : ℤ) : ZMod (2 ^ n)) =
@@ -888,354 +933,7 @@ theorem cardSqrts_two_pow_coprime (n : ℕ) (hn : 3 ≤ n) (u : ℤ) (hu : ¬ (2
     · -- u ≡ 1 mod 8
       rw [if_pos hu8]
       rw [if_pos hu8] at ih
-      have h_exists : ∃ x : ZMod (2 ^ (k + 3)), x ^ 2 = ((u : ℤ) : ZMod (2 ^ (k + 3))) := by
-        have : 0 < cardSqrts (2 ^ (k + 3)) ((u : ℤ) : ZMod (2 ^ (k + 3))) := by omega
-        unfold cardSqrts at this
-        rw [Finset.card_pos] at this
-        obtain ⟨x, hx⟩ := this
-        rw [Finset.mem_filter] at hx
-        exact ⟨x, hx.2⟩
-      obtain ⟨x, hx⟩ := h_exists
-      -- Now we should use the pair argument.
-      -- For now, let's sorry to see if the structure is accepted.
-      have h_sol1 : x ^ 2 = ((u : ℤ) : ZMod (2 ^ (k + 3))) := hx
-      have h_sol2 : (-x) ^ 2 = ((u : ℤ) : ZMod (2 ^ (k + 3))) := by rw [neg_sq, hx]
-      have h_sol3 : (x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 = ((u : ℤ) : ZMod (2 ^ (k + 3))) := by
-        have h_pow : (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) = 0 := by
-          have : (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) = ((2 ^ (k + 3) : ℕ) : ZMod (2 ^ (k + 3))) := by push_cast; rfl
-          rw [this, ZMod.natCast_self]
-        have h_expand : (x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 =
-            x ^ 2 + 2 * x * (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) +
-            ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 := by ring
-        rw [h_expand]
-        have h1 : 2 * x * (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) =
-            x * (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) := by ring
-        rw [h1, h_pow, mul_zero]
-        have h2 : ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 = 0 := by
-          have h_pow_mul : ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 =
-              (2 : ZMod (2 ^ (k + 3))) ^ ((k + 2) * 2) :=
-            (pow_mul _ _ _).symm
-          rw [h_pow_mul]
-          have h_pow_add : (2 : ℕ) ^ ((k + 2) * 2) = 2 ^ (k + 3) * 2 ^ (k + 1) := by
-            rw [show (k + 2) * 2 = k + 3 + (k + 1) by omega]
-            rw [Nat.pow_add]
-          have h_pow_add_cast : (2 : ZMod (2 ^ (k + 3))) ^ ((k + 2) * 2) = (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) * (2 : ZMod (2 ^ (k + 3))) ^ (k + 1) := by
-            have : (2 : ZMod (2 ^ (k + 3))) ^ ((k + 2) * 2) = (( (2 : ℕ) ^ ((k + 2) * 2) : ℕ) : ZMod (2 ^ (k + 3))) := by push_cast; rfl
-            rw [this, h_pow_add]
-            push_cast
-            rfl
-          rw [h_pow_add_cast, h_pow, zero_mul]
-        rw [h2, add_zero, add_zero]
-        exact hx
-      have h_sol4 : (-x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 = ((u : ℤ) : ZMod (2 ^ (k + 3))) := by
-        have h_pow : (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) = 0 := by
-          have : (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) = ((2 ^ (k + 3) : ℕ) : ZMod (2 ^ (k + 3))) := by push_cast; rfl
-          rw [this, ZMod.natCast_self]
-        have h_expand : (-x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 =
-            (-x) ^ 2 + 2 * (-x) * (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) +
-            ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 := by ring
-        rw [h_expand]
-        have h1 : 2 * (-x) * (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) =
-            (-x) * (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) := by ring
-        rw [h1, h_pow, mul_zero]
-        have h2 : ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 = 0 := by
-          have h_pow_mul : ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 =
-              (2 : ZMod (2 ^ (k + 3))) ^ ((k + 2) * 2) :=
-            (pow_mul _ _ _).symm
-          rw [h_pow_mul]
-          have h_pow_add : (2 : ℕ) ^ ((k + 2) * 2) = 2 ^ (k + 3) * 2 ^ (k + 1) := by
-            rw [show (k + 2) * 2 = k + 3 + (k + 1) by omega]
-            rw [Nat.pow_add]
-          have h_pow_add_cast : (2 : ZMod (2 ^ (k + 3))) ^ ((k + 2) * 2) =
-              (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) * (2 : ZMod (2 ^ (k + 3))) ^ (k + 1) := by
-            have : (2 : ZMod (2 ^ (k + 3))) ^ ((k + 2) * 2) =
-                (( (2 : ℕ) ^ ((k + 2) * 2) : ℕ) : ZMod (2 ^ (k + 3))) := by
-              push_cast; rfl
-            rw [this, h_pow_add]
-            push_cast
-            rfl
-          rw [h_pow_add_cast, h_pow, zero_mul]
-        rw [h2, add_zero, add_zero]
-        rw [neg_sq]
-        exact hx
-
-
-      have h_pow_nz : (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) ≠ 0 := by
-        have h_val : ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)).val = 2 ^ (k + 2) := by
-          have : (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) = ((2 ^ (k + 2) : ℕ) : ZMod (2 ^ (k + 3))) := by push_cast; rfl
-          rw [this, ZMod.val_natCast]
-          apply Nat.mod_eq_of_lt
-          gcongr
-          decide
-          omega
-        intro h0
-        have h_val_zero := congr_arg ZMod.val h0
-        rw [h_val, ZMod.val_zero] at h_val_zero
-        have : 2 ^ (k + 2) > 0 := by positivity
-        omega
-      have h_dist1 : x ≠ x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by
-        intro h
-        have : (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) = 0 := by
-          calc (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) = (x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) - x := by ring
-            _ = x - x := by rw [← h]
-            _ = 0 := by ring
-        exact h_pow_nz this
-
-      have h_dist2 : x ≠ -x := by
-        intro h
-        have h_zero : 2 * x = 0 := by
-          have h_eq : x - (-x) = x - x := by rw [← h]
-          calc 2 * x = x - (-x) := by ring
-            _ = x - x := h_eq
-            _ = 0 := by ring
-        have h_dvd : 2 ^ (k + 3) ∣ 2 * x.val := by
-          have h_cast : (((2 * x.val : ℤ) : ZMod (2 ^ (k + 3))) = 0) := by
-            push_cast
-            rw [ZMod.natCast_zmod_val]
-            exact h_zero
-          rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at h_cast
-          exact_mod_cast h_cast
-        have h_dvd' : 2 ^ (k + 2) ∣ x.val := by
-          have h_dvd_mul : 2 * 2 ^ (k + 2) ∣ 2 * x.val := by
-            have h_eq : 2 * 2 ^ (k + 2) = 2 ^ (k + 3) := by
-              nth_rewrite 2 [pow_succ]
-              rw [mul_comm]
-            rw [h_eq]
-            exact h_dvd
-          exact Nat.dvd_of_mul_dvd_mul_left (by decide) h_dvd_mul
-        have h_sq_zero : x ^ 2 = 0 := by
-          obtain ⟨m, hm⟩ := h_dvd'
-          have : x.val = m * 2 ^ (k + 2) := by
-            rw [hm]
-            exact mul_comm _ _
-          have h_cast : x = ↑(m * 2 ^ (k + 2)) := by rw [← this, ZMod.natCast_zmod_val]
-          rw [h_cast]
-          have h2 : ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 = 0 := by
-            have h_pow_mul : ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 = (2 : ZMod (2 ^ (k + 3))) ^ ((k + 2) * 2) := (pow_mul _ _ _).symm
-            rw [h_pow_mul]
-            have h_pow_add : (2 : ℕ) ^ ((k + 2) * 2) = 2 ^ (k + 3) * 2 ^ (k + 1) := by
-              rw [show (k + 2) * 2 = k + 3 + (k + 1) by omega]
-              rw [Nat.pow_add]
-            have h_pow_add_cast : (2 : ZMod (2 ^ (k + 3))) ^ ((k + 2) * 2) = (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) * (2 : ZMod (2 ^ (k + 3))) ^ (k + 1) := by
-              have : (2 : ZMod (2 ^ (k + 3))) ^ ((k + 2) * 2) = (( (2 : ℕ) ^ ((k + 2) * 2) : ℕ) : ZMod (2 ^ (k + 3))) := by push_cast; rfl
-              rw [this, h_pow_add]
-              push_cast
-              rfl
-            rw [h_pow_add_cast]
-            have h_pow : (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) = 0 := by
-              have : (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) = ((2 ^ (k + 3) : ℕ) : ZMod (2 ^ (k + 3))) := by push_cast; rfl
-              rw [this, ZMod.natCast_self]
-            rw [h_pow, zero_mul]
-          have h_eq : ((m * 2 ^ (k + 2) : ℕ) : ZMod (2 ^ (k + 3))) ^ 2 = (m : ZMod (2 ^ (k + 3))) ^ 2 * ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 := by
-            push_cast
-            exact mul_pow _ _ _
-          rw [h_eq]
-          change (m : ZMod (2 ^ (k + 3))) ^ 2 * ((2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) ^ 2 = 0
-          rw [h2, mul_zero]
-        have h_u_zero : ((u : ℤ) : ZMod (2 ^ (k + 3))) = 0 := by
-          rw [← hx, h_sq_zero]
-        have h_dvd_u : 2 ^ (k + 3) ∣ u := by
-          have h0 : (((u : ℤ) : ZMod (2 ^ (k + 3))) = 0) := h_u_zero
-          rwa [ZMod.intCast_zmod_eq_zero_iff_dvd] at h0
-        have h_dvd_8 : 8 ∣ u := by
-          have : (8 : ℤ) = 2 ^ 3 := by decide
-          rw [this]
-          exact dvd_trans (pow_dvd_pow _ (by omega)) h_dvd_u
-        have hu8_zero : (u : ZMod 8) = 0 := by
-          rwa [ZMod.intCast_zmod_eq_zero_iff_dvd]
-        rw [hu8_zero] at hu8
-        have : (0 : ZMod 8) ≠ 1 := by decide
-        exact this hu8
-      have h_dist3 : x ≠ -x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by
-        intro h
-        have h_eq : 2 * x = (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by
-          have h1 : 2 * x = x + x := by ring
-          have h2 : x + x = 2 ^ (k + 2) := by
-            calc x + x = (-x + 2 ^ (k + 2)) + x := by nth_rewrite 1 [h]; rfl
-              _ = 2 ^ (k + 2) := by ring
-          rw [h1, h2]
-        have h_cast : (((2 * x.val : ℤ) - (2 : ℤ) ^ (k + 2) : ℤ) : ZMod (2 ^ (k + 3))) = 0 := by
-          push_cast
-          rw [ZMod.natCast_zmod_val]
-          rw [h_eq]
-          push_cast
-          ring
-        rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at h_cast
-        obtain ⟨M, hM⟩ := h_cast
-        have h_cancel : (x.val : ℤ) - (2 : ℤ) ^ (k + 1) = M * (2 : ℤ) ^ (k + 2) := by
-          apply mul_left_cancel₀ (by decide : (2 : ℤ) ≠ 0)
-          calc (2 : ℤ) * ((x.val : ℤ) - (2 : ℤ) ^ (k + 1)) = (2 : ℤ) * (x.val : ℤ) - (2 : ℤ) ^ (k + 2) := by ring
-            _ = (2 : ℤ) ^ (k + 3) * M := hM
-            _ = (2 : ℤ) * ((2 : ℤ) ^ (k + 2) * M) := by ring
-            _ = (2 : ℤ) * (M * (2 : ℤ) ^ (k + 2)) := by ring
-        have h_x_val : (x.val : ℤ) = (2 : ℤ) ^ (k + 1) + M * (2 : ℤ) ^ (k + 2) := by linarith
-        have h_even : (2 : ℤ) ∣ (x.val : ℤ) := by
-          rw [h_x_val]
-          apply dvd_add
-          · use (2 : ℤ) ^ k
-            ring
-          · use M * (2 : ℤ) ^ (k + 1)
-            ring
-        have h_x_even : 2 ∣ x.val := by
-          omega
-        have h_dvd_4 : (4 : ℤ) ∣ u := by
-          have h_dvd_x_sq : 4 ∣ x.val ^ 2 := by
-            obtain ⟨m, hm⟩ := h_x_even
-            rw [hm]
-            use m ^ 2
-            ring
-          have h_dvd_diff : (2 : ℤ) ^ (k + 3) ∣ (x.val : ℤ) ^ 2 - u := by
-            have h0 : (((x.val : ℤ) ^ 2 - u : ℤ) : ZMod (2 ^ (k + 3))) = 0 := by
-              push_cast
-              rw [ZMod.natCast_zmod_val]
-              rw [hx]
-              push_cast
-              ring
-            rwa [ZMod.intCast_zmod_eq_zero_iff_dvd] at h0
-          have h_dvd_4_diff : (4 : ℤ) ∣ (x.val : ℤ) ^ 2 - u := by
-            have : (4 : ℤ) = 2 ^ 2 := by decide
-            rw [this]
-            exact dvd_trans (pow_dvd_pow _ (by omega)) h_dvd_diff
-          have h_dvd_x_sq_int : (4 : ℤ) ∣ (x.val : ℤ) ^ 2 := by
-            obtain ⟨m, hm⟩ := h_dvd_x_sq
-            use m
-            exact_mod_cast hm
-          have : (4 : ℤ) ∣ u := by
-            have : u = (x.val : ℤ) ^ 2 - ((x.val : ℤ) ^ 2 - u) := by ring
-            rw [this]
-            exact dvd_sub h_dvd_x_sq_int h_dvd_4_diff
-          exact this
-        have hu8_mod : u % 8 = 1 := by
-          have h0 : ((u - 1 : ℤ) : ZMod 8) = 0 := by
-            push_cast
-            rw [hu8]
-            ring
-          rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at h0
-          obtain ⟨q, hq⟩ := h0
-          norm_cast at hq
-          have : u = 8 * q + 1 := by linarith
-          rw [this]
-          omega
-        have h_u_mod_4 : u % 4 = 1 := by
-          have : u = 8 * (u / 8) + 1 := by omega
-          rw [this]
-          omega
-        have h_u_mod_4' : u % 4 = 0 := Int.emod_eq_zero_of_dvd h_dvd_4
-        rw [h_u_mod_4'] at h_u_mod_4
-        norm_num at h_u_mod_4
-
-      have h_neg_pow : -(2 : ZMod (2 ^ (k + 3))) ^ (k + 2) = (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by
-        have : (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) = 0 := by
-          calc (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) = 2 * (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by ring
-            _ = (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) := by ring
-            _ = 0 := by
-              have : (2 : ZMod (2 ^ (k + 3))) ^ (k + 3) = ((2 ^ (k + 3) : ℕ) : ZMod (2 ^ (k + 3))) := by push_cast; rfl
-              rw [this, ZMod.natCast_self]
-        exact neg_eq_iff_add_eq_zero.mpr this
-
-      have h_dist4 : -x ≠ x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by
-        intro h
-        have h_eq : 2 * x = (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by
-          have h_x : x = -x - 2 ^ (k + 2) := by
-            calc x = -(-x) := by ring
-              _ = -(x + 2 ^ (k + 2)) := by rw [← h]
-              _ = -x - 2 ^ (k + 2) := by ring
-          have h1 : 2 * x = x + x := by ring
-          have h2 : x + x = -(2 ^ (k + 2)) := by
-            calc x + x = x + (-x - 2 ^ (k + 2)) := by nth_rewrite 2 [h_x]; rfl
-              _ = -(2 ^ (k + 2)) := by ring
-          rw [h1, h2]
-          exact h_neg_pow
-        have h_cast : (((2 * x.val : ℤ) - (2 : ℤ) ^ (k + 2) : ℤ) : ZMod (2 ^ (k + 3))) = 0 := by
-          push_cast
-          rw [ZMod.natCast_zmod_val]
-          rw [h_eq]
-          push_cast
-          ring
-        rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at h_cast
-        obtain ⟨M, hM⟩ := h_cast
-        have h_cancel : (x.val : ℤ) - (2 : ℤ) ^ (k + 1) = M * (2 : ℤ) ^ (k + 2) := by
-          apply mul_left_cancel₀ (by decide : (2 : ℤ) ≠ 0)
-          calc (2 : ℤ) * ((x.val : ℤ) - (2 : ℤ) ^ (k + 1)) = (2 : ℤ) * (x.val : ℤ) - (2 : ℤ) ^ (k + 2) := by ring
-            _ = (2 : ℤ) ^ (k + 3) * M := hM
-            _ = (2 : ℤ) * ((2 : ℤ) ^ (k + 2) * M) := by ring
-            _ = (2 : ℤ) * (M * (2 : ℤ) ^ (k + 2)) := by ring
-        have h_x_val : (x.val : ℤ) = (2 : ℤ) ^ (k + 1) + M * (2 : ℤ) ^ (k + 2) := by linarith
-        have h_even : (2 : ℤ) ∣ (x.val : ℤ) := by
-          rw [h_x_val]
-          apply dvd_add
-          · use (2 : ℤ) ^ k
-            ring
-          · use M * (2 : ℤ) ^ (k + 1)
-            ring
-        have h_x_even : 2 ∣ x.val := by
-          omega
-        have h_dvd_4 : (4 : ℤ) ∣ u := by
-          have h_dvd_x_sq : 4 ∣ x.val ^ 2 := by
-            obtain ⟨m, hm⟩ := h_x_even
-            rw [hm]
-            use m ^ 2
-            ring
-          have h_dvd_diff : (2 : ℤ) ^ (k + 3) ∣ (x.val : ℤ) ^ 2 - u := by
-            have h0 : (((x.val : ℤ) ^ 2 - u : ℤ) : ZMod (2 ^ (k + 3))) = 0 := by
-              push_cast
-              rw [ZMod.natCast_zmod_val]
-              rw [hx]
-              push_cast
-              ring
-            rwa [ZMod.intCast_zmod_eq_zero_iff_dvd] at h0
-          have h_dvd_4_diff : (4 : ℤ) ∣ (x.val : ℤ) ^ 2 - u := by
-            have : (4 : ℤ) = 2 ^ 2 := by decide
-            rw [this]
-            exact dvd_trans (pow_dvd_pow _ (by omega)) h_dvd_diff
-          have h_dvd_x_sq_int : (4 : ℤ) ∣ (x.val : ℤ) ^ 2 := by
-            obtain ⟨m, hm⟩ := h_dvd_x_sq
-            use m
-            exact_mod_cast hm
-          have : (4 : ℤ) ∣ u := by
-            have : u = (x.val : ℤ) ^ 2 - ((x.val : ℤ) ^ 2 - u) := by ring
-            rw [this]
-            exact dvd_sub h_dvd_x_sq_int h_dvd_4_diff
-          exact this
-        have hu8_mod : u % 8 = 1 := by
-          have h0 : ((u - 1 : ℤ) : ZMod 8) = 0 := by
-            push_cast
-            rw [hu8]
-            ring
-          rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at h0
-          obtain ⟨q, hq⟩ := h0
-          norm_cast at hq
-          have : u = 8 * q + 1 := by linarith
-          rw [this]
-          omega
-        have h_u_mod_4 : u % 4 = 1 := by
-          have : u = 8 * (u / 8) + 1 := by omega
-          rw [this]
-          omega
-        have h_u_mod_4' : u % 4 = 0 := Int.emod_eq_zero_of_dvd h_dvd_4
-        rw [h_u_mod_4'] at h_u_mod_4
-        norm_num at h_u_mod_4
-
-      have h_dist5 : -x ≠ -x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by
-        intro h
-        have : (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) = 0 := by
-          calc (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) = (-x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) - (-x) := by ring
-            _ = -x - (-x) := by rw [← h]
-            _ = 0 := by ring
-        exact h_pow_nz this
-
-      have h_dist6 : x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) ≠ -x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by
-        intro h
-        have : x = -x := by
-          calc x = (x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) - (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by ring
-            _ = (-x + (2 : ZMod (2 ^ (k + 3))) ^ (k + 2)) - (2 : ZMod (2 ^ (k + 3))) ^ (k + 2) := by rw [h]
-            _ = -x := by ring
-        exact h_dist2 this
-      -- We partition solutions into pairs and show exactly one lifts.
-      -- This part is hard to formalize constructively without more lemmas.
-      -- Let's assume we can show cardSqrts (2 ^ (k + 4)) u = 4.
-      -- I'll use sorry for now to complete the structure of the induction step.
-      sorry
+      exact cardSqrts_two_pow_coprime_step k u hu8 ih
     · -- u ≢ 1 mod 8
       rw [if_neg hu8]
       rw [if_neg hu8] at ih
