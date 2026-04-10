@@ -58,6 +58,10 @@ structure Process where
 def Process.deltaU (p : Process) : ℝ :=
   p.final.internalEnergy - p.initial.internalEnergy
 
+/-- Composes two sequential processes. -/
+def Process.compose (p1 p2 : Process) (h : p1.final = p2.initial) : Process :=
+  { initial := p1.initial, final := p2.final, heat := p1.heat + p2.heat, work := p1.work + p2.work }
+
 /-! ### The first law -/
 
 /-- A process **satisfies the first law** if `ΔU = Q - W`. -/
@@ -65,6 +69,15 @@ def Process.satisfiesFirstLaw (p : Process) : Prop :=
   p.deltaU = p.heat - p.work
 
 /-! ### Consequences of the first law -/
+
+/-- Composing two processes that satisfy the first law results in a process
+that also satisfies the first law. -/
+theorem firstLaw_compose {p1 p2 : Process} (h : p1.final = p2.initial)
+    (h1 : p1.satisfiesFirstLaw) (h2 : p2.satisfiesFirstLaw) :
+    (Process.compose p1 p2 h).satisfiesFirstLaw := by
+  unfold Process.compose Process.satisfiesFirstLaw Process.deltaU at *
+  rw [h]
+  linarith
 
 /-- **Adiabatic processes** (`Q = 0`): the first law reduces to `ΔU = -W`.
 All energy change comes from work alone. -/
@@ -107,6 +120,19 @@ theorem firstLaw_unique_work (initial final : State) (Q : ℝ) :
     ring
   · intro W hW
     unfold Process.satisfiesFirstLaw Process.deltaU at hW
+    linarith
+
+/-- **Existence and uniqueness of final state**: given a fixed initial state,
+heat `Q`, and work `W`, there is a unique final state such that the process
+satisfies the first law. -/
+theorem firstLaw_unique_energy (initial : State) (Q W : ℝ) :
+    ∃! final : State, (Process.mk initial final Q W).satisfiesFirstLaw := by
+  refine ⟨{ internalEnergy := initial.internalEnergy + Q - W }, ?_, ?_⟩
+  · unfold Process.satisfiesFirstLaw Process.deltaU
+    ring
+  · intro final hfinal
+    unfold Process.satisfiesFirstLaw Process.deltaU at hfinal
+    ext
     linarith
 
 end Thermodynamics
