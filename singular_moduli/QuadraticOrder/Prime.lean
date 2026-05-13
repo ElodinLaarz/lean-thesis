@@ -442,4 +442,64 @@ noncomputable def quadraticOrderModP_equiv_X_sq_quot
   (quadraticOrderModP_equiv_polyModQuot d p).trans <|
     Ideal.quotEquivOfEq <| by rw [polyMod_eq_X_sq_of_p_dvd_d hp2 hd hpd]
 
+/-- **Ramification witness**: when `p ∣ d` (with `p ≠ 2`, `d ≡ 0 ∨ 1 (mod 4)`),
+`τ²` lies in `(p) ⊆ QuadraticOrder d`. Combined with `τ ∉ (p)` (which holds
+generally because `τ` is a Z-basis element), this exhibits `τ + (p)` as a
+nonzero nilpotent of order 2 in `QuadraticOrder d / (p)` — the algebraic
+fingerprint of ramification of `p` in `QuadraticOrder d`. -/
+theorem tau_sq_mem_span_p_of_p_dvd_d
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1)
+    (hpd : (p : ℤ) ∣ d) :
+    (tau (d := d)) ^ 2 ∈ Ideal.span {(p : QuadraticOrder d)} := by
+  -- Replicate the `p ∣ (d² - d) / 4` chain from `polyMod_eq_X_sq_of_p_dvd_d`.
+  have h4dvd : (4 : ℤ) ∣ d ^ 2 - d := by
+    have hdd : d ^ 2 - d = d * (d - 1) := by ring
+    rw [hdd]
+    rcases hd with h | h
+    · exact Dvd.dvd.mul_right (Int.dvd_of_emod_eq_zero h) _
+    · exact Dvd.dvd.mul_left (Int.dvd_of_emod_eq_zero (by omega)) _
+  have hp_dvd_q : (p : ℤ) ∣ (d ^ 2 - d) / 4 := by
+    have hp_dvd_sub : (p : ℤ) ∣ 4 * ((d ^ 2 - d) / 4) := by
+      rw [Int.mul_ediv_cancel' h4dvd]
+      exact dvd_sub (dvd_pow hpd (by norm_num)) hpd
+    have hp_prime_int : Prime (p : ℤ) :=
+      Nat.prime_iff_prime_int.mp (Fact.out (p := p.Prime))
+    have hp_not_dvd_4 : ¬ (p : ℤ) ∣ 4 := by
+      intro hdvd4
+      have hp_prime : p.Prime := Fact.out
+      have hp_le : (p : ℤ) ≤ 4 := Int.le_of_dvd (by norm_num) hdvd4
+      have hpnat_le : p ≤ 4 := by exact_mod_cast hp_le
+      have hpnat_ge : 2 ≤ p := hp_prime.two_le
+      interval_cases p
+      · exact hp2 rfl
+      · norm_num at hdvd4
+      · exact absurd hp_prime (by decide)
+    exact (hp_prime_int.dvd_mul.mp hp_dvd_sub).resolve_left hp_not_dvd_4
+  -- From `tau_minimal_poly`: `τ² = d • τ - ((d²-d)/4) • 1`.
+  have htau : (tau (d := d)) ^ 2 =
+      d • tau - ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) := by
+    have h := tau_minimal_poly (d := d)
+    linear_combination h
+  rw [htau]
+  -- Show each summand is in the ideal.
+  apply Ideal.sub_mem
+  · -- `d • τ ∈ (p)`: rewrite `d = p * k`, then `d • τ = (p : QO d) * (k • τ)`.
+    obtain ⟨k, hk⟩ := hpd
+    have hstep : (d : ℤ) • (tau (d := d)) =
+        (p : QuadraticOrder d) * (k • tau) := by
+      rw [hk, zsmul_eq_mul, zsmul_eq_mul]
+      push_cast
+      ring
+    rw [hstep]
+    exact Ideal.mul_mem_right _ _ (Ideal.subset_span (Set.mem_singleton _))
+  · -- `((d²-d)/4) • 1 ∈ (p)`: same idea with the divisibility `p ∣ (d²-d)/4`.
+    obtain ⟨m, hm⟩ := hp_dvd_q
+    have hstep : ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) =
+        (p : QuadraticOrder d) * (m • (1 : QuadraticOrder d)) := by
+      rw [hm, zsmul_eq_mul, zsmul_eq_mul]
+      push_cast
+      ring
+    rw [hstep]
+    exact Ideal.mul_mem_right _ _ (Ideal.subset_span (Set.mem_singleton _))
+
 end QuadraticOrder
