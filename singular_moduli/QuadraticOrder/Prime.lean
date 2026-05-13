@@ -199,4 +199,47 @@ theorem polyMod_splits_iff_legendreSym_ne_neg_one
   rw [polyMod_splits_iff_exists_root,
       polyMod_exists_root_iff_legendreSym_ne_neg_one hp2 hd]
 
+/-- The ramified case at the polynomial level: when `p` is an odd prime
+dividing `d` (with `d ≡ 0 ∨ 1 (mod 4)`), the reduction `polyMod d p` is
+identically `X²` in `(ZMod p)[X]`. In particular it has the unique root 0
+with multiplicity 2, witnessing the ramified behaviour of `(p)` in
+`QuadraticOrder d`. -/
+theorem polyMod_eq_X_sq_of_p_dvd_d
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1)
+    (hpd : (p : ℤ) ∣ d) :
+    polyMod d p = X ^ 2 := by
+  rw [polyMod_eq]
+  -- Show both the linear and constant coefficients are 0 in ZMod p.
+  have hd_zmod : (d : ZMod p) = 0 := by
+    rwa [ZMod.intCast_zmod_eq_zero_iff_dvd]
+  have h4dvd : (4 : ℤ) ∣ d ^ 2 - d := by
+    have hdd : d ^ 2 - d = d * (d - 1) := by ring
+    rw [hdd]
+    rcases hd with h | h
+    · exact Dvd.dvd.mul_right (Int.dvd_of_emod_eq_zero h) _
+    · exact Dvd.dvd.mul_left (Int.dvd_of_emod_eq_zero (by omega)) _
+  have hp_dvd_q : (p : ℤ) ∣ (d ^ 2 - d) / 4 := by
+    -- 4 * ((d²-d)/4) = d² - d (by hcancel), and p ∣ d² - d = d*(d-1).
+    -- Then p prime, p ∤ 4, so p ∣ (d²-d)/4.
+    have hp_dvd_sub : (p : ℤ) ∣ 4 * ((d ^ 2 - d) / 4) := by
+      rw [Int.mul_ediv_cancel' h4dvd]
+      exact dvd_sub (dvd_pow hpd (by norm_num)) hpd
+    have hp_prime_int : Prime (p : ℤ) :=
+      Nat.prime_iff_prime_int.mp (Fact.out (p := p.Prime))
+    have hp_not_dvd_4 : ¬ (p : ℤ) ∣ 4 := by
+      intro hdvd4
+      have hp_prime : p.Prime := Fact.out
+      have hp_le : (p : ℤ) ≤ 4 := Int.le_of_dvd (by norm_num) hdvd4
+      have hpnat_le : p ≤ 4 := by exact_mod_cast hp_le
+      have hpnat_ge : 2 ≤ p := hp_prime.two_le
+      interval_cases p
+      · exact hp2 rfl
+      · norm_num at hdvd4
+      · exact absurd hp_prime (by decide)
+    exact (hp_prime_int.dvd_mul.mp hp_dvd_sub).resolve_left hp_not_dvd_4
+  have hq_zmod : (((d ^ 2 - d) / 4 : ℤ) : ZMod p) = 0 := by
+    rwa [ZMod.intCast_zmod_eq_zero_iff_dvd]
+  rw [hd_zmod, hq_zmod]
+  simp
+
 end QuadraticOrder
