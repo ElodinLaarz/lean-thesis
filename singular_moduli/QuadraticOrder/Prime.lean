@@ -135,15 +135,9 @@ theorem polyMod_exists_root_iff_isSquare_d
           (((d ^ 2 - d) / 4 : ℤ) : ZMod p) = 0 := by
     intro x
     rw [polyMod_eval]
-    constructor
-    · intro h; linear_combination h
-    · intro h; linear_combination h
+    constructor <;> (intro h; linear_combination h)
   -- Restate the existential using the quadratic form.
-  rw [show (∃ x : ZMod p, (polyMod d p).eval x = 0) ↔
-        ∃ x : ZMod p, (1 : ZMod p) * (x * x) + (-(d : ZMod p)) * x +
-          (((d ^ 2 - d) / 4 : ℤ) : ZMod p) = 0 from
-      ⟨fun ⟨x, hx⟩ => ⟨x, (hquad_iff x).mp hx⟩,
-       fun ⟨x, hx⟩ => ⟨x, (hquad_iff x).mpr hx⟩⟩]
+  simp_rw [hquad_iff]
   -- Now apply the discriminant characterisation.
   have h1ne : (1 : ZMod p) ≠ 0 := one_ne_zero
   constructor
