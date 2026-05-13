@@ -219,16 +219,11 @@ theorem polyMod_eq_X_sq_of_p_dvd_d
     · exact Dvd.dvd.mul_right (Int.dvd_of_emod_eq_zero h) _
     · exact Dvd.dvd.mul_left (Int.dvd_of_emod_eq_zero (by omega)) _
   have hp_dvd_q : (p : ℤ) ∣ (d ^ 2 - d) / 4 := by
-    -- p | d² - d (since p | d and d² - d = d(d-1)).
-    have hp_dvd_sub : (p : ℤ) ∣ d ^ 2 - d := by
-      have hdd : d ^ 2 - d = d * (d - 1) := by ring
-      rw [hdd]
-      exact Dvd.dvd.mul_right hpd _
-    -- 4 * ((d²-d)/4) = d² - d, so p ∣ 4 * ((d²-d)/4).
-    have hcancel : (4 : ℤ) * ((d ^ 2 - d) / 4) = d ^ 2 - d :=
-      Int.mul_ediv_cancel' h4dvd
-    rw [← hcancel] at hp_dvd_sub
-    -- p is prime in ℤ. Since p ≠ 2, p does not divide 4, so p ∣ (d²-d)/4.
+    -- 4 * ((d²-d)/4) = d² - d (by hcancel), and p ∣ d² - d = d*(d-1).
+    -- Then p prime, p ∤ 4, so p ∣ (d²-d)/4.
+    have hp_dvd_sub : (p : ℤ) ∣ 4 * ((d ^ 2 - d) / 4) := by
+      rw [Int.mul_ediv_cancel' h4dvd]
+      exact dvd_sub (dvd_pow hpd (by norm_num)) hpd
     have hp_prime_int : Prime (p : ℤ) :=
       Nat.prime_iff_prime_int.mp (Fact.out (p := p.Prime))
     have hp_not_dvd_4 : ¬ (p : ℤ) ∣ 4 := by
