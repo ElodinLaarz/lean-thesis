@@ -2,6 +2,7 @@ import QuadraticOrder.Basic
 import Mathlib.Algebra.QuadraticDiscriminant
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Algebra.Field.ZMod
+import Mathlib.NumberTheory.LegendreSymbol.Basic
 
 /-!
 # Layer 2a: Polynomial reduction of `poly d` mod `p`
@@ -155,5 +156,25 @@ theorem polyMod_exists_root_iff_isSquare_d
       refine ⟨s, ?_⟩
       rw [polyMod_discrim_eq hd, hs]
     exact exists_quadratic_eq_zero h1ne hdisc_sq
+
+/-- `polyMod d p` has a root in `ZMod p` iff the Legendre symbol `(d/p)` is
+not `-1`. Equivalently, `d` is either zero (ramified case) or a quadratic
+residue (split case) mod `p`. -/
+theorem polyMod_exists_root_iff_legendreSym_ne_neg_one
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1) :
+    (∃ x : ZMod p, (polyMod d p).eval x = 0) ↔ legendreSym p d ≠ -1 := by
+  rw [polyMod_exists_root_iff_isSquare_d hp2 hd, Ne, legendreSym.eq_neg_one_iff,
+      not_not]
+
+/-- `polyMod d p` has no root in `ZMod p` iff `(d/p) = -1` — the inert case. -/
+theorem polyMod_no_root_iff_legendreSym_eq_neg_one
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1) :
+    (¬ ∃ x : ZMod p, (polyMod d p).eval x = 0) ↔ legendreSym p d = -1 := by
+  rw [polyMod_exists_root_iff_legendreSym_ne_neg_one hp2 hd, not_not]
+
+/-- The ramified case: `(d/p) = 0 ↔ p ∣ d`. -/
+theorem legendreSym_eq_zero_iff_dvd [Fact p.Prime] :
+    legendreSym p d = 0 ↔ (p : ℤ) ∣ d := by
+  rw [legendreSym.eq_zero_iff, ZMod.intCast_zmod_eq_zero_iff_dvd]
 
 end QuadraticOrder
