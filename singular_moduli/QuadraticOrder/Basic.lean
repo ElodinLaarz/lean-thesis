@@ -197,10 +197,7 @@ lemma tau_sub_tauConj_sq_of_valid_disc
     rw [hdd]
     rcases hd with h | h
     · exact Dvd.dvd.mul_right (Int.dvd_of_emod_eq_zero h) _
-    · have h1 : (4 : ℤ) ∣ (d - 1) := by
-        have : (d - 1) % 4 = 0 := by omega
-        exact Int.dvd_of_emod_eq_zero this
-      exact Dvd.dvd.mul_left h1 _
+    · exact Dvd.dvd.mul_left (Int.dvd_of_emod_eq_zero (by omega)) _
   have hcancel : (4 : ℤ) * ((d ^ 2 - d) / 4) = d ^ 2 - d :=
     Int.mul_ediv_cancel' h4dvd
   linarith
