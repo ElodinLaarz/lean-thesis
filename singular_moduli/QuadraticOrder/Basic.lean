@@ -160,4 +160,46 @@ lemma normForm_eq_mul_conj (a b : ℤ) :
     ((b : QuadraticOrder d) * (a : QuadraticOrder d)) * hsum
       + ((b : QuadraticOrder d) ^ 2) * hprod
 
+/-! ### Discriminant: `(τ - τ̄)²` -/
+
+/-- The difference of the two roots: `τ - τ̄ = 2 • τ - d • 1`. -/
+lemma tau_sub_tauConj : tau - tauConj = 2 • tau - d • (1 : QuadraticOrder d) := by
+  unfold tauConj
+  abel
+
+/-- General discriminant identity: `(τ - τ̄)² = (d² - 4·⌊(d²-d)/4⌋) • 1`. The
+right-hand-side equals `d • 1` when `d ≡ 0` or `d ≡ 1 (mod 4)` (the values
+for which `poly d` has integer coefficients matching the discriminant of the
+quadratic field). For general `d`, the difference is the Euclidean remainder
+`(d² - d) mod 4`. -/
+lemma tau_sub_tauConj_sq :
+    (tau - tauConj) ^ 2
+      = (d ^ 2 - 4 * ((d ^ 2 - d) / 4) : ℤ) • (1 : QuadraticOrder d) := by
+  have h := tau_minimal_poly (d := d)
+  rw [tau_sub_tauConj]
+  -- (2 • τ - d • 1)^2 = 4 • τ² - 4d • τ + d² • 1
+  -- substitute τ² = d • τ - q • 1, giving d² • 1 - 4q • 1 = (d² - 4q) • 1
+  linear_combination (4 : QuadraticOrder d) * h
+
+/-- Under the valid-discriminant hypothesis `d ≡ 0 ∨ d ≡ 1 (mod 4)`, the
+discriminant equals `d` exactly: `(τ - τ̄)² = d • 1`. This is the case used
+throughout the thesis (the only `d` for which `QuadraticOrder d` coincides
+with the quadratic order of discriminant `d`). -/
+lemma tau_sub_tauConj_sq_of_valid_disc
+    (hd : d % 4 = 0 ∨ d % 4 = 1) :
+    (tau - tauConj) ^ 2 = d • (1 : QuadraticOrder d) := by
+  rw [tau_sub_tauConj_sq]
+  congr 1
+  -- reduce to: d^2 - 4 * ((d^2 - d) / 4) = d
+  -- equivalently: 4 ∣ (d^2 - d), so 4 * ((d^2-d)/4) = d^2 - d
+  have h4dvd : (4 : ℤ) ∣ d ^ 2 - d := by
+    have hdd : d ^ 2 - d = d * (d - 1) := by ring
+    rw [hdd]
+    rcases hd with h | h
+    · exact Dvd.dvd.mul_right (Int.dvd_of_emod_eq_zero h) _
+    · exact Dvd.dvd.mul_left (Int.dvd_of_emod_eq_zero (by omega)) _
+  have hcancel : (4 : ℤ) * ((d ^ 2 - d) / 4) = d ^ 2 - d :=
+    Int.mul_ediv_cancel' h4dvd
+  linarith
+
 end QuadraticOrder
