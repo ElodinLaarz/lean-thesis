@@ -575,7 +575,7 @@ private theorem polyMod_squarefree_of_not_p_dvd_d [Fact p.Prime] (hp2 : p ≠ 2)
     Squarefree (polyMod d p) := by
   -- `d ≢ 0 (mod p)` since `p ∤ d`.
   have hd_ne : (d : ZMod p) ≠ 0 := by
-    rw [Ne, ZMod.intCast_zmod_eq_zero_iff_dvd]; exact hpd
+    rwa [Ne, ZMod.intCast_zmod_eq_zero_iff_dvd]
   -- The Legendre symbol is ±1.
   have htri : legendreSym p d = 1 ∨ legendreSym p d = -1 :=
     legendreSym.eq_one_or_neg_one (p := p) hd_ne
@@ -596,8 +596,7 @@ private theorem polyMod_squarefree_of_not_p_dvd_d [Fact p.Prime] (hp2 : p ≠ 2)
     have hmul_monic : ((X - C r) * (X - C s)).Monic :=
       (Polynomial.monic_X_sub_C r).mul (Polynomial.monic_X_sub_C s)
     have hmul_natDeg : ((X - C r) * (X - C s)).natDegree = 2 := by
-      rw [(Polynomial.monic_X_sub_C r).natDegree_mul' (Polynomial.monic_X_sub_C s).ne_zero,
-          Polynomial.natDegree_X_sub_C, Polynomial.natDegree_X_sub_C]
+      compute_degree!
     have heq : polyMod d p = (X - C r) * (X - C s) :=
       Polynomial.eq_of_monic_of_dvd_of_natDegree_le hmul_monic (polyMod_monic d p)
         hmul_dvd (by rw [polyMod_natDegree, hmul_natDeg])
