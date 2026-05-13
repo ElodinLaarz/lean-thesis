@@ -110,7 +110,7 @@ factorisation `(a + b·τ)(a + b·τ̄) = N(a, b)`. -/
 noncomputable def tauConj : QuadraticOrder d := d • (1 : QuadraticOrder d) - tau
 
 /-- Vieta: the sum of the roots of `poly d` equals `d`. -/
-lemma tau_add_tauConj : tau + tauConj = (d : ℤ) • (1 : QuadraticOrder d) := by
+lemma tau_add_tauConj : tau + tauConj = d • (1 : QuadraticOrder d) := by
   unfold tauConj
   ring
 
@@ -132,16 +132,13 @@ lemma tauConj_minimal_poly :
 /-- The norm involution: `(a + b·τ)(a + b·τ̄) = N(a, b)`. This exhibits the
 conjugate as the involution under which `normForm` is the multiplicative norm. -/
 lemma normForm_eq_mul_conj (a b : ℤ) :
-    (algebraMap ℤ (QuadraticOrder d) a + b • tau)
-      * (algebraMap ℤ (QuadraticOrder d) a + b • tauConj)
-    = algebraMap ℤ (QuadraticOrder d) (normForm d a b) := by
-  have hsum : tau + tauConj = (d : ℤ) • (1 : QuadraticOrder d) := tau_add_tauConj
+    (a • (1 : QuadraticOrder d) + b • tau)
+      * (a • (1 : QuadraticOrder d) + b • tauConj)
+    = (normForm d a b) • (1 : QuadraticOrder d) := by
+  have hsum : tau + tauConj = d • (1 : QuadraticOrder d) := tau_add_tauConj
   have hprod : tau * tauConj = ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) :=
     tau_mul_tauConj
-  -- Move everything into multiplications by integer casts so `ring` can finish.
-  simp only [normForm, Algebra.algebraMap_eq_smul_one, zsmul_eq_mul, mul_one]
-    at hsum hprod ⊢
-  set q : ℤ := (d ^ 2 - d) / 4
+  simp only [normForm, zsmul_eq_mul] at hsum hprod ⊢
   push_cast
   linear_combination
     ((b : QuadraticOrder d) * (a : QuadraticOrder d)) * hsum
