@@ -322,44 +322,42 @@ properties of `polyMod d p` in `(ZMod p)[X]`. It is the foundation on which
 the inert/split/ramified ideal-theoretic characterisations are built. -/
 noncomputable def quadraticOrderModP_equiv_polyModQuot
     (d : ℤ) (p : ℕ) [Fact p.Prime] :
-    (QuadraticOrder d ⧸ Ideal.span ({(p : QuadraticOrder d)} : Set _)) ≃+*
-      ((ZMod p)[X] ⧸ Ideal.span ({polyMod d p} : Set _)) := by
-  -- Step 1: rewrite the ideal `(p) ⊆ QuadraticOrder d` as the image under
+    (QuadraticOrder d ⧸ Ideal.span {(p : QuadraticOrder d)}) ≃+*
+      ((ZMod p)[X] ⧸ Ideal.span {polyMod d p}) := by
+  -- Step 1: rewrite `(p) ⊆ QuadraticOrder d` as the image under
   -- `algebraMap ℤ (QuadraticOrder d) = AdjoinRoot.of (poly d)` of `(p) ⊆ ℤ`.
-  have h_span_eq : (Ideal.span ({(p : QuadraticOrder d)} : Set _) : Ideal (QuadraticOrder d)) =
-      Ideal.map (AdjoinRoot.of (poly d)) (Ideal.span ({(p : ℤ)} : Set ℤ)) := by
+  have h_span_eq : Ideal.span {(p : QuadraticOrder d)} =
+      Ideal.map (AdjoinRoot.of (poly d)) (Ideal.span {(p : ℤ)}) := by
     rw [Ideal.map_span, Set.image_singleton]
     simp
-  -- Step 4: the polynomial in the target ideal — after transport through
+  -- Step 2: the polynomial in the target ideal — after transport through
   -- `Polynomial.mapEquiv (Int.quotientSpanNatEquivZMod p)` — coincides with
-  -- `polyMod d p`. This uses `Polynomial.map_map` and the simp-lemma
+  -- `polyMod d p`. Uses `Polynomial.map_map` and
   -- `Int.quotientSpanNatEquivZMod_comp_Quotient_mk`.
   have h_poly_eq :
-      (poly d).map (((Int.quotientSpanNatEquivZMod p : _ →+* _).comp
-        (Ideal.Quotient.mk (Ideal.span ({(p : ℤ)} : Set ℤ))))) = polyMod d p := by
+      (poly d).map ((Int.quotientSpanNatEquivZMod p : _ →+* _).comp
+        (Ideal.Quotient.mk (Ideal.span {(p : ℤ)}))) = polyMod d p := by
     rw [Int.quotientSpanNatEquivZMod_comp_Quotient_mk]
     rfl
   have h_map_eq :
       (Polynomial.mapEquiv (Int.quotientSpanNatEquivZMod p) : _ →+* _)
-        ((poly d).map (Ideal.Quotient.mk (Ideal.span ({(p : ℤ)} : Set ℤ)))) =
+        ((poly d).map (Ideal.Quotient.mk (Ideal.span {(p : ℤ)}))) =
         polyMod d p := by
     change (Polynomial.mapEquiv (Int.quotientSpanNatEquivZMod p))
         ((poly d).map (Ideal.Quotient.mk _)) = polyMod d p
     rw [Polynomial.mapEquiv_apply, Polynomial.map_map, h_poly_eq]
   have h_map_span :
       Ideal.map (Polynomial.mapEquiv (Int.quotientSpanNatEquivZMod p) : _ →+* _)
-          (Ideal.span ({(poly d).map (Ideal.Quotient.mk (Ideal.span ({(p : ℤ)} : Set ℤ)))} :
-            Set (((ℤ ⧸ Ideal.span ({(p : ℤ)} : Set ℤ)))[X]))) =
-        Ideal.span ({polyMod d p} : Set ((ZMod p)[X])) := by
+          (Ideal.span {(poly d).map (Ideal.Quotient.mk (Ideal.span {(p : ℤ)}))}) =
+        Ideal.span {polyMod d p} := by
     rw [Ideal.map_span, Set.image_singleton, h_map_eq]
-  -- Step 2: `quotEquivQuotMap` from `AdjoinRoot f / (I·f)` to `(R/I)[X] / (f mod I)`.
-  -- Step 3: `quotientEquiv` transports along `Polynomial.mapEquiv` of the
-  -- `ℤ/(p) ≃+* ZMod p` ring equiv.
+  -- Step 3: compose `Ideal.quotEquivOfEq` with `AdjoinRoot.quotEquivQuotMap`
+  -- and `Ideal.quotientEquiv` (the latter transports the polynomial quotient
+  -- along the ring equiv `ℤ/(p) ≃+* ZMod p`).
   exact
     (Ideal.quotEquivOfEq h_span_eq).trans <|
-      (AdjoinRoot.quotEquivQuotMap (poly d) (Ideal.span ({(p : ℤ)} : Set ℤ))).toRingEquiv.trans <|
-        Ideal.quotientEquiv _
-          (Ideal.span ({polyMod d p} : Set ((ZMod p)[X])))
+      (AdjoinRoot.quotEquivQuotMap (poly d) (Ideal.span {(p : ℤ)})).toRingEquiv.trans <|
+        Ideal.quotientEquiv _ (Ideal.span {polyMod d p})
           (Polynomial.mapEquiv (Int.quotientSpanNatEquivZMod p)) h_map_span.symm
 
 end QuadraticOrder
