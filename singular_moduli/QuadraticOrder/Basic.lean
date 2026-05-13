@@ -99,4 +99,49 @@ theorem normForm_mul (a b c e : ℤ) :
   set q := (d ^ 2 - d) / 4
   ring
 
+/-! ### Conjugate and norm involution
+
+The element `tauConj := d • 1 - tau` is the "Galois conjugate" of `tau`: it is
+the other root of `poly d`. Together with `tau`, it satisfies the standard
+Vieta relations, and exhibits `normForm` as a multiplicative norm via the
+factorisation `(a + b·τ)(a + b·τ̄) = N(a, b)`. -/
+
+/-- The Galois conjugate of `tau`: the other root of `poly d`. -/
+noncomputable def tauConj : QuadraticOrder d := d • (1 : QuadraticOrder d) - tau
+
+/-- Vieta: the sum of the roots of `poly d` equals `d`. -/
+lemma tau_add_tauConj : tau + tauConj = d • (1 : QuadraticOrder d) := by
+  unfold tauConj
+  ring
+
+/-- Vieta: the product of the roots of `poly d` equals `(d^2 - d) / 4`. -/
+lemma tau_mul_tauConj :
+    tau * tauConj = ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) := by
+  unfold tauConj
+  have h := tau_minimal_poly (d := d)
+  -- `tau * (d • 1 - tau) = d • tau - tau^2`, and `tau^2 = d • tau - q • 1`.
+  linear_combination -h
+
+/-- The conjugate `tauConj` is also a root of the defining polynomial `poly d`. -/
+lemma tauConj_minimal_poly :
+    tauConj ^ 2 - d • tauConj + ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) = 0 := by
+  unfold tauConj
+  have h := tau_minimal_poly (d := d)
+  linear_combination h
+
+/-- The norm involution: `(a + b·τ)(a + b·τ̄) = N(a, b)`. This exhibits the
+conjugate as the involution under which `normForm` is the multiplicative norm. -/
+lemma normForm_eq_mul_conj (a b : ℤ) :
+    (a • (1 : QuadraticOrder d) + b • tau)
+      * (a • (1 : QuadraticOrder d) + b • tauConj)
+    = (normForm d a b) • (1 : QuadraticOrder d) := by
+  have hsum : tau + tauConj = d • (1 : QuadraticOrder d) := tau_add_tauConj
+  have hprod : tau * tauConj = ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) :=
+    tau_mul_tauConj
+  simp only [normForm, zsmul_eq_mul] at hsum hprod ⊢
+  push_cast
+  linear_combination
+    ((b : QuadraticOrder d) * (a : QuadraticOrder d)) * hsum
+      + ((b : QuadraticOrder d) ^ 2) * hprod
+
 end QuadraticOrder
