@@ -129,6 +129,22 @@ lemma tauConj_minimal_poly :
   have h := tau_minimal_poly (d := d)
   linear_combination h
 
+/-- `τ` is a root of the defining polynomial `poly d` in `QuadraticOrder d`. -/
+@[simp] lemma poly_aeval_tau :
+    Polynomial.aeval (tau (d := d)) (poly d) = 0 := by
+  unfold tau
+  rw [AdjoinRoot.aeval_eq]
+  exact AdjoinRoot.mk_self
+
+/-- The Galois conjugate `tauConj` is also a root of `poly d`. -/
+@[simp] lemma poly_aeval_tauConj :
+    Polynomial.aeval (tauConj (d := d)) (poly d) = 0 := by
+  have h := tauConj_minimal_poly (d := d)
+  simp only [poly, map_sub, map_add, map_mul, map_pow,
+             Polynomial.aeval_X, Polynomial.aeval_C,
+             Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul]
+  exact h
+
 /-- The norm involution: `(a + b·τ)(a + b·τ̄) = N(a, b)`. This exhibits the
 conjugate as the involution under which `normForm` is the multiplicative norm. -/
 lemma normForm_eq_mul_conj (a b : ℤ) :
