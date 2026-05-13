@@ -100,4 +100,66 @@ lemma polyMod_discrim_eq (hd : d % 4 = 0 ∨ d % 4 = 1) :
   convert hcast using 1
   ring
 
+/-- Evaluation of `polyMod d p` at `x ∈ ZMod p`: a closed-form expansion.
+
+This reduces evaluation to a quadratic expression in `x` over `ZMod p`. -/
+lemma polyMod_eval (x : ZMod p) :
+    (polyMod d p).eval x = x ^ 2 - (d : ZMod p) * x + (((d ^ 2 - d) / 4 : ℤ) : ZMod p) := by
+  rw [polyMod_eq]
+  simp [Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+        Polynomial.eval_pow, Polynomial.eval_X]
+
+/-- For `p` an odd prime and `d ≡ 0 ∨ 1 (mod 4)`, `polyMod d p` has a root
+in `ZMod p` iff `d` is a quadratic residue mod `p` (i.e. `IsSquare (d : ZMod p)`).
+
+This is the polynomial-level bridge connecting `poly d`'s splitting behaviour
+to the Kronecker / Legendre symbol `(d / p)`. -/
+theorem polyMod_exists_root_iff_isSquare_d
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1) :
+    (∃ x : ZMod p, (polyMod d p).eval x = 0) ↔ IsSquare (d : ZMod p) := by
+  -- Establish `NeZero (2 : ZMod p)` from `p` prime and `p ≠ 2`.
+  have hp_prime : p.Prime := Fact.out
+  have hp_two_ne : (2 : ZMod p) ≠ 0 := by
+    rw [show (2 : ZMod p) = ((2 : ℕ) : ZMod p) by norm_cast, Ne,
+        CharP.cast_eq_zero_iff (ZMod p) p 2]
+    intro hdvd
+    -- p ∣ 2 with p prime forces p ≤ 2, and combined with p ≥ 2 yields p = 2.
+    have hple : p ≤ 2 := Nat.le_of_dvd (by norm_num) hdvd
+    have hpge : 2 ≤ p := hp_prime.two_le
+    exact hp2 (le_antisymm hple hpge)
+  have hne2 : NeZero (2 : ZMod p) := ⟨hp_two_ne⟩
+  -- Bridge `polyMod` evaluation to standard quadratic form `a*(x*x) + b*x + c = 0`.
+  have hquad_iff : ∀ x : ZMod p,
+      (polyMod d p).eval x = 0 ↔
+        (1 : ZMod p) * (x * x) + (-(d : ZMod p)) * x +
+          (((d ^ 2 - d) / 4 : ℤ) : ZMod p) = 0 := by
+    intro x
+    rw [polyMod_eval]
+    constructor
+    · intro h; linear_combination h
+    · intro h; linear_combination h
+  -- Restate the existential using the quadratic form.
+  rw [show (∃ x : ZMod p, (polyMod d p).eval x = 0) ↔
+        ∃ x : ZMod p, (1 : ZMod p) * (x * x) + (-(d : ZMod p)) * x +
+          (((d ^ 2 - d) / 4 : ℤ) : ZMod p) = 0 from
+      ⟨fun ⟨x, hx⟩ => ⟨x, (hquad_iff x).mp hx⟩,
+       fun ⟨x, hx⟩ => ⟨x, (hquad_iff x).mpr hx⟩⟩]
+  -- Now apply the discriminant characterisation.
+  have h1ne : (1 : ZMod p) ≠ 0 := one_ne_zero
+  constructor
+  · -- Forward: a root gives a square root of the discriminant, which is `d`.
+    rintro ⟨x, hx⟩
+    have hdsq := discrim_eq_sq_of_quadratic_eq_zero hx
+    -- `discrim 1 (-d) ((d^2-d)/4) = (2*1*x + (-d))^2`
+    rw [polyMod_discrim_eq hd] at hdsq
+    refine ⟨2 * 1 * x + (-(d : ZMod p)), ?_⟩
+    linear_combination hdsq
+  · -- Reverse: a square `d = s*s` gives a discriminant-square, then `exists_quadratic_eq_zero`.
+    rintro ⟨s, hs⟩
+    have hdisc_sq : ∃ t : ZMod p,
+        discrim (1 : ZMod p) (-(d : ZMod p)) (((d ^ 2 - d) / 4 : ℤ) : ZMod p) = t * t := by
+      refine ⟨s, ?_⟩
+      rw [polyMod_discrim_eq hd, hs]
+    exact exists_quadratic_eq_zero h1ne hdisc_sq
+
 end QuadraticOrder
