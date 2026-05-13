@@ -177,4 +177,28 @@ theorem legendreSym_eq_zero_iff_dvd [Fact p.Prime] :
     legendreSym p d = 0 ↔ (p : ℤ) ∣ d := by
   rw [legendreSym.eq_zero_iff, ZMod.intCast_zmod_eq_zero_iff_dvd]
 
+/-- A monic-quadratic polynomial in `(ZMod p)[X]` splits iff it has a root.
+For `polyMod d p` this is the bridge from `polyMod_exists_root_iff_isSquare_d`
+to the `Polynomial.Splits` predicate. -/
+theorem polyMod_splits_iff_exists_root [Fact p.Prime] :
+    (polyMod d p).Splits ↔ ∃ x : ZMod p, (polyMod d p).eval x = 0 := by
+  constructor
+  · intro hs
+    have hdeg : (polyMod d p).degree ≠ 0 := by
+      rw [Polynomial.degree_eq_natDegree (Polynomial.Monic.ne_zero (polyMod_monic d p)),
+          polyMod_natDegree]
+      decide
+    exact hs.exists_eval_eq_zero hdeg
+  · rintro ⟨x, hx⟩
+    exact Polynomial.Splits.of_natDegree_eq_two polyMod_natDegree hx
+
+/-- `polyMod d p` splits in `(ZMod p)[X]` iff the Legendre symbol `(d/p)` is
+not `-1`. This combines `polyMod_splits_iff_exists_root` with the previously
+proved `polyMod_exists_root_iff_legendreSym_ne_neg_one`. -/
+theorem polyMod_splits_iff_legendreSym_ne_neg_one
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1) :
+    (polyMod d p).Splits ↔ legendreSym p d ≠ -1 := by
+  rw [polyMod_splits_iff_exists_root,
+      polyMod_exists_root_iff_legendreSym_ne_neg_one hp2 hd]
+
 end QuadraticOrder
