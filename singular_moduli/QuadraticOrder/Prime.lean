@@ -5,6 +5,9 @@ import Mathlib.Data.ZMod.QuotientRing
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.NumberTheory.LegendreSymbol.Basic
 import Mathlib.Algebra.Polynomial.SpecificDegree
+import Mathlib.Algebra.Polynomial.RingDivision
+import Mathlib.Algebra.Squarefree.Basic
+import Mathlib.RingTheory.Ideal.Quotient.Nilpotent
 
 /-!
 # Layer 2a: Polynomial reduction of `poly d` mod `p`
@@ -561,5 +564,78 @@ theorem span_p_not_isRadical_of_p_dvd_d
   apply tau_not_mem_span_p (d := d) (p := p)
   -- `tau ∈ (p).radical` because `tau^2 ∈ (p)`.
   exact hrad ⟨2, tau_sq_mem_span_p_of_p_dvd_d hp2 hd hpd⟩
+
+/-- When `p ∤ d` (with `p ≠ 2`, `d ≡ 0 ∨ 1 (mod 4)`), the polynomial
+`polyMod d p` is squarefree in `(ZMod p)[X]`. In the inert case
+(`legendreSym p d = -1`) it is irreducible. In the split case
+(`legendreSym p d = 1`) it factors as `(X - C r) * (X - C s)` with `r ≠ s`,
+a product of two coprime irreducible (and thus squarefree) factors. -/
+private theorem polyMod_squarefree_of_not_p_dvd_d [Fact p.Prime] (hp2 : p ≠ 2)
+    (hd : d % 4 = 0 ∨ d % 4 = 1) (hpd : ¬ (p : ℤ) ∣ d) :
+    Squarefree (polyMod d p) := by
+  -- `d ≢ 0 (mod p)` since `p ∤ d`.
+  have hd_ne : (d : ZMod p) ≠ 0 := by
+    rwa [Ne, ZMod.intCast_zmod_eq_zero_iff_dvd]
+  -- The Legendre symbol is ±1.
+  have htri : legendreSym p d = 1 ∨ legendreSym p d = -1 :=
+    legendreSym.eq_one_or_neg_one (p := p) hd_ne
+  rcases htri with hsplit | hinert
+  · -- Split: factor `polyMod = (X - C r) * (X - C s)` with `r ≠ s`.
+    obtain ⟨r, s, hrs, hr, hs⟩ :=
+      polyMod_exists_two_distinct_roots_of_legendreSym_eq_one hp2 hd hsplit
+    -- Each linear factor divides `polyMod`.
+    have hr_dvd : (X - C r) ∣ polyMod d p := Polynomial.dvd_iff_isRoot.mpr hr
+    have hs_dvd : (X - C s) ∣ polyMod d p := Polynomial.dvd_iff_isRoot.mpr hs
+    -- The two linear factors are coprime (since `r - s ≠ 0` is a unit in the field).
+    have hcop : IsCoprime (X - C r) (X - C s) :=
+      Polynomial.isCoprime_X_sub_C_of_isUnit_sub
+        ((sub_ne_zero_of_ne hrs).isUnit)
+    -- Product divides `polyMod`.
+    have hmul_dvd : (X - C r) * (X - C s) ∣ polyMod d p := hcop.mul_dvd hr_dvd hs_dvd
+    -- Both sides monic of degree 2, so equal.
+    have hmul_monic : ((X - C r) * (X - C s)).Monic :=
+      (Polynomial.monic_X_sub_C r).mul (Polynomial.monic_X_sub_C s)
+    have hmul_natDeg : ((X - C r) * (X - C s)).natDegree = 2 := by
+      compute_degree!
+    have heq : polyMod d p = (X - C r) * (X - C s) :=
+      Polynomial.eq_of_monic_of_dvd_of_natDegree_le hmul_monic (polyMod_monic d p)
+        hmul_dvd (by rw [polyMod_natDegree, hmul_natDeg])
+    -- Squarefreeness of the product.
+    rw [heq, squarefree_mul_iff]
+    refine ⟨hcop.isRelPrime, ?_, ?_⟩
+    · exact (Polynomial.irreducible_X_sub_C r).squarefree
+    · exact (Polynomial.irreducible_X_sub_C s).squarefree
+  · -- Inert: irreducible → squarefree.
+    exact ((polyMod_irreducible_iff_legendreSym_eq_neg_one hp2 hd).mpr hinert).squarefree
+
+/-- **Issue #7's ramified iff at the ideal level**: the ideal `(p)` fails to
+be radical in `QuadraticOrder d` exactly when `p ∣ d`. The forward direction
+(`p ∣ d → ¬ IsRadical`) is `span_p_not_isRadical_of_p_dvd_d`. The reverse
+(`p ∤ d → IsRadical`) is proved by transporting squarefreeness of
+`polyMod d p` (from `polyMod_squarefree_of_not_p_dvd_d`) along the ring
+isomorphism `quadraticOrderModP_equiv_polyModQuot`. -/
+theorem prime_ramified_iff [Fact p.Prime] (hp2 : p ≠ 2)
+    (hd : d % 4 = 0 ∨ d % 4 = 1) :
+    ¬ (Ideal.span {(p : QuadraticOrder d)}).IsRadical ↔ (p : ℤ) ∣ d := by
+  refine ⟨?_, span_p_not_isRadical_of_p_dvd_d hp2 hd⟩
+  -- Reverse: `¬ IsRadical → p ∣ d`. Contrapositive: `p ∤ d → IsRadical`.
+  contrapose!
+  intro hpd
+  -- Step 1: `polyMod d p` is squarefree, hence the ideal `(polyMod d p)`
+  -- in `(ZMod p)[X]` is radical.
+  have hsqf : Squarefree (polyMod d p) := polyMod_squarefree_of_not_p_dvd_d hp2 hd hpd
+  have hrad_poly : (Ideal.span {polyMod d p}).IsRadical :=
+    isRadical_iff_span_singleton.mp hsqf.isRadical
+  -- Step 2: the quotient `(ZMod p)[X] ⧸ (polyMod d p)` is reduced.
+  have hred_poly : IsReduced ((ZMod p)[X] ⧸ Ideal.span {polyMod d p}) :=
+    (Ideal.isRadical_iff_quotient_reduced _).mp hrad_poly
+  -- Step 3: transport reducedness through the ring iso
+  -- `QO d ⧸ (p) ≃+* (ZMod p)[X] ⧸ (polyMod d p)`.
+  have hred_QO : IsReduced (QuadraticOrder d ⧸ Ideal.span {(p : QuadraticOrder d)}) :=
+    isReduced_of_injective
+      (quadraticOrderModP_equiv_polyModQuot d p).toRingHom
+      (quadraticOrderModP_equiv_polyModQuot d p).injective
+  -- Step 4: reduced quotient ↔ radical ideal.
+  exact (Ideal.isRadical_iff_quotient_reduced _).mpr hred_QO
 
 end QuadraticOrder
