@@ -486,4 +486,68 @@ theorem tau_sq_mem_span_p_of_p_dvd_d
     rw [hstep]
     exact Ideal.mul_mem_right _ _ (Ideal.subset_span (Set.mem_singleton _))
 
+/-- `τ` is not in the ideal `(p)` of `QuadraticOrder d` for any prime `p`.
+This holds because `τ` is the second `ℤ`-basis element of `QuadraticOrder d`
+(the first being `1`), so its `τ`-coordinate is `1`, which is not a multiple
+of `p ≥ 2`.
+
+Together with `tau_sq_mem_span_p_of_p_dvd_d`, this shows that when `p ∣ d`,
+the image of `τ` in `QuadraticOrder d / (p)` is a nonzero element with
+`τ² = 0` — a genuine order-2 nilpotent witnessing ramification. -/
+theorem tau_not_mem_span_p [Fact p.Prime] :
+    tau (d := d) ∉ Ideal.span {(p : QuadraticOrder d)} := by
+  intro hmem
+  -- Unfold span membership: get `α` with `α * (p : QO d) = τ`.
+  obtain ⟨α, hα⟩ := Ideal.mem_span_singleton'.mp hmem
+  -- Rewrite as `(p : ℕ) • α = τ` via commutativity + `nsmul_eq_mul`.
+  have hsmul : (p : ℕ) • α = tau (d := d) := by
+    rw [nsmul_eq_mul, ← mul_comm α, hα]
+  -- The basis dimension is 2 (degree of `poly d`).
+  have hdim : (basis (d := d)).dim = 2 := by
+    change (poly d).natDegree = 2
+    unfold poly
+    compute_degree!
+  -- Index `1 : Fin basis.dim` (requires `1 < 2`).
+  let i1 : Fin (basis (d := d)).dim := ⟨1, by rw [hdim]; decide⟩
+  -- Compute `repr τ` at index `1`. Use `powerBasisAux'_repr_apply_to_fun`:
+  -- `(basis.basis.repr τ) 1 = (modByMonicHom (poly_monic d) τ).coeff 1`.
+  -- Since `τ = mk (poly d) X` and `X %ₘ poly d = X` (degree 1 < 2), this is `1`.
+  have hrepr_tau : ((basis (d := d)).basis.repr (tau (d := d))) i1 = 1 := by
+    change ((AdjoinRoot.powerBasisAux' (poly_monic d)).repr (tau (d := d))) i1 = 1
+    rw [AdjoinRoot.powerBasisAux'_repr_apply_to_fun]
+    -- Goal: `((modByMonicHom (poly_monic d)) τ).coeff ↑i1 = 1`
+    have htau_eq : (tau (d := d)) = AdjoinRoot.mk (poly d) Polynomial.X := by
+      unfold tau; rw [AdjoinRoot.mk_X]
+    rw [htau_eq, AdjoinRoot.modByMonicHom_mk]
+    -- Goal: `(Polynomial.X %ₘ poly d).coeff ↑i1 = 1`
+    have hX_mod : Polynomial.X %ₘ poly d = (Polynomial.X : ℤ[X]) := by
+      rw [Polynomial.modByMonic_eq_self_iff (poly_monic d)]
+      -- degree X = 1 < 2 = degree (poly d)
+      have hpoly_nd : (poly d).natDegree = 2 := by
+        unfold poly
+        compute_degree!
+      have hpoly_deg : (poly d).degree = 2 := by
+        rw [Polynomial.degree_eq_natDegree (poly_monic d).ne_zero, hpoly_nd]
+        rfl
+      rw [hpoly_deg, Polynomial.degree_X]
+      decide
+    rw [hX_mod]
+    change (Polynomial.X : ℤ[X]).coeff 1 = 1
+    exact Polynomial.coeff_X_one
+  -- Now apply `repr` to `hsmul : (p : ℕ) • α = τ` and project at index `i1`.
+  have hlhs : ((basis (d := d)).basis.repr ((p : ℕ) • α)) i1 = 1 := by
+    rw [hsmul]; exact hrepr_tau
+  -- Linearity: `repr` is a `LinearEquiv ℤ`, so it preserves nsmul. After
+  -- pushing the smul through the LinearEquiv and the Finsupp evaluation,
+  -- and converting nsmul on ℤ to natCast multiplication, we get
+  -- `(p : ℤ) * ((basis.basis.repr α) i1) = 1`.
+  rw [map_nsmul, Finsupp.coe_smul, Pi.smul_apply, nsmul_eq_mul] at hlhs
+  -- `hlhs : (p : ℤ) * ((basis.basis.repr α) i1) = 1`.
+  have hdvd : (p : ℤ) ∣ 1 := ⟨_, hlhs.symm⟩
+  have hp_ge_two : 2 ≤ p := (Fact.out : p.Prime).two_le
+  have hp_int_ge_two : (2 : ℤ) ≤ (p : ℤ) := by exact_mod_cast hp_ge_two
+  have hp_pos : (0 : ℤ) < (p : ℤ) := by linarith
+  have hple : (p : ℤ) ≤ 1 := Int.le_of_dvd (by norm_num) hdvd
+  linarith
+
 end QuadraticOrder
