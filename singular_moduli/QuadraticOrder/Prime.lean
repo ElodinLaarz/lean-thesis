@@ -542,12 +542,8 @@ theorem tau_not_mem_span_p [Fact p.Prime] :
   -- and converting nsmul on ℤ to natCast multiplication, we get
   -- `(p : ℤ) * ((basis.basis.repr α) i1) = 1`.
   rw [map_nsmul, Finsupp.coe_smul, Pi.smul_apply, nsmul_eq_mul] at hlhs
-  -- `hlhs : (p : ℤ) * ((basis.basis.repr α) i1) = 1`.
-  have hdvd : (p : ℤ) ∣ 1 := ⟨_, hlhs.symm⟩
-  have hp_ge_two : 2 ≤ p := (Fact.out : p.Prime).two_le
-  have hp_int_ge_two : (2 : ℤ) ≤ (p : ℤ) := by exact_mod_cast hp_ge_two
-  have hp_pos : (0 : ℤ) < (p : ℤ) := by linarith
-  have hple : (p : ℤ) ≤ 1 := Int.le_of_dvd (by norm_num) hdvd
-  linarith
+  -- `hlhs : (p : ℤ) * ((basis.basis.repr α) i1) = 1`, so `(p : ℤ) ∣ 1`,
+  -- contradicting `Prime.not_dvd_one` for the integer prime `(p : ℤ)`.
+  exact (Nat.prime_iff_prime_int.mp Fact.out).not_dvd_one ⟨_, hlhs.symm⟩
 
 end QuadraticOrder
