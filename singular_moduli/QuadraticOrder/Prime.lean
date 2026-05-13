@@ -442,4 +442,48 @@ noncomputable def quadraticOrderModP_equiv_X_sq_quot
   (quadraticOrderModP_equiv_polyModQuot d p).trans <|
     Ideal.quotEquivOfEq <| by rw [polyMod_eq_X_sq_of_p_dvd_d hp2 hd hpd]
 
+/-- **Ramification witness**: when `p ∣ d` (with `p ≠ 2`, `d ≡ 0 ∨ 1 (mod 4)`),
+`τ²` lies in `(p) ⊆ QuadraticOrder d`. Combined with `τ ∉ (p)` (which holds
+generally because `τ` is a Z-basis element), this exhibits `τ + (p)` as a
+nonzero nilpotent of order 2 in `QuadraticOrder d / (p)` — the algebraic
+fingerprint of ramification of `p` in `QuadraticOrder d`. -/
+theorem tau_sq_mem_span_p_of_p_dvd_d
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1)
+    (hpd : (p : ℤ) ∣ d) :
+    (tau (d := d)) ^ 2 ∈ Ideal.span {(p : QuadraticOrder d)} := by
+  -- Extract `p ∣ (d²-d)/4` from the already-proved `polyMod_eq_X_sq_of_p_dvd_d`:
+  -- the constant coefficient of `polyMod d p = X^2` is zero in `ZMod p`, and
+  -- the constant coefficient is `((d²-d)/4 : ℤ) : ZMod p`.
+  have hp_dvd_q : (p : ℤ) ∣ (d ^ 2 - d) / 4 := by
+    have hpoly := polyMod_eq_X_sq_of_p_dvd_d hp2 hd hpd
+    have h0 := congr_arg (Polynomial.coeff · 0) hpoly
+    simp only [polyMod_coeff_zero, Polynomial.coeff_X_pow] at h0
+    exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp h0
+  -- From `tau_minimal_poly`: `τ² = d • τ - ((d²-d)/4) • 1`.
+  have htau : (tau (d := d)) ^ 2 =
+      d • tau - ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) := by
+    have h := tau_minimal_poly (d := d)
+    linear_combination h
+  rw [htau]
+  -- Show each summand is in the ideal.
+  apply Ideal.sub_mem
+  · -- `d • τ ∈ (p)`: rewrite `d = p * k`, then `d • τ = (p : QO d) * (k • τ)`.
+    obtain ⟨k, hk⟩ := hpd
+    have hstep : (d : ℤ) • (tau (d := d)) =
+        (p : QuadraticOrder d) * (k • tau) := by
+      rw [hk, zsmul_eq_mul, zsmul_eq_mul]
+      push_cast
+      ring
+    rw [hstep]
+    exact Ideal.mul_mem_right _ _ (Ideal.subset_span (Set.mem_singleton _))
+  · -- `((d²-d)/4) • 1 ∈ (p)`: same idea with the divisibility `p ∣ (d²-d)/4`.
+    obtain ⟨m, hm⟩ := hp_dvd_q
+    have hstep : ((d ^ 2 - d) / 4 : ℤ) • (1 : QuadraticOrder d) =
+        (p : QuadraticOrder d) * (m • (1 : QuadraticOrder d)) := by
+      rw [hm, zsmul_eq_mul, zsmul_eq_mul]
+      push_cast
+      ring
+    rw [hstep]
+    exact Ideal.mul_mem_right _ _ (Ideal.subset_span (Set.mem_singleton _))
+
 end QuadraticOrder
