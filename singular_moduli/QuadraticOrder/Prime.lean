@@ -360,4 +360,47 @@ noncomputable def quadraticOrderModP_equiv_polyModQuot
         Ideal.quotientEquiv _ (Ideal.span {polyMod d p})
           (Polynomial.mapEquiv (Int.quotientSpanNatEquivZMod p)) h_map_span.symm
 
+/-- The ideal `(p)` in `QuadraticOrder d` is maximal iff `polyMod d p` is
+irreducible in `(ZMod p)[X]`. This is the ideal-theoretic inert
+characterisation: `(p)` is maximal — equivalently, `(p)` does not factor in
+`QuadraticOrder d` — exactly when its mod-`p` polynomial form is irreducible
+over `ZMod p`.
+
+Combined with `polyMod_splits_iff_legendreSym_ne_neg_one` (and the field
+structure on `(ZMod p)[X] / (irreducible)`), this connects the Legendre
+symbol `(d/p) = -1` characterisation to the ring-theoretic notion that
+`(p)` remains prime in `QuadraticOrder d`. -/
+theorem span_p_isMaximal_iff_irreducible_polyMod
+    (d : ℤ) (p : ℕ) [Fact p.Prime] :
+    (Ideal.span {(p : QuadraticOrder d)}).IsMaximal ↔ Irreducible (polyMod d p) := by
+  constructor
+  · intro hMax
+    -- Transport maximality through the ring equiv to get maximality of
+    -- `Ideal.span {polyMod d p}` in `(ZMod p)[X]`.
+    have hField :
+        IsField (QuadraticOrder d ⧸ Ideal.span {(p : QuadraticOrder d)}) :=
+      (Ideal.Quotient.maximal_ideal_iff_isField_quotient _).mp hMax
+    have hField' :
+        IsField ((ZMod p)[X] ⧸ Ideal.span {polyMod d p}) :=
+      (quadraticOrderModP_equiv_polyModQuot d p).symm.toMulEquiv.isField hField
+    have hMax' : (Ideal.span {polyMod d p}).IsMaximal :=
+      (Ideal.Quotient.maximal_ideal_iff_isField_quotient _).mpr hField'
+    -- IsMaximal → IsPrime → Prime → Irreducible (using `polyMod` is nonzero).
+    have hne : (polyMod d p) ≠ 0 := (polyMod_monic d p).ne_zero
+    have hPrime : Prime (polyMod d p) :=
+      (Ideal.span_singleton_prime hne).mp hMax'.isPrime
+    exact hPrime.irreducible
+  · intro hIrred
+    -- `(ZMod p)[X]` is a PID, so irreducible generates a maximal ideal.
+    have hMax' : (Ideal.span {polyMod d p}).IsMaximal :=
+      PrincipalIdealRing.isMaximal_of_irreducible hIrred
+    have hField' :
+        IsField ((ZMod p)[X] ⧸ Ideal.span {polyMod d p}) :=
+      (Ideal.Quotient.maximal_ideal_iff_isField_quotient _).mp hMax'
+    -- Transport `IsField` back through the ring equiv.
+    have hField :
+        IsField (QuadraticOrder d ⧸ Ideal.span {(p : QuadraticOrder d)}) :=
+      (quadraticOrderModP_equiv_polyModQuot d p).toMulEquiv.isField hField'
+    exact (Ideal.Quotient.maximal_ideal_iff_isField_quotient _).mpr hField
+
 end QuadraticOrder
