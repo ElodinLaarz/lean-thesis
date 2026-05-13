@@ -546,4 +546,20 @@ theorem tau_not_mem_span_p [Fact p.Prime] :
   -- contradicting `Prime.not_dvd_one` for the integer prime `(p : ℤ)`.
   exact (Nat.prime_iff_prime_int.mp Fact.out).not_dvd_one ⟨_, hlhs.symm⟩
 
+/-- **Ramified-direction radical-witness**: when `p ∣ d` (with `p ≠ 2`,
+`d ≡ 0 ∨ 1 (mod 4)`), the ideal `(p)` in `QuadraticOrder d` is NOT a
+radical ideal. The witness is `τ`: `τ² ∈ (p)` (by
+`tau_sq_mem_span_p_of_p_dvd_d`) but `τ ∉ (p)` (by `tau_not_mem_span_p`).
+This is the algebraic fingerprint of ramification — the quotient
+`QuadraticOrder d / (p)` has a nonzero nilpotent. -/
+theorem span_p_not_isRadical_of_p_dvd_d
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1)
+    (hpd : (p : ℤ) ∣ d) :
+    ¬ (Ideal.span {(p : QuadraticOrder d)}).IsRadical := by
+  intro hrad
+  -- `IsRadical I ↔ I.radical ≤ I`. Apply `hrad` to `tau` with witness `n = 2`.
+  apply tau_not_mem_span_p (d := d) (p := p)
+  -- `tau ∈ (p).radical` because `tau^2 ∈ (p)`.
+  exact hrad ⟨2, tau_sq_mem_span_p_of_p_dvd_d hp2 hd hpd⟩
+
 end QuadraticOrder
