@@ -4,6 +4,7 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.ZMod.QuotientRing
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.NumberTheory.LegendreSymbol.Basic
+import Mathlib.Algebra.Polynomial.SpecificDegree
 
 /-!
 # Layer 2a: Polynomial reduction of `poly d` mod `p`
@@ -402,5 +403,29 @@ theorem span_p_isMaximal_iff_irreducible_polyMod
         IsField (QuadraticOrder d ⧸ Ideal.span {(p : QuadraticOrder d)}) :=
       (quadraticOrderModP_equiv_polyModQuot d p).toMulEquiv.isField hField'
     exact (Ideal.Quotient.maximal_ideal_iff_isField_quotient _).mpr hField
+
+/-- `polyMod d p` is irreducible in `(ZMod p)[X]` iff the Legendre symbol
+`(d/p) = -1`. Combines the monic-degree-two irreducibility characterisation
+with the polynomial-level Legendre bridge already established. -/
+theorem polyMod_irreducible_iff_legendreSym_eq_neg_one
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1) :
+    Irreducible (polyMod d p) ↔ legendreSym p d = -1 := by
+  have hne : (polyMod d p) ≠ 0 := (polyMod_monic d p).ne_zero
+  rw [Polynomial.Monic.irreducible_iff_roots_eq_zero_of_degree_le_three
+        (polyMod_monic d p)
+        (by rw [polyMod_natDegree]) (by rw [polyMod_natDegree]; decide),
+      Multiset.eq_zero_iff_forall_notMem]
+  simp_rw [Polynomial.mem_roots hne, Polynomial.IsRoot.def]
+  rw [← not_exists, polyMod_no_root_iff_legendreSym_eq_neg_one hp2 hd]
+
+/-- **Issue #7's inert iff at the ideal level**: the ideal `(p)` is maximal
+in `QuadraticOrder d` (i.e. `p` is "inert") iff the Legendre symbol
+`(d/p) = -1`. Direct composition of `span_p_isMaximal_iff_irreducible_polyMod`
+with `polyMod_irreducible_iff_legendreSym_eq_neg_one`. -/
+theorem prime_inert_iff
+    [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1) :
+    (Ideal.span {(p : QuadraticOrder d)}).IsMaximal ↔ legendreSym p d = -1 := by
+  rw [span_p_isMaximal_iff_irreducible_polyMod,
+      polyMod_irreducible_iff_legendreSym_eq_neg_one hp2 hd]
 
 end QuadraticOrder
