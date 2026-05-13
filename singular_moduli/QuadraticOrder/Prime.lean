@@ -428,4 +428,18 @@ theorem prime_inert_iff
   rw [span_p_isMaximal_iff_irreducible_polyMod,
       polyMod_irreducible_iff_legendreSym_eq_neg_one hp2 hd]
 
+/-- **Ramified-case quotient isomorphism**: when `p ∣ d` (with the
+discriminant hypothesis `d ≡ 0 ∨ 1 (mod 4)` and `p ≠ 2`), the quotient
+`QuadraticOrder d / (p)` is isomorphic to `(ZMod p)[X] / (X²)`. This makes
+the dual-numbers / non-reduced structure of the ramified branch explicit:
+the image of `X` in this quotient is nilpotent of order 2, witnessing that
+`(p)` is not a radical ideal in `QuadraticOrder d`. -/
+noncomputable def quadraticOrderModP_equiv_X_sq_quot
+    (d : ℤ) (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) (hd : d % 4 = 0 ∨ d % 4 = 1)
+    (hpd : (p : ℤ) ∣ d) :
+    (QuadraticOrder d ⧸ Ideal.span {(p : QuadraticOrder d)}) ≃+*
+      ((ZMod p)[X] ⧸ Ideal.span {(X ^ 2 : (ZMod p)[X])}) :=
+  (quadraticOrderModP_equiv_polyModQuot d p).trans <|
+    Ideal.quotEquivOfEq <| by rw [polyMod_eq_X_sq_of_p_dvd_d hp2 hd hpd]
+
 end QuadraticOrder
