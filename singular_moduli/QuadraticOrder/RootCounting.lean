@@ -391,6 +391,7 @@ private lemma prime_pow_dvd_sq_imp (r : ℕ) {a : ℤ} (hpp : Prime (p : ℤ))
     rw [show (r + 1) + 1 = r + 2 from by omega, pow_succ]
     exact mul_dvd_mul_left _ (dvd_mul_right _ _)
 
+omit hp2 in
 /-- If the `p`-adic valuation of `c` is odd and less than `n`, then `x² ≡ c (mod p^n)`
 has no solutions. -/
 theorem cardSqrts_odd_val_eq_zero (n r : ℕ)
@@ -723,6 +724,7 @@ theorem cardSqrts_prime_pow_even_val (hp2 : p ≠ 2) (n r : ℕ)
     exact Prod.ext hy_eq' hk_eq
 
 
+omit hp2 in
 /-- When `c ≡ 0 (mod p^n)`, every multiple of `p^⌈n/2⌉` is a solution,
 giving `p^⌊n/2⌋` solutions total. -/
 theorem cardSqrts_zero (n : ℕ) (hn : 0 < n) :
