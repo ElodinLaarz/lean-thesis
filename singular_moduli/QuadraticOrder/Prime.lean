@@ -184,11 +184,9 @@ theorem polyMod_splits_iff_exists_root [Fact p.Prime] :
     (polyMod d p).Splits ↔ ∃ x : ZMod p, (polyMod d p).eval x = 0 := by
   constructor
   · intro hs
-    have hdeg : (polyMod d p).degree ≠ 0 := by
-      rw [Polynomial.degree_eq_natDegree (Polynomial.Monic.ne_zero (polyMod_monic d p)),
-          polyMod_natDegree]
-      decide
-    exact hs.exists_eval_eq_zero hdeg
+    refine hs.exists_eval_eq_zero ?_
+    rw [Polynomial.degree_eq_natDegree (polyMod_monic d p).ne_zero, polyMod_natDegree]
+    decide
   · rintro ⟨x, hx⟩
     exact Polynomial.Splits.of_natDegree_eq_two polyMod_natDegree hx
 
