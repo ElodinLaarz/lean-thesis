@@ -95,7 +95,7 @@ ring element — via the `modByMonic` representation underlying `AdjoinRoot`'s
 polynomial, namely `2`. -/
 @[simp] lemma basis_dim : (basis (d := d)).dim = 2 := poly_natDegree d
 
-/-- The basis-reprresentation coefficient at index `i` is the `i`-th coefficient
+/-- The basis-representation coefficient at index `i` is the `i`-th coefficient
 of the unique polynomial of degree `< 2` representing `α` (its `modByMonic`
 remainder). -/
 lemma basis_repr_apply (α : QuadraticOrder d) (i : Fin (basis (d := d)).dim) :
@@ -107,8 +107,7 @@ lemma basis_repr_apply (α : QuadraticOrder d) (i : Fin (basis (d := d)).dim) :
 lemma basis_repr_tau_one :
     (basis.basis.repr (tau (d := d))) ⟨1, by simp⟩ = 1 := by
   rw [basis_repr_apply]
-  have htau_eq : (tau (d := d)) = AdjoinRoot.mk (poly d) Polynomial.X := by
-    unfold tau; rw [AdjoinRoot.mk_X]
+  have htau_eq : (tau (d := d)) = AdjoinRoot.mk (poly d) Polynomial.X := rfl
   rw [htau_eq, AdjoinRoot.modByMonicHom_mk]
   have hX_mod : Polynomial.X %ₘ poly d = (Polynomial.X : ℤ[X]) := by
     rw [Polynomial.modByMonic_eq_self_iff (poly_monic d), poly_degree,
