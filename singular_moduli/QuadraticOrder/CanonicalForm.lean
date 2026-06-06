@@ -44,8 +44,8 @@ The intended parameter range is `m/2 ≤ k ≤ m` with `A` taken modulo
 `p^(2k-m)`. -/
 noncomputable def canonicalIdeal (d : ℤ) (p k m : ℕ) (A : ℤ) :
     Ideal (QuadraticOrder d) :=
-  Ideal.span {(p ^ k : QuadraticOrder d),
-              (p ^ (m - k) : QuadraticOrder d) *
+  Ideal.span {(p : QuadraticOrder d) ^ k,
+              (p : QuadraticOrder d) ^ (m - k) *
                 (tau - (A : QuadraticOrder d))}
 
 /-- A canonical-form parameter `(k, A)` is **admissible** at index `p^m`
@@ -70,11 +70,11 @@ it admits the obvious `ℤ`-basis used in the determinant computation. -/
 noncomputable def canonicalZSpan (d : ℤ) (p k m : ℕ) (A : ℤ) :
     Submodule ℤ (QuadraticOrder d) :=
   Submodule.span ℤ
-    {(p ^ k : QuadraticOrder d),
-     (p ^ (m - k) : QuadraticOrder d) * (tau - (A : QuadraticOrder d))}
+    {(p : QuadraticOrder d) ^ k,
+     (p : QuadraticOrder d) ^ (m - k) * (tau - (A : QuadraticOrder d))}
 
 private lemma p_pow_k_mem_zSpan :
-    (p ^ k : QuadraticOrder d) ∈ canonicalZSpan d p k m A :=
+    (p : QuadraticOrder d) ^ k ∈ canonicalZSpan d p k m A :=
   Submodule.subset_span (Set.mem_insert _ _)
 
 private lemma p_pow_mk_tau_sub_A_mem_zSpan :
