@@ -12,7 +12,10 @@ import Mathlib.RingTheory.AdjoinRoot
 * `QuadraticOrder d`  — the order, as `AdjoinRoot (poly d)`
 * `tau`               — the root `τ = (d + √d)/2`
 * `tau_minimal_poly`  — `τ` satisfies its defining polynomial
-* `basis`             — the rank-2 `ℤ`-power basis `{1, τ}`
+* `basis`             — the rank-2 `ℤ`-power basis `{1, τ}`, with the
+  `basis_repr_*` coordinate-extraction helpers
+* `dvd_four_of_valid_disc` — `4 ∣ d² − d` under `d ≡ 0, 1 (mod 4)` (shared by
+  the discriminant computations downstream)
 
 The norm form lives in `Norm.lean`; the discriminant identity `(τ − τ̄)² = d`
 in `Discriminant.lean`.
@@ -65,6 +68,15 @@ lemma poly_monic (d : ℤ) : (poly d).Monic := by
   · exact (Polynomial.degree_C_mul_X_le d).trans_lt (by norm_cast)
   · exact Polynomial.degree_C_le.trans_lt (by norm_cast)
 
+/-- The natural degree of the defining polynomial is `2`. -/
+lemma poly_natDegree (d : ℤ) : (poly d).natDegree = 2 := by
+  unfold poly; compute_degree!
+
+/-- The degree of the defining polynomial is `2`. -/
+lemma poly_degree (d : ℤ) : (poly d).degree = 2 := by
+  rw [Polynomial.degree_eq_natDegree (poly_monic d).ne_zero, poly_natDegree]
+  rfl
+
 variable {d : ℤ}
 
 /-- The element `τ` corresponding to `(d + √d)/2` in the order. -/
@@ -107,5 +119,46 @@ instance : Module.Free ℤ (QuadraticOrder d) :=
 /-- `QuadraticOrder d` is a finite `ℤ`-module. -/
 instance : Module.Finite ℤ (QuadraticOrder d) :=
   (poly_monic d).finite_adjoinRoot
+
+/-- For an honest discriminant (`d ≡ 0 ∨ 1 (mod 4)`), `4 ∣ d² − d`. This is the
+shared arithmetic fact underlying the discriminant computations in
+`Discriminant.lean` and `Prime/PolyMod.lean`. -/
+lemma dvd_four_of_valid_disc (hd : d % 4 = 0 ∨ d % 4 = 1) : (4 : ℤ) ∣ d ^ 2 - d := by
+  have hdd : d ^ 2 - d = d * (d - 1) := by ring
+  rw [hdd]
+  rcases hd with h | h
+  · exact Dvd.dvd.mul_right (Int.dvd_of_emod_eq_zero h) _
+  · exact Dvd.dvd.mul_left (Int.dvd_of_emod_eq_zero (by omega)) _
+
+/-! ### Basis helpers
+
+These extract `(basis.basis.repr α) i` — the τ-component (or 1-component) of a
+ring element — via the `modByMonic` representation underlying `AdjoinRoot`'s
+`powerBasis'`. -/
+
+/-- The dimension of the power basis equals the degree of the defining
+polynomial, namely `2`. -/
+@[simp] lemma basis_dim : (basis (d := d)).dim = 2 := poly_natDegree d
+
+/-- The basis-representation coefficient at index `i` is the `i`-th coefficient
+of the unique polynomial of degree `< 2` representing `α` (its `modByMonic`
+remainder). -/
+lemma basis_repr_apply (α : QuadraticOrder d) (i : Fin (basis (d := d)).dim) :
+    (basis.basis.repr α) i =
+      (AdjoinRoot.modByMonicHom (poly_monic d) α).coeff i.val :=
+  AdjoinRoot.powerBasisAux'_repr_apply_to_fun _ _ _
+
+/-- The τ-coefficient (index `1`) of `τ` itself is `1`. -/
+lemma basis_repr_tau_one :
+    (basis.basis.repr (tau (d := d))) ⟨1, by simp⟩ = 1 := by
+  rw [basis_repr_apply]
+  have htau_eq : (tau (d := d)) = AdjoinRoot.mk (poly d) Polynomial.X := rfl
+  rw [htau_eq, AdjoinRoot.modByMonicHom_mk]
+  have hX_mod : Polynomial.X %ₘ poly d = (Polynomial.X : ℤ[X]) := by
+    rw [Polynomial.modByMonic_eq_self_iff (poly_monic d), poly_degree,
+        Polynomial.degree_X]
+    decide
+  rw [hX_mod]
+  exact Polynomial.coeff_X_one
 
 end QuadraticOrder

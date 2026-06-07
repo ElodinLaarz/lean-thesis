@@ -57,12 +57,7 @@ lemma tau_sub_tauConj_sq_of_valid_disc
   congr 1
   -- reduce to: d^2 - 4 * ((d^2 - d) / 4) = d
   -- equivalently: 4 ∣ (d^2 - d), so 4 * ((d^2-d)/4) = d^2 - d
-  have h4dvd : (4 : ℤ) ∣ d ^ 2 - d := by
-    have hdd : d ^ 2 - d = d * (d - 1) := by ring
-    rw [hdd]
-    rcases hd with h | h
-    · exact Dvd.dvd.mul_right (Int.dvd_of_emod_eq_zero h) _
-    · exact Dvd.dvd.mul_left (Int.dvd_of_emod_eq_zero (by omega)) _
+  have h4dvd := dvd_four_of_valid_disc hd
   have hcancel : (4 : ℤ) * ((d ^ 2 - d) / 4) = d ^ 2 - d :=
     Int.mul_ediv_cancel' h4dvd
   linarith

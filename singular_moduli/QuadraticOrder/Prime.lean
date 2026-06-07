@@ -2,6 +2,7 @@ import QuadraticOrder.Prime.PolyMod
 import QuadraticOrder.Prime.QuotientIso
 import QuadraticOrder.Prime.Inert
 import QuadraticOrder.Prime.Ramified
+import QuadraticOrder.Prime.Split
 
 /-!
 # Layer 2a: Prime classification in `QuadraticOrder d`
@@ -19,10 +20,7 @@ is split one-result-per-concern across `Prime/`:
 | `Prime/QuotientIso` | `O/(p) ≅ 𝔽ₚ[X]/(polyMod)`, `≅ 𝔽ₚ[X]/(X²)` | proof device |
 | `Prime/Inert`       | `(p)` maximal ↔ `(d/p) = -1` | Prop 3.2.1 inert |
 | `Prime/Ramified`    | `(p)` not radical ↔ `p ∣ d` | Prop 3.2.1 ramified |
-
-The split branch (`(p)` radical-but-not-maximal ↔ `(d/p) = 1`) lands as
-`Prime/Split` together with PR #33 (`prime_split_iff`, closing issue #7);
-until then it is not on `main`.
+| `Prime/Split`       | `(p)` radical, not maximal ↔ `(d/p) = 1` | Prop 3.2.1 split |
 
 See `Prime/QuotientIso.lean` for the main *divergence from the thesis*: the
 whole trichotomy is routed through one ring isomorphism rather than the
