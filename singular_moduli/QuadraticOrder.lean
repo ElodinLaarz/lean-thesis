@@ -1,4 +1,6 @@
 import QuadraticOrder.Basic
+import QuadraticOrder.Norm
+import QuadraticOrder.Discriminant
 import QuadraticOrder.Verification
 import QuadraticOrder.RootCounting
 import QuadraticOrder.Prime
