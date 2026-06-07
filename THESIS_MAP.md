@@ -61,7 +61,7 @@ Legend: ✅ done · ⚠️ partial · ⛔ stub/not started
 | `O/(p) ≅ 𝔽ₚ[X]/(g)` (proof device) | `quadraticOrderModP_equiv_polyModQuot` | `Prime/QuotientIso.lean` | ✅ |
 | Prime **inert** iff `(d/p) = -1` | `prime_inert_iff` | `Prime/Inert.lean` | ✅ |
 | Prime **ramified** iff `p ∣ d` | `prime_ramified_iff` | `Prime/Ramified.lean` | ✅ |
-| Prime **split** iff `(d/p) = 1` | `prime_split_iff` | `Prime/Split.lean` | ⛔ PR #33 |
+| Prime **split** iff `(d/p) = 1` | `prime_split_iff` | `Prime/Split.lean` | ✅ |
 
 ### Root counting (thesis §3.2, Lemma 3.2.6)
 
@@ -74,7 +74,7 @@ Legend: ✅ done · ⚠️ partial · ⛔ stub/not started
 
 | Thesis | Lean | File | Status |
 |--------|------|------|:--:|
-| Lemma 3.2.4 (canonical form — keystone) | `canonicalIdeal`, `CanonicalAdmissible`, … | `CanonicalForm.lean` | ⛔ |
+| Lemma 3.2.4 (canonical form — keystone) | `canonicalIdeal`, `CanonicalAdmissible`, `canonicalIdeal_eq_zSpan` | `CanonicalForm.lean` | ⚠️ scaffolding (#37) |
 | Lemma 3.2.2 / 3.2.7 / 3.2.8 (localisation) | — | `Localization.lean` | ⛔ |
 | Proposition 3.1.1 (count in `O_K`, maximal) | — | `MaximalCase.lean` | ⛔ |
 | Theorem 3.1.2 (count in `O_d`) | — | `IdealCount.lean` | ⛔ |
