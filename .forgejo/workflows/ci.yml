@@ -1,0 +1,20 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: lean   # leanprovercommunity/lean:latest (no node -> manual checkout)
+    steps:
+      - name: Checkout
+        run: git clone --depth 1 "http://x-access-token:${{ github.token }}@forgejo:3000/${{ github.repository }}.git" .
+      - name: Build singular_moduli
+        run: |
+          cd singular_moduli
+          # Download Mathlib's prebuilt cache for the pinned rev (v4.28.0),
+          # otherwise lake would compile all of Mathlib from source.
+          lake exe cache get
+          lake build
