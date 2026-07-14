@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Singular Moduli — Lean proof map</title>
+</head>
+<body>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1e2430; --muted: #5d6675;
+    --line: #d8dde6; --grid: #e9ecf1; --chrome: #3d4a6b;
+    --ok: #25855a; --part: #b7791f; --todo: #2b6cb0; --state: #6b46c1; --res: #c53030;
+    --sel: #3d4a6b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171d; --panel: #1c2028; --ink: #e6e9ef; --muted: #9aa3b2;
+      --line: #333a46; --grid: #1e232c; --chrome: #9fb0d8;
+      --ok: #4cc38a; --part: #e0a93e; --todo: #5ea3f0; --state: #a78bfa; --res: #f27878;
+      --sel: #9fb0d8;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1e2430; --muted: #5d6675;
+    --line: #d8dde6; --grid: #e9ecf1; --chrome: #3d4a6b;
+    --ok: #25855a; --part: #b7791f; --todo: #2b6cb0; --state: #6b46c1; --res: #c53030;
+    --sel: #3d4a6b;
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171d; --panel: #1c2028; --ink: #e6e9ef; --muted: #9aa3b2;
+    --line: #333a46; --grid: #1e232c; --chrome: #9fb0d8;
+    --ok: #4cc38a; --part: #e0a93e; --todo: #5ea3f0; --state: #a78bfa; --res: #f27878;
+    --sel: #9fb0d8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 15px; line-height: 1.5; margin: 0; padding: 24px;
+  }
+  h1, h2, h3 { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; text-wrap: balance; }
+  h1 { font-size: 1.7rem; margin: 0 0 2px; font-weight: 600; }
+  h2 { font-size: 1.2rem; margin: 0 0 10px; font-weight: 600; }
+  code, .mono { font-family: "Cascadia Code", ui-monospace, Consolas, monospace; font-size: .86em; }
+  .sub { color: var(--muted); margin: 0 0 18px; max-width: 72ch; }
+  .counts { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px; padding: 4px 12px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--panel);
+    font-size: .82rem; cursor: pointer; user-select: none; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .chip .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .chip[aria-pressed="false"] { opacity: .38; }
+  .chip:focus-visible { outline: 2px solid var(--sel); outline-offset: 2px; }
+  .hint { font-size: .8rem; color: var(--muted); margin: 0 0 10px; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 16px; align-items: start; }
+  @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } .detail { position: static; } }
+  .graph-wrap {
+    position: relative; border: 1px solid var(--line); border-radius: 10px;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      var(--panel);
+    background-size: 22px 22px, 22px 22px, auto;
+    overflow: hidden; height: 640px; cursor: grab; touch-action: none;
+  }
+  .graph-wrap.dragging { cursor: grabbing; }
+  .zoombar { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 3; }
+  .zoombar button {
+    width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 7px;
+    background: var(--panel); color: var(--ink); font-size: 15px; cursor: pointer; line-height: 1;
+  }
+  .zoombar button:hover { border-color: var(--chrome); }
+  .zoombar button:focus-visible { outline: 2px solid var(--sel); outline-offset: 1px; }
+  svg text { font-family: "Segoe UI", system-ui, sans-serif; fill: var(--ink); pointer-events: none; }
+  text.colhead { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-size: 14px; font-weight: 600; fill: var(--chrome); }
+  text.colsub { font-size: 10.5px; fill: var(--muted); letter-spacing: .04em; }
+  .node rect.box { fill: var(--panel); stroke: var(--line); stroke-width: 1.2; rx: 8; }
+  .node rect.stripe { rx: 2.5; }
+  .node text.lbl { font-size: 12px; font-weight: 600; }
+  .node text.ref { font-family: "Cascadia Code", ui-monospace, Consolas, monospace; font-size: 10px; fill: var(--muted); }
+  .node { cursor: pointer; }
+  .node:focus { outline: none; }
+  .node.selected rect.box, .node:focus-visible rect.box { stroke: var(--sel); stroke-width: 2.2; }
+  .node.axiom rect.box { stroke-dasharray: 5 3; }
+  .edge { fill: none; stroke: var(--line); stroke-width: 1.4; opacity: .75; }
+  .edge.hi { stroke: var(--chrome); stroke-width: 2.2; opacity: 1; }
+  .faded { opacity: .13; transition: opacity .15s; }
+  .node, .edge { transition: opacity .15s; }
+  @media (prefers-reduced-motion: reduce) { .node, .edge, .faded { transition: none; } }
+  .detail {
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+    padding: 16px 18px; position: sticky; top: 12px; max-height: 640px; overflow-y: auto;
+  }
+  .detail h3 { margin: 0 0 2px; font-size: 1.05rem; }
+  .detail .ref { color: var(--muted); font-size: .8rem; margin-bottom: 10px; }
+  .status-pill {
+    display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .75rem;
+    font-weight: 600; color: var(--bg); margin: 6px 0 10px;
+  }
+  .detail dl { margin: 10px 0 0; }
+  .detail dt { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-top: 12px; }
+  .detail dd { margin: 3px 0 0; font-size: .88rem; }
+  .deplink { color: var(--todo); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; background: none; border: none; padding: 0; font: inherit; font-size: .88rem; }
+  .deplink:focus-visible { outline: 2px solid var(--sel); outline-offset: 1px; }
+  .queue { margin-top: 26px; }
+  .queue-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  .qcard { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 14px 16px; }
+  .qcard h3 { margin: 0 0 4px; font-size: .98rem; }
+  .qcard .phase { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .qcard ul { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .qcard li { display: flex; gap: 9px; align-items: baseline; font-size: .87rem; }
+  .qcard .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; position: relative; top: 0; }
+  .qcard .done-note { color: var(--muted); font-size: .8rem; }
+  .qcard button.item { background: none; border: none; padding: 0; font: inherit; color: inherit; cursor: pointer; text-align: left; }
+  .qcard button.item:hover { color: var(--chrome); }
+  .qcard button.item:focus-visible { outline: 2px solid var(--sel); outline-offset: 2px; }
+  .errata-note {
+    border: 1px solid var(--part); border-radius: 8px; padding: 9px 13px; margin: 12px 0 16px;
+    font-size: .85rem; background: color-mix(in srgb, var(--part) 8%, var(--panel)); max-width: 86ch;
+  }
+</style>
+
+<h1>Singular Moduli — Lean proof map</h1>
+<p class="sub">Every result in the thesis and its formalization plan, as a live dependency graph.
+Click a node for its statement, Lean location, and what remains. Drag to pan, scroll to zoom,
+chips filter by status.</p>
+
+<div class="errata-note"><strong>Targets corrected statements.</strong> Thm 3.1.2 and Cor 3.1.3 nodes
+track the corrected forms from <span class="mono">ERRATA.md</span> — two 2-adic cases of the thesis
+statement are false (E1, E2) and the corollary's boundary regime is wrong for p = 2, D odd (E5).</div>
+
+<div class="counts" id="chips" role="group" aria-label="Filter by status"></div>
+<p class="hint">Solid border = to be proved in Lean · dashed border = assumed axiom (quarantined, cited) · hover highlights neighbors</p>
+
+<div class="layout">
+  <div class="graph-wrap" id="graphwrap">
+    <div class="zoombar">
+      <button id="zin" title="Zoom in" aria-label="Zoom in">+</button>
+      <button id="zout" title="Zoom out" aria-label="Zoom out">−</button>
+      <button id="zfit" title="Fit to view" aria-label="Fit to view">⊡</button>
+    </div>
+    <svg id="graph" role="img" aria-label="Dependency graph of thesis results"></svg>
+  </div>
+  <aside class="detail" id="detail" aria-live="polite"></aside>
+</div>
+
+<section class="queue">
+  <h2>Work queue — what we still need to prove</h2>
+  <div class="queue-grid" id="queue"></div>
+</section>
+
+<script>
+(function () {
+  "use strict";
+
+  var STATUS = {
+    proven:  { label: "Proved in Lean",      color: "var(--ok)"    },
+    partial: { label: "Partially proved",    color: "var(--part)"  },
+    toprove: { label: "To prove",            color: "var(--todo)"  },
+    tostate: { label: "To state / define",   color: "var(--state)" },
+    research:{ label: "Research (open)",     color: "var(--res)"   }
+  };
+
+  var COLS = [
+    { title: "Infrastructure",  sub: "layer 0 · general purpose" },
+    { title: "Ch. 3 preliminaries", sub: "§3.2 lemmas" },
+    { title: "Ch. 3 results",   sub: "the thesis's proofs" },
+    { title: "Ch. 2 objects",   sub: "definitions + axioms" },
+    { title: "Ch. 2 statements",sub: "GZ · Dorman · Lauter–Viray" },
+    { title: "Extensions",      sub: "layer 3 · research" }
+  ];
+
+  // col, row drive layout. status drives color. axiom => dashed.
+  var NODES = [
+    { id:"od", col:0, row:0, status:"proven", ref:"§1.2", title:"Order O_d construction",
+      lean:"QuadraticOrder/{Basic, Norm, Discriminant}.lean — QuadraticOrder d, tau, basis, normForm, tau_sub_tauConj_sq_of_valid_disc",
+      stmt:"The imaginary quadratic order O_d = ℤ[τ], τ = (d+√d)/2, as an explicit pair type with basis {1, τ}; norm form derived via the conjugate τ̄ and Vieta (τ+τ̄ = d, ττ̄ = (d²−d)/4); discriminant identity (τ−τ̄)² = d for d ≡ 0,1 mod 4.",
+      needs:"Done. Defined for all d; congruence hypothesis introduced only where needed (deliberate divergence, see THESIS_MAP)." },
+    { id:"idx", col:0, row:2, status:"toprove", ref:"infra", title:"Ideal index layer",
+      lean:null,
+      stmt:"[O:a] as a ℕ-valued index via Submodule.cardQuot / AddSubgroup.index; finiteness of {a : [O:a] = n}; multiplicativity for comaximal ideals (CRT) and for invertible ideals.",
+      needs:"Mathlib's Ideal.absNorm multiplicative API is Dedekind-gated — false for non-invertible ideals of a non-maximal order. Build on cardQuot directly; Smith normal form machinery exists for the finiteness argument." },
+    { id:"inv", col:0, row:4, status:"toprove", ref:"infra", title:"Invertible ⇔ locally principal",
+      lean:null,
+      stmt:"For f.g. ideals of a Noetherian domain: invertible ⇔ locally principal; invertibility is a local property; ideals prime to the conductor are invertible; at q ≠ p an ideal of index p^m is locally trivial.",
+      needs:"Audit Mathlib's FractionalIdeal API outside Dedekind domains; expect to fill gaps. Load-bearing for every invertible-ideal count and for Pic(O_d)." },
+    { id:"units", col:0, row:6, status:"toprove", ref:"infra", title:"Units: O_d^× = {±1} for d < −4",
+      lean:null,
+      stmt:"w(d) := #O_d^× ∈ {2, 4, 6}, with w = 2 for d < −4, via positive definiteness of the norm form.",
+      needs:"Mathlib's torsion-unit theory covers maximal orders only. Needed for the 8/(w₁w₂) exponents and the (2/w₁)·#Pic term." },
+    { id:"sqrt", col:0, row:8, status:"partial", ref:"Lem 3.2.6", title:"Square-root counts mod p^s",
+      lean:"QuadraticOrder/RootCounting.lean — cardSqrts, cardSqrts_prime_pow_coprime, cardSqrts_prime_pow_even_val, cardSqrts_odd_val_eq_zero, cardSqrts_zero (odd p); base cases cardSqrts_two/_four_odd/_eight",
+      stmt:"#{x ∈ ℤ/p^s : x² ≡ p^{2r}u}, gcd(u,p) = 1, 2r < s: zero unless u is a QR mod p^{s−2r}; otherwise 2p^r for odd p, and for p = 2: 2^r, 2^{r+1}, 2^{r+2} as s−2r = 1, 2, ≥ 3.",
+      needs:"Odd p done (838-line file — split per its own TODO). Missing: the general p = 2 count. ERRATA E3: the residue condition is on s−2r, not s — the exact confusion that broke the thesis's 2-adic cases. First ForMathlib upstream candidate." },
+
+    { id:"p321", col:1, row:0, status:"proven", ref:"Prop 3.2.1", title:"Primes of ℤ[τ] over p",
+      lean:"QuadraticOrder/Prime/{PolyMod, QuotientIso, Inert, Ramified, Split}.lean — quadraticOrderModP_equiv_polyModQuot, prime_inert_iff, prime_ramified_iff, prime_split_iff",
+      stmt:"Primes of O over p correspond to irreducible factors of g mod p; trichotomy: p inert ⇔ (d/p) = −1, ramified ⇔ p | d, split ⇔ (d/p) = 1. Proved by transporting across the ring iso O/(p) ≅ 𝔽_p[X]/(g) — cleaner than the thesis argument; blueprint this as the official route.",
+      needs:"Done." },
+    { id:"r323", col:1, row:1.5, status:"proven", ref:"Rem 3.2.3", title:"Split ⇔ split in O_K and p ∤ f",
+      lean:"Prime/*.lean (trichotomy corollaries)",
+      stmt:"p splits in O exactly when p splits in O_K and p ∤ f. Consequently every p | f has a unique prime of O above it (p | f ⇒ p | d ⇒ ramified-or-inert classification applies).",
+      needs:"Trichotomy proved; extract the explicit 'unique prime above p | f' corollary as its own named lemma (it is the standing hypothesis of §3.2)." },
+    { id:"l322", col:1, row:3, status:"toprove", ref:"Lem 3.2.2", title:"Localization O_𝔭 = ℤ₍ₚ₎[τ]",
+      lean:"stub: QuadraticOrder/Localization.lean",
+      stmt:"For 𝔭 the unique prime of O over p (p non-split): ℤ₍ₚ₎[τ] = O_𝔭, and a+bτ is invertible in O_𝔭 exactly when p ∤ N(a+bτ).",
+      needs:"False for split p — formal statement must carry the non-split hypothesis (ERRATA E6.2)." },
+    { id:"r325", col:1, row:4.5, status:"proven", ref:"Rem 3.2.5", title:"ℤ-spans suffice",
+      lean:"QuadraticOrder/CanonicalForm.lean — canonicalIdeal_eq_zSpan",
+      stmt:"The O-ideal (p^k, p^{m−k}(τ−A)) equals the ℤ-span of its two generators (τ-multiples reduce via g(A) ≡ 0 mod p^{2k−m}).",
+      needs:"Done (part of the CanonicalForm scaffolding)." },
+    { id:"bridge", col:1, row:6, status:"toprove", ref:"unstated", title:"Bridge lemmas",
+      lean:null,
+      stmt:"(a) Every ideal of index p^m is 𝔭-primary when 𝔭 is the unique prime over p. (b) The constructed ideal (p^k, p^{m−k}(τ−A)) has minimal integer exactly p^k, so (k, [A]) ↔ a is a bijection.",
+      needs:"Both used silently by the thesis (ERRATA E6.4); without (b) ideals get double-counted across k. Small but load-bearing." },
+    { id:"l327", col:1, row:7.5, status:"toprove", ref:"Lem 3.2.7", title:"Minimal p-power in (p^r(τ−s))O_𝔭",
+      lean:"stub: Localization.lean",
+      stmt:"(p^r(τ−s))O_𝔭 ∩ ℤ₍ₚ₎ = p^{r+v_p(N(τ−s))} ℤ₍ₚ₎ — the minimal positive integer in the local principal ideal.",
+      needs:"Carries the same unstated non-split standing hypothesis; rename the shift variable (s collides with Lem 3.2.6's modulus exponent)." },
+
+    { id:"p311", col:2, row:0, status:"toprove", ref:"Prop 3.1.1", title:"Counts in the maximal order",
+      lean:"stub: QuadraticOrder/MaximalCase.lean",
+      stmt:"#{a ⊆ O_K : N(a) = p^m} = m+1 (split), 1 (inert with m even, or ramified), 0 (inert, m odd).",
+      needs:"Route through Dedekind unique factorization (Mathlib-supported) — should be the easiest counting result. Holds in any quadratic field." },
+    { id:"l324", col:2, row:2, status:"partial", ref:"Lem 3.2.4", title:"Normal form of 𝔭-primary ideals",
+      lean:"QuadraticOrder/CanonicalForm.lean — CanonicalAdmissible, canonicalIdeal (defs + ℤ-span equality only)",
+      stmt:"a is 𝔭-primary of index p^m ⇔ a = (p^k, p^{m−k}(τ−A)) for a unique ⌈m/2⌉ ≤ k ≤ m and unique [A] ∈ ℤ/p^{2k−m} with g(A) ≡ 0 mod p^{2k−m}. Converts ideal counting into root counting.",
+      needs:"Existence, uniqueness, and the converse (with the minimality fact from the bridge lemmas). The keystone of Chapter 3." },
+    { id:"t312", col:2, row:3.5, status:"toprove", ref:"Thm 3.1.2*", title:"All ideals of norm p^m (corrected)",
+      lean:"stub: QuadraticOrder/IdealCount.lean",
+      stmt:"p | f, w = v_p(f), ε = [m even], v = v_p(d/4). If v ≥ m: (p^{⌊m/2⌋+1}−1)/(p−1). If v < m: ramified (p^{w+1}−1)/(p−1); inert (p^{w+ε}−1)/(p−1); split (p^{w+ε}−1)/(p−1) + p^w(m+1−2w−ε). ONE p-uniform statement — the thesis's separate 2-adic display had two false cases.",
+      needs:"Prove against ERRATA E4, not the thesis text. Assembly = normal form × root counts, summed over k; regression vectors d = −16, −48, −192 in Examples." },
+    { id:"l328", col:2, row:5, status:"toprove", ref:"Lem 3.2.8", title:"Equality of principal local ideals",
+      lean:"stub: Localization.lean",
+      stmt:"p^r(τ−α)O_𝔭 = p^r(τ−β)O_𝔭 ⇔ v_p(N(τ−α)) = v_p(N(τ−β)) and α ≡ β mod p^{v_p(N(τ−α))}.",
+      needs:"Thesis proof is a two-line delegation to 3.2.7 + 3.2.4; the formal proof must spell out the contraction's normal form." },
+    { id:"c313", col:2, row:6.5, status:"toprove", ref:"Cor 3.1.3*", title:"Invertible ideals of norm p^m (corrected)",
+      lean:"stub: QuadraticOrder/InvertibleCount.lean",
+      stmt:"Corrected regime (ERRATA E5): trivial branch (p^{m/2} if m even, else 0) iff m < v or (m = v = 2w−2, i.e. p = 2 with D odd); case branch iff m > v or (m = v ≥ 2w): ramified p^w; inert p^w+p^{w−1} (m even, else 0); split (p^w−p^{w−1})(m+1−2w).",
+      needs:"The thesis regime gives −2 for d = −112, m = 2 (absurd); corrected regime also fixes the m = 0 corner. Display must say 'invertible' and include the inert-odd zero case." },
+    { id:"glue", col:2, row:8, status:"toprove", ref:"beyond thesis", title:"Arbitrary norm n (CRT glue)",
+      lean:null,
+      stmt:"#{a : [O:a] = n} = ∏_p #{a : [O:a] = p^{v_p(n)}} via primary decomposition + CRT, importing Prop 3.1.1 for p ∤ f through the conductor-avoiding localization iso.",
+      needs:"Not in the thesis but the natural completion; required for the §3.4 observation and the Question 3.0.1 falsification loop." },
+
+    { id:"j", col:3, row:0, status:"tostate", ref:"§2.1", title:"Klein j : ℍ → ℂ",
+      lean:null,
+      stmt:"j = E₄³/Δ with SL₂(ℤ)-invariance and q-expansion 1/q + 744 + 196884q + …. Not in Mathlib, but every ingredient is (E₄, E₆, Δ = η²⁴ nonvanishing, q-expansion API).",
+      needs:"Decision D3: axiom interface now, honest definition as a parallel Mathlib-contribution track (months; q-expansion integrality is the hard part)." },
+    { id:"cmax", col:3, row:1.5, status:"tostate", axiom:true, ref:"§2.1", title:"CM axioms (quarantined)",
+      lean:"planned: Assumptions/ — one axiom per file, FLT-style, with citations",
+      stmt:"j(τ_d) is an algebraic integer of degree h(d); its conjugates are the h(d) singular moduli of discriminant d; K(j(τ)) is the ring class field; integrality of normalized J. [Cox Thm 10.23, §11].",
+      needs:"Genuine CM theory — years away ecosystem-wide (kbuzzard/ClassFieldTheory). Stated as documented axioms; #print axioms audit discloses them." },
+    { id:"jdef", col:3, row:3, status:"tostate", ref:"Def 1.1.1", title:"J(d₁, d₂)",
+      lean:null,
+      stmt:"J(d₁,d₂) = ∏ (j(τ₁) − j(τ₂)) over pairs of SL₂(ℤ)-classes with disc τ_i = d_i; finite by class-group finiteness; nonzero iff d₁ ≠ d₂; w-normalized powers J^{8/(w₁w₂)}.",
+      needs:"Finite product over a quotient — needs the CM-point enumeration (reduction theory; port from QuadraticNumberFields)." },
+    { id:"char", col:3, row:5, status:"tostate", ref:"§2.2–2.4", title:"Characters & symbols",
+      lean:"vendor: WangFrankie/QuadraticNumberFields — kroneckerSym + Dirichlet-character packaging",
+      stmt:"Kronecker symbol χ_D; Dorman's genus characters ε_p; Hilbert-symbol conditions (d₁, −m)_ℓ encoded via Legendre symbols + valuations (decision D4 — no Hilbert symbol exists in any Lean project).",
+      needs:"Vendor Kronecker from QNF (Apache-2.0); genus characters missing everywhere — coordinate with QNF's WIP genus-theory branches." },
+    { id:"an", col:3, row:6.5, status:"tostate", ref:"Def (2.4.2)", title:"The ideal count A(N)",
+      lean:null,
+      stmt:"A(N) = #{b ⊆ O_{d₁} invertible, N(b) = N, avoidance conditions at primes over p | (N, f₂)}. The exact object Question 3.0.1 proposes to modify.",
+      needs:"Transcribe exactly from LV Thm 1.5 (papers/on_singular_moduli_lauter_viray.pdf) — the thesis PDF's rendering is damaged. 'p ∤ b' needs a formal divisibility notion for non-invertible primes." },
+
+    { id:"gz", col:4, row:0, status:"tostate", axiom:true, ref:"Thm 2.2.1", title:"Gross–Zagier factorization",
+      lean:null,
+      stmt:"J(D₁,D₂)^{8/(w₁w₂)} = ± ∏_{x²+4nn′=D} n^{ε(n′)}; equivalently ± ∏ F((D−x²)/4) with each F(m) a single-prime power. [GZ85 Thm 1.3]",
+      needs:"Statement only, over the CM axiom layer. Pin exponent normalization from papers/gross-zagier-on_singular_moduli.pdf (vs Dorman's 4/(w₁w₂))." },
+    { id:"c222", col:4, row:1.5, status:"toprove", ref:"Cor 2.2.2", title:"Prime bounds (conditional)",
+      lean:null,
+      stmt:"ℓ | J(D₁,D₂)^{8/(w₁w₂)} ⇒ (D₁/ℓ) ≠ 1, (D₂/ℓ) ≠ 1, ℓ | (D−x²)/4 for some x; hence ℓ ≤ D/4 (sharper under congruence conditions).",
+      needs:"Genuinely provable from the GZ statement by elementary quadratic-residue arguments — the one Ch. 2 result we prove. Transcribe exact inequalities from GZ85 Cor 1.6." },
+    { id:"dor", col:4, row:3, status:"tostate", axiom:true, ref:"Thm 2.3.1", title:"Dorman's formula",
+      lean:null,
+      stmt:"ord_ℓ(J(D₁,D₂)^{4/(w₁w₂)}) = (1/2e) Σ_x Σ_n ρ_ℓ(x) R((D₁D₂−x²)/(4ℓⁿ)) with ρ built from genus characters. [Dor88 Thm 1.2]",
+      needs:"Statement only. Genus-character block garbled in the thesis PDF — transcribe from papers/dorman.pdf; reconcile 4- vs 8-exponent with GZ." },
+    { id:"lv1", col:4, row:4.5, status:"tostate", axiom:true, ref:"Thm 2.4.1", title:"Lauter–Viray: existence of F",
+      lean:null,
+      stmt:"For any distinct discriminants: J(d₁,d₂)^{8/(w₁w₂)} = ± ∏ F((d₁d₂−x²)/4); F(m) = 1 unless m = 0 with d₂ = d₁ℓ^{2k}, or the Hilbert symbol (d₁,−m)_ℓ = −1 at a unique finite ℓ | m. [LV15b Thm 1.1]",
+      needs:"Statement only, needs the encoded Hilbert-symbol conditions." },
+    { id:"lv2", col:4, row:6, status:"tostate", axiom:true, ref:"Thm 2.4.2", title:"LV: v_ℓ(F(m)) as ideal count",
+      lean:null,
+      stmt:"For ℓ ∤ f₁, m coprime to f₁: v_ℓ(F(m)) = (1/e)ρ(m)Σ_{r≥1} A(m/ℓ^r) (or ρ(m)A(m/ℓ^{1+v(f₂)}) if ℓ | f₂). THE bridge between the J-function and Chapter 3's counting. [LV15b Thm 1.5]",
+      needs:"Statement only. Transcribe (2.4.1)/(2.4.2) exactly from the LV paper — r-sum start index and ρ's condition sets are damaged in the thesis PDF." },
+    { id:"conj", col:4, row:7.5, status:"tostate", ref:"Conj 2.4.3", title:"LV Conjecture 1.7",
+      lean:null,
+      stmt:"Full closed formula for v_ℓ(J(d₁,d₂)^{8/(w₁w₂)}) for coprime conductors, with local factors c_p and weight ε̃_ℓ. The end goal the thesis works toward.",
+      needs:"Both case-functions unreadable in the thesis PDF — transcribe verbatim from LV15b Conj 1.7 before writing this node's blueprint entry." },
+
+    { id:"pic", col:5, row:1, status:"research", ref:"L3", title:"Pic(O_d): finiteness + Cox 7.24",
+      lean:null,
+      stmt:"Finiteness of Pic(O_d) via the conductor exact sequence relating Pic(O_d) and Cl(K); class number formula h(O) = h(K)·f·∏(1−(D/p)/p)/[O_K^×:O^×].",
+      needs:"Absent from Mathlib and every project (QNF has WIP for conductor 2). Wanted for Conj 2.4.3's H term. Cox reference now in papers/." },
+    { id:"genus", col:5, row:3, status:"research", ref:"§3.4", title:"Genus of conductor-meeting ideals",
+      lean:null,
+      stmt:"Determine the genus class of invertible ideals that non-trivially meet the conductor — the ingredient §3.4 identifies as missing for fixing A(N).",
+      needs:"Open mathematics. The formal counting layer turns candidate definitions into decidable checks." },
+    { id:"q301", col:5, row:5, status:"research", ref:"Q 3.0.1", title:"Corrected A(N) (Question 3.0.1)",
+      lean:null,
+      stmt:"Find A′(N) so LV Thm 1.5's equalities hold without gcd(m, f₁) = 1. The thesis's proposed research direction.",
+      needs:"Falsification loop: candidate A′ → #eval/decide counts → compare against Sage/PARI oracle factorizations of J. This is where the formalization becomes a research instrument." },
+    { id:"obs", col:5, row:7.5, status:"research", ref:"§3.4", title:"Ga/Gm/P¹(ℤ/p^r) observation",
+      lean:null,
+      stmt:"The order/maximal-order count ratios match |Ga(ℤ/p^r)|, |Gm(ℤ/p^r)|, |P¹(ℤ/p^r)| for suitable r (Viray's observation). A statement about the counting formulas — provable once the glue exists.",
+      needs:"P¹ over ℤ/p^r (r ≥ 2) has no Mathlib home (Projectivization needs a division ring) — formalize the count 2^{r−1}(p+1) directly. A nice original formal result." }
+  ];
+
+  var EDGES = [
+    ["od","p321"],["od","idx"],["od","inv"],["od","units"],["od","r325"],["od","an"],
+    ["p321","r323"],["p321","l324"],
+    ["r323","l322"],["r323","bridge"],
+    ["idx","bridge"],["idx","p311"],
+    ["r325","l324"],["bridge","l324"],
+    ["l322","l327"],["l327","l328"],["l324","l328"],
+    ["l324","t312"],["sqrt","t312"],["sqrt","c313"],
+    ["t312","c313"],["inv","c313"],["l327","c313"],["l328","c313"],
+    ["p311","glue"],["t312","glue"],["c313","glue"],
+    ["j","jdef"],["units","jdef"],
+    ["jdef","gz"],["cmax","gz"],["gz","c222"],
+    ["jdef","dor"],["cmax","dor"],["char","dor"],
+    ["jdef","lv1"],["lv1","lv2"],["an","lv2"],["char","lv2"],
+    ["inv","an"],
+    ["lv2","conj"],["char","conj"],["units","conj"],["pic","conj"],
+    ["c313","q301"],["an","q301"],["lv2","q301"],["genus","q301"],
+    ["glue","obs"],["q301","conj"]
+  ];
+
+  var QUEUE = [
+    { phase: "Phase 1 · infrastructure (remainder)", items: [
+      { node:"idx",    text:"Ideal index layer (cardQuot, finiteness, CRT)", done:"index API usable without Dedekind hypotheses" },
+      { node:"inv",    text:"Invertible ⇔ locally principal interface", done:"prime-to-conductor ideals proved invertible" },
+      { node:"units",  text:"O_d^× = {±1} for d < −4", done:"w(d) ∈ {2,4,6} as a simp-able function" },
+      { node:"sqrt",   text:"Lemma 3.2.6, p = 2 general case + split RootCounting.lean", done:"cardSqrts closed form for all p; five files" },
+      { node:"bridge", text:"Bridge lemmas: index p^m ⇒ 𝔭-primary; minimality of p^k", done:"(k,[A]) ↔ a bijection usable by Thm 3.1.2" }
+    ]},
+    { phase: "Phase 2 · Chapter 3 core", items: [
+      { node:"l322", text:"Lemma 3.2.2 — localization O_𝔭 = ℤ₍ₚ₎[τ]", done:"with explicit non-split hypothesis" },
+      { node:"l324", text:"Lemma 3.2.4 — complete the normal form", done:"existence + uniqueness + converse, zero sorries" },
+      { node:"l327", text:"Lemma 3.2.7 — minimal p-power", done:"contraction formula proved" },
+      { node:"l328", text:"Lemma 3.2.8 — equality criterion", done:"delegation to 3.2.4/3.2.7 spelled out" },
+      { node:"p311", text:"Prop 3.1.1 — maximal-order counts", done:"all three splitting cases" },
+      { node:"t312", text:"Thm 3.1.2* — corrected, p-uniform total count", done:"passes d = −16/−48/−192 regression vectors" },
+      { node:"c313", text:"Cor 3.1.3* — corrected invertible count", done:"corrected regime incl. m = 0; d = −112 vector passes" },
+      { node:"glue", text:"Arbitrary norm n via CRT + maximal-order import", done:"#eval brute-force agreement on a test suite" }
+    ]},
+    { phase: "Phase 3 · statement layer (state; prove only 2.2.2)", items: [
+      { node:"an",   text:"Transcribe LV Thm 1.5 / Conj 1.7, GZ, Dorman from papers/", done:"blueprint nodes quote the originals" },
+      { node:"char", text:"Kronecker (vendor QNF) + genus characters + symbol encoding", done:"χ_D and ε_p defined, norm_num-checkable" },
+      { node:"jdef", text:"j interface, CM axioms, J(d₁,d₂), F, A(N), GZ/Dorman/LV/Conj statements", done:"Conj 2.4.3 stated sorry-free; axioms audited" },
+      { node:"c222", text:"Cor 2.2.2 — prove conditionally on the GZ statement", done:"#print axioms shows only the declared GZ/CM axioms" }
+    ]},
+    { phase: "Phase 4 · research extensions", items: [
+      { node:"pic",   text:"Conductor exact sequence + Pic(O_d) finiteness (Cox 7.24)", done:"h(O) formula formal" },
+      { node:"genus", text:"Genus class of conductor-meeting invertible ideals", done:"decidable genus assignment" },
+      { node:"q301",  text:"Candidate corrected A(N) + oracle falsification loop", done:"a candidate surviving all Sage test vectors" },
+      { node:"obs",   text:"Ga/Gm/P¹(ℤ/p^r) numerology as a theorem", done:"ratio identities proved from the closed forms" }
+    ]}
+  ];
+
+  // ---- layout constants ----
+  var NW = 200, NH = 58, COLW = 252, X0 = 30, Y0 = 74, ROWH = 84;
+  var W = X0 + COLS.length * COLW - (COLW - NW) + 20;
+  var H = Y0 + 9.2 * ROWH;
+
+  var byId = {}, uses = {}, usedBy = {};
+  NODES.forEach(function (n) {
+    n.x = X0 + n.col * COLW;
+    n.y = Y0 + n.row * ROWH;
+    byId[n.id] = n; uses[n.id] = []; usedBy[n.id] = [];
+  });
+  EDGES.forEach(function (e) { uses[e[1]].push(e[0]); usedBy[e[0]].push(e[1]); });
+
+  var svg = document.getElementById("graph");
+  var NS = "http://www.w3.org/2000/svg";
+  svg.setAttribute("width", W); svg.setAttribute("height", H);
+  var root = document.createElementNS(NS, "g");
+  svg.appendChild(root);
+
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    (parent || root).appendChild(e); return e;
+  }
+
+  // column headers
+  COLS.forEach(function (c, i) {
+    var x = X0 + i * COLW;
+    var t = el("text", { x: x, y: 28, "class": "colhead" }); t.textContent = c.title;
+    var s = el("text", { x: x, y: 44, "class": "colsub" }); s.textContent = c.sub;
+  });
+
+  // edges
+  var edgeEls = [];
+  var edgeLayer = el("g", {});
+  EDGES.forEach(function (e) {
+    var a = byId[e[0]], b = byId[e[1]], d;
+    if (a.col === b.col) {
+      var down = b.y > a.y;
+      var sx = a.x + NW / 2, sy = down ? a.y + NH : a.y;
+      var tx = b.x + NW / 2, ty = down ? b.y : b.y + NH;
+      d = "M" + sx + "," + sy + " C" + (sx - NW * 0.62) + "," + (sy + ty) / 2 + " " +
+          (tx - NW * 0.62) + "," + (sy + ty) / 2 + " " + tx + "," + ty;
+    } else {
+      var fwd = b.col > a.col;
+      var sx2 = fwd ? a.x + NW : a.x, sy2 = a.y + NH / 2;
+      var tx2 = fwd ? b.x : b.x + NW, ty2 = b.y + NH / 2;
+      var c1 = sx2 + (fwd ? 1 : -1) * Math.max(50, Math.abs(tx2 - sx2) * 0.42);
+      var c2 = tx2 - (fwd ? 1 : -1) * Math.max(50, Math.abs(tx2 - sx2) * 0.42);
+      d = "M" + sx2 + "," + sy2 + " C" + c1 + "," + sy2 + " " + c2 + "," + ty2 + " " + tx2 + "," + ty2;
+    }
+    var p = el("path", { d: d, "class": "edge" }, edgeLayer);
+    edgeEls.push({ el: p, from: e[0], to: e[1] });
+  });
+
+  // nodes
+  var nodeEls = {};
+  NODES.forEach(function (n) {
+    var g = el("g", { "class": "node" + (n.axiom ? " axiom" : ""), transform: "translate(" + n.x + "," + n.y + ")", tabindex: 0, role: "button", "aria-label": n.title + ", " + STATUS[n.status].label });
+    el("rect", { "class": "box", width: NW, height: NH, rx: 8 }, g);
+    el("rect", { "class": "stripe", x: 0, y: 0, width: 5, height: NH, rx: 2.5, fill: STATUS[n.status].color }, g);
+    var ref = el("text", { x: 14, y: 17, "class": "ref" }, g); ref.textContent = n.ref;
+    var words = n.title.split(" "), line1 = "", line2 = "";
+    words.forEach(function (w) { if ((line1 + " " + w).trim().length <= 27 && !line2) line1 = (line1 + " " + w).trim(); else line2 = (line2 + " " + w).trim(); });
+    var t1 = el("text", { x: 14, y: line2 ? 34 : 39, "class": "lbl" }, g); t1.textContent = line1;
+    if (line2) { var t2 = el("text", { x: 14, y: 49, "class": "lbl" }, g); t2.textContent = line2.length > 29 ? line2.slice(0, 28) + "…" : line2; }
+    g.addEventListener("click", function () { select(n.id); });
+    g.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select(n.id); } });
+    g.addEventListener("mouseenter", function () { hover(n.id); });
+    g.addEventListener("mouseleave", function () { hover(null); });
+    nodeEls[n.id] = g;
+  });
+
+  // ---- selection & detail panel ----
+  var detail = document.getElementById("detail");
+  var selected = null;
+
+  function statusPill(s) {
+    return '<span class="status-pill" style="background:' + STATUS[s].color + '">' + STATUS[s].label + "</span>";
+  }
+  function depButtons(ids) {
+    if (!ids.length) return "—";
+    return ids.map(function (id) {
+      return '<button class="deplink" data-goto="' + id + '">' + byId[id].ref + " " + byId[id].title + "</button>";
+    }).join("<br>");
+  }
+  function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+  function renderDefault() {
+    var counts = {};
+    NODES.forEach(function (n) { counts[n.status] = (counts[n.status] || 0) + 1; });
+    detail.innerHTML =
+      "<h3>Project at a glance</h3>" +
+      '<div class="ref">' + NODES.length + " nodes · " + EDGES.length + " dependencies</div>" +
+      "<dl>" +
+      Object.keys(STATUS).map(function (s) {
+        return '<dt><span style="color:' + STATUS[s].color + '">●</span> ' + STATUS[s].label + "</dt><dd>" + (counts[s] || 0) + " results</dd>";
+      }).join("") +
+      "<dt>Reading order</dt><dd>Columns are layers: infrastructure feeds the Chapter 3 proofs (the core deliverable), which feed the Chapter 2 statement layer and the research extensions. Click any node.</dd>" +
+      "<dt>Ground truth</dt><dd>Thm 3.1.2* and Cor 3.1.3* track the corrected statements in <code>ERRATA.md</code>, not the thesis text.</dd>" +
+      "</dl>";
+  }
+
+  function select(id) {
+    if (selected && nodeEls[selected]) nodeEls[selected].classList.remove("selected");
+    selected = id;
+    if (!id) { renderDefault(); hover(null); return; }
+    nodeEls[id].classList.add("selected");
+    var n = byId[id];
+    detail.innerHTML =
+      "<h3>" + esc(n.title) + "</h3>" +
+      '<div class="ref mono">' + esc(n.ref) + (n.axiom ? " · assumed axiom" : "") + "</div>" +
+      statusPill(n.status) +
+      "<dl>" +
+      "<dt>Statement</dt><dd>" + esc(n.stmt) + "</dd>" +
+      "<dt>Lean</dt><dd>" + (n.lean ? "<code>" + esc(n.lean) + "</code>" : "— not started") + "</dd>" +
+      (n.needs ? "<dt>What remains / notes</dt><dd>" + esc(n.needs) + "</dd>" : "") +
+      "<dt>Uses</dt><dd>" + depButtons(uses[id]) + "</dd>" +
+      "<dt>Used by</dt><dd>" + depButtons(usedBy[id]) + "</dd>" +
+      "</dl>";
+    hover(id, true);
+  }
+  detail.addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-goto]");
+    if (b) select(b.getAttribute("data-goto"));
+  });
+
+  // ---- hover / neighborhood highlight ----
+  function hover(id, sticky) {
+    var keep = id || selected;
+    if (!keep) {
+      NODES.forEach(function (n) { nodeEls[n.id].classList.remove("faded"); });
+      edgeEls.forEach(function (e) { e.el.classList.remove("faded", "hi"); });
+      applyFilter();
+      return;
+    }
+    var hood = { }; hood[keep] = true;
+    uses[keep].forEach(function (i) { hood[i] = true; });
+    usedBy[keep].forEach(function (i) { hood[i] = true; });
+    NODES.forEach(function (n) { nodeEls[n.id].classList.toggle("faded", !hood[n.id]); });
+    edgeEls.forEach(function (e) {
+      var on = e.from === keep || e.to === keep;
+      e.el.classList.toggle("hi", on);
+      e.el.classList.toggle("faded", !on);
+    });
+  }
+
+  // ---- status filter chips ----
+  var chipWrap = document.getElementById("chips");
+  var active = {};
+  Object.keys(STATUS).forEach(function (s) { active[s] = true; });
+  Object.keys(STATUS).forEach(function (s) {
+    var count = NODES.filter(function (n) { return n.status === s; }).length;
+    var b = document.createElement("button");
+    b.className = "chip"; b.setAttribute("aria-pressed", "true");
+    b.innerHTML = '<span class="dot" style="background:' + STATUS[s].color + '"></span>' + STATUS[s].label + " · " + count;
+    b.addEventListener("click", function () {
+      active[s] = !active[s];
+      b.setAttribute("aria-pressed", String(active[s]));
+      applyFilter();
+    });
+    chipWrap.appendChild(b);
+  });
+  function applyFilter() {
+    NODES.forEach(function (n) { nodeEls[n.id].classList.toggle("faded", !active[n.status]); });
+    edgeEls.forEach(function (e) {
+      var on = active[byId[e.from].status] && active[byId[e.to].status];
+      e.el.classList.toggle("faded", !on);
+    });
+  }
+
+  // ---- pan & zoom ----
+  var wrap = document.getElementById("graphwrap");
+  var view = { x: 0, y: 0, k: 1 };
+  function applyView() { root.setAttribute("transform", "translate(" + view.x + "," + view.y + ") scale(" + view.k + ")"); }
+  function fit() {
+    var r = wrap.getBoundingClientRect();
+    view.k = Math.min(r.width / W, r.height / H) * 0.97;
+    view.x = (r.width - W * view.k) / 2; view.y = 8;
+    applyView();
+  }
+  wrap.addEventListener("wheel", function (ev) {
+    ev.preventDefault();
+    var r = wrap.getBoundingClientRect();
+    var mx = ev.clientX - r.left, my = ev.clientY - r.top;
+    var k2 = Math.min(2.5, Math.max(0.3, view.k * (ev.deltaY < 0 ? 1.12 : 0.89)));
+    view.x = mx - (mx - view.x) * (k2 / view.k);
+    view.y = my - (my - view.y) * (k2 / view.k);
+    view.k = k2; applyView();
+  }, { passive: false });
+  var drag = null;
+  wrap.addEventListener("pointerdown", function (ev) {
+    if (ev.target.closest(".node") || ev.target.closest(".zoombar")) return;
+    drag = { x: ev.clientX - view.x, y: ev.clientY - view.y };
+    wrap.classList.add("dragging"); wrap.setPointerCapture(ev.pointerId);
+  });
+  wrap.addEventListener("pointermove", function (ev) {
+    if (!drag) return;
+    view.x = ev.clientX - drag.x; view.y = ev.clientY - drag.y; applyView();
+  });
+  wrap.addEventListener("pointerup", function () { drag = null; wrap.classList.remove("dragging"); });
+  document.getElementById("zin").addEventListener("click", function () { view.k = Math.min(2.5, view.k * 1.2); applyView(); });
+  document.getElementById("zout").addEventListener("click", function () { view.k = Math.max(0.3, view.k / 1.2); applyView(); });
+  document.getElementById("zfit").addEventListener("click", fit);
+  wrap.addEventListener("dblclick", function (ev) { if (!ev.target.closest(".node")) { select(null); } });
+
+  // ---- work queue ----
+  var queueWrap = document.getElementById("queue");
+  QUEUE.forEach(function (grp) {
+    var card = document.createElement("div"); card.className = "qcard";
+    card.innerHTML = '<div class="phase">' + grp.phase + "</div>";
+    var ul = document.createElement("ul");
+    grp.items.forEach(function (it) {
+      var n = byId[it.node];
+      var li = document.createElement("li");
+      li.innerHTML = '<span class="dot" style="background:' + STATUS[n.status].color + '"></span>' +
+        '<span><button class="item" data-goto="' + it.node + '">' + esc(it.text) + "</button>" +
+        '<br><span class="done-note">done when: ' + esc(it.done) + "</span></span>";
+      ul.appendChild(li);
+    });
+    card.appendChild(ul); queueWrap.appendChild(card);
+  });
+  queueWrap.addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-goto]");
+    if (b) {
+      select(b.getAttribute("data-goto"));
+      wrap.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+    }
+  });
+
+  renderDefault(); fit(); applyFilter();
+  window.addEventListener("resize", fit);
+})();
+</script>
+
+</body>
+</html>
