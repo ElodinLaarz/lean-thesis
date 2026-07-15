@@ -118,10 +118,10 @@ so $1+\tau$ has order $3$ and $-(1+\tau)$ has order $6$. Under $\tau = \frac{-3+
 | Statement | Intended Lean declaration | File | Status |
 |---|---|---|---|
 | Norm form $N(x+y\tau)$, conjugation, $N(\alpha)=\alpha\bar\alpha$, multiplicativity (preliminaries) | `QuadraticOrder.normForm`, `QuadraticOrder.tauConj`, `QuadraticOrder.normForm_eq_mul_conj`, `QuadraticOrder.normForm_mul` | `singular_moduli/QuadraticOrder/Norm.lean` | formalized (exists, sorry-free) |
-| Lemma 1 (completed square, positive definiteness) | helper, name not yet assigned (suggested `QuadraticOrder.four_mul_normForm`, `QuadraticOrder.normForm_pos_of_ne_zero`) | `singular_moduli/QuadraticOrder/Units.lean` | file exists; helper not yet present |
-| Lemma 2 (unit $\iff$ $N=1$) | helper, name not yet assigned (suggested `QuadraticOrder.isUnit_iff_normForm_eq_one`) | `singular_moduli/QuadraticOrder/Units.lean` | file exists; helper not yet present |
-| Theorem, part 1 ($\mathcal{O}_d^\times = \{\pm 1\}$ for $d<-4$) | `QuadraticOrder.units_eq_one_or_neg_one` | `singular_moduli/QuadraticOrder/Units.lean` | stub exists (`sorry`; statement frozen by WP-0) |
-| Corollary ($w(d) = 2$ for $d<-4$) | `QuadraticOrder.card_units_eq_two` | `singular_moduli/QuadraticOrder/Units.lean` | stub exists (`sorry`; statement frozen by WP-0) |
+| Lemma 1 (completed square, positive definiteness) | private helpers `four_mul_normForm`, `normForm_nonneg` | `singular_moduli/QuadraticOrder/Units.lean` | **Proved** (WP-A; private implementation lemmas). |
+| Lemma 2 (unit $\iff$ $N=1$) | private helper `normForm_eq_one_of_unit` (forward direction used here) | `singular_moduli/QuadraticOrder/Units.lean` | **Proved** (WP-A; private implementation lemma). |
+| Theorem, part 1 ($\mathcal{O}_d^\times = \{\pm 1\}$ for $d<-4$) | `QuadraticOrder.units_eq_one_or_neg_one` | `singular_moduli/QuadraticOrder/Units.lean` | **Proved** (WP-A; sorry-free). |
+| Corollary ($w(d) = 2$ for $d<-4$) | `QuadraticOrder.card_units_eq_two` | `singular_moduli/QuadraticOrder/Units.lean` | **Proved** (WP-A; sorry-free). |
 | Parts 2–3 ($w(-4)=4$, $w(-3)=6$) and the trichotomy | none assigned; natural candidates for `decide`/`#eval` regression vectors in `Examples.lean` per PLAN §6.6 | — | not started |
 
 Stub signatures as frozen in `Units.lean` (hypotheses per Remarks 2–3):

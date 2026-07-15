@@ -63,6 +63,7 @@
 
 \begin{lemma}[Finiteness of the set of ideals of index $n$]\label{infra-index-finite}
   \lean{QuadraticOrder.finite_setOf_idealIndex_eq}
+  \leanok
   \uses{infra-index}
   For every integer $n \ge 1$, the set
   \[
@@ -89,6 +90,7 @@
 
 \begin{proposition}[Comaximal multiplicativity of the index]\label{infra-index-mul}
   \lean{QuadraticOrder.idealIndex_mul_of_codisjoint}
+  \leanok
   \uses{infra-index}
   Let $I, J \subseteq \mathcal{O}$ be ideals with $I + J = \mathcal{O}$ (in Lean, the
   hypothesis $I \sqcup J = \top$). Then
@@ -174,6 +176,7 @@
 
 \begin{theorem}[Prime-power factorization of the ideal count]\label{infra-index-count}
   \lean{QuadraticOrder.idealCount_multiplicative}
+  \leanok
   \uses{infra-index}
   Let $n \ge 1$ and write $m_p := v_p(n)$ for each prime $p \mid n$. Then the map
   \[
@@ -294,6 +297,7 @@
 \begin{lemma}[Bridge lemma: $p$-power index implies $\mathfrak{P}$-primary at conductor
   primes (ERRATA E6.4(a))]\label{infra-index-primary}
   \lean{QuadraticOrder.isPrimary_of_idealIndex_prime_pow}
+  \leanok
   \uses{infra-index, prop-3-2-1}
   Suppose $p \mid f$. Then $g(x) \equiv (x - A)^2 \pmod p$ for some integer $A$, and
   $\mathcal{O}$ has a unique prime ideal containing $p$, namely the maximal ideal

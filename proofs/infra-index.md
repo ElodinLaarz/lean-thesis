@@ -423,26 +423,26 @@ Proposition 3.2.1). Parts (1)–(3) are `ForMathlib/` candidates.
 The definition `idealIndex` already exists as final API (WP-0 statement freeze) in
 `QuadraticOrder/Defs/Counting.lean`; the four theorems are stated in
 `QuadraticOrder/Index/Basic.lean` and `QuadraticOrder/Index/Primary.lean` in the
-`singular_moduli` Lake project, currently as frozen WP-A stubs with `sorry` proofs. Names
-are relative to the `QuadraticOrder` namespace.
+`singular_moduli` Lake project and were proved in WP-A without changing their frozen
+statements. Names are relative to the `QuadraticOrder` namespace.
 
 | Statement | Lean declaration | File | Status |
 |---|---|---|---|
 | Definition: $[\mathcal O : \mathfrak a]$ as `Nat.card` of the quotient | `QuadraticOrder.idealIndex` | `QuadraticOrder/Defs/Counting.lean` | defined (WP-0 statement freeze) |
-| (1) finiteness of $\{\mathfrak a : [\mathcal O:\mathfrak a] = n\}$, $n \ge 1$ | `QuadraticOrder.finite_setOf_idealIndex_eq` | `QuadraticOrder/Index/Basic.lean` | stated; proof `sorry` (WP-A) |
-| (2) $I + J = \mathcal O \Rightarrow [\mathcal O : IJ] = [\mathcal O:I][\mathcal O:J]$ | `QuadraticOrder.idealIndex_mul_of_codisjoint` | `QuadraticOrder/Index/Basic.lean` | stated; proof `sorry` (WP-A) |
-| (3) $\#\{[\mathcal O:\mathfrak a] = n\} = \prod_p \#\{[\mathcal O:\mathfrak a] = p^{v_p(n)}\}$ (the frozen Lean statement is the equivalent coprime-multiplicativity form `idealCount d (m*n) = idealCount d m * idealCount d n` for coprime `m, n ≥ 1`) | `QuadraticOrder.idealCount_multiplicative` | `QuadraticOrder/Index/Basic.lean` | stated; proof `sorry` (WP-A) |
-| (4) $p \mid f$, $[\mathcal O : \mathfrak a] = p^m$, $m \ge 1$ $\Rightarrow$ $\mathfrak a$ is $\mathfrak P$-primary | `QuadraticOrder.isPrimary_of_idealIndex_prime_pow` | `QuadraticOrder/Index/Primary.lean` | stated; proof `sorry` (WP-A) |
+| (1) finiteness of $\{\mathfrak a : [\mathcal O:\mathfrak a] = n\}$, $n \ge 1$ | `QuadraticOrder.finite_setOf_idealIndex_eq` | `QuadraticOrder/Index/Basic.lean` | **Proved** (WP-A; sorry-free). |
+| (2) $I + J = \mathcal O \Rightarrow [\mathcal O : IJ] = [\mathcal O:I][\mathcal O:J]$ | `QuadraticOrder.idealIndex_mul_of_codisjoint` | `QuadraticOrder/Index/Basic.lean` | **Proved** (WP-A; sorry-free). |
+| (3) $\#\{[\mathcal O:\mathfrak a] = n\} = \prod_p \#\{[\mathcal O:\mathfrak a] = p^{v_p(n)}\}$ (the frozen Lean statement is the equivalent coprime-multiplicativity form `idealCount d (m*n) = idealCount d m * idealCount d n` for coprime `m, n ≥ 1`) | `QuadraticOrder.idealCount_multiplicative` | `QuadraticOrder/Index/Basic.lean` | **Proved** (WP-A; sorry-free). |
+| (4) $p \mid f$, $[\mathcal O : \mathfrak a] = p^m$, $m \ge 1$ $\Rightarrow$ $\mathfrak a$ is $\mathfrak P$-primary | `QuadraticOrder.isPrimary_of_idealIndex_prime_pow` | `QuadraticOrder/Index/Primary.lean` | **Proved** (WP-A; sorry-free). |
 
 Implementation notes. `idealIndex` is `Nat.card` of the quotient ring (equal to
 `Submodule.cardQuot` and to `AddSubgroup.index` of the coerced additive subgroup), **not**
 `Ideal.absNorm` (Remark 2). The frozen Lean statement of (2) phrases comaximality as the
 hypothesis `I ⊔ J = ⊤`. The frozen Lean statement of (4) carries the standing hypotheses
 as the bundled instance `[ConductorPrimeSetup d D f p]` and concludes `Ideal.IsPrimary I`;
-the radical identification $\sqrt{\mathfrak a} = \mathfrak P$ (Step 3) is recovered from
-`QuadraticOrder.existsUnique_isPrime_mem_of_dvd_conductor`
-(`QuadraticOrder/Prime/ConductorPrime.lean`, blueprint node `prop-3-2-1-unique-prime`),
-since the radical of a primary ideal containing $p^m$ is a prime containing $p$.
+the formal proof first uses `QuadraticOrder.existsUnique_isPrime_mem_of_dvd_conductor`
+(`QuadraticOrder/Prime/ConductorPrime.lean`, blueprint node `prop-3-2-1-unique-prime`) to
+show that every prime above $\mathfrak a$ equals $\mathfrak P$, and hence identifies
+$\sqrt{\mathfrak a}=\mathfrak P$ before applying the primary-ideal criterion.
 Useful Mathlib ingredients:
 `Ideal.quotientInfEquivQuotientProd` (CRT), `Ideal.mul_eq_inf_of_coprime` (Step 1 of the
 proof of (2)), `Nat.card_prod`, `Nat.card_congr`, `Ideal.isPrimary_of_isMaximal_radical` and
