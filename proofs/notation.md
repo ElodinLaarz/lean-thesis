@@ -27,23 +27,20 @@ in full in the "Proof" section. All later documents cite these items by their la
 > $\omega := \frac{D + \sqrt{D}}{2}$.
 >
 > **(N3) The order $\mathcal{O}_d$.** Set
-> $$g(x) := x^2 - d\,x + \frac{d^2 - d}{4} \in \mathbb{Z}[x], \qquad
-> \tau := \frac{d + \sqrt{d}}{2} \in \mathbb{C}$$
+> $$g(x) := x^2 - d\,x + \frac{d^2 - d}{4} \in \mathbb{Z}[x], \qquad \tau := \frac{d + \sqrt{d}}{2} \in \mathbb{C}$$
 > (any fixed square root $\sqrt{d}$ with positive imaginary part). Then $g$ is the minimal
 > polynomial of $\tau$, $\operatorname{disc}(g) = d$, and we define
 > $$\mathcal{O}_d := \mathbb{Z}[\tau] \;\cong\; \mathbb{Z}[x]/(g(x)),$$
-> a free $\mathbb{Z}$-module with basis $(1, \tau)$. When the discriminant is clear from
+> a free $\mathbb{Z}\text{-module}$ with basis $(1, \tau)$. When the discriminant is clear from
 > context we write $\mathcal{O}$ for $\mathcal{O}_d$. With $d = Df^2$ as in (N2) one has
 > $\tau = f\omega + \tfrac{Df(f-1)}{2}$ and hence
-> $$\mathcal{O}_d = \mathbb{Z}[f\omega] = \mathbb{Z} + f\,\mathcal{O}_K \subseteq \mathcal{O}_K,
-> \qquad [\mathcal{O}_K : \mathcal{O}_d] = f .$$
+> $$\mathcal{O}_d = \mathbb{Z}[f\omega] = \mathbb{Z} + f\,\mathcal{O}_K \subseteq \mathcal{O}_K, \qquad [\mathcal{O}_K : \mathcal{O}_d] = f .$$
 >
 > **(N4) Conjugation and the norm form.** Let $\bar{\tau} := d - \tau$ (the other root of
 > $g$). The map fixing $\mathbb{Z}$ and sending $\tau \mapsto \bar\tau$ extends to a ring
 > involution $\alpha \mapsto \bar{\alpha}$ of $\mathcal{O}_d$ (complex conjugation under any
 > embedding into $\mathbb{C}$). Vieta gives
-> $$\tau + \bar{\tau} = d, \qquad \tau \bar{\tau} = \frac{d^2 - d}{4},
-> \qquad (\tau - \bar\tau)^2 = d.$$
+> $$\tau + \bar{\tau} = d, \qquad \tau \bar{\tau} = \frac{d^2 - d}{4}, \qquad (\tau - \bar\tau)^2 = d.$$
 > The *norm* is $N(\alpha) := \alpha \bar{\alpha}$; in coordinates,
 > $$N(x + y\tau) = x^2 + d\,xy + \frac{d^2 - d}{4}\,y^2 \qquad (x, y \in \mathbb{Z}),$$
 > the homogenization of $g$: for $y \neq 0$, $N(x + y\tau) = y^2\, g(-x/y)$; in particular
@@ -53,24 +50,20 @@ in full in the "Proof" section. All later documents cite these items by their la
 >
 > **(N5) Ideal index — THE norm convention.** For an ideal
 > $\mathfrak{a} \subseteq \mathcal{O}_d$ define the *index*
-> $$[\mathcal{O}_d : \mathfrak{a}] := \#\bigl(\mathcal{O}_d / \mathfrak{a}\bigr) \in
-> \mathbb{Z}_{\geq 1} \cup \{0\},$$
+> $$[\mathcal{O}_d : \mathfrak{a}] := \#\bigl(\mathcal{O}_d / \mathfrak{a}\bigr) \in \mathbb{Z}_{\geq 1} \cup \{0\},$$
 > the cardinality of the quotient as an abelian group, with the convention that the value is
 > $0$ when the quotient is infinite (this happens only for $\mathfrak{a} = (0)$). Every
 > nonzero ideal has finite index. **The norm of an ideal is by definition its index**:
-> $$N(\mathfrak{a}) := [\mathcal{O}_d : \mathfrak{a}]
-> \qquad \text{for every nonzero ideal } \mathfrak{a},$$
-> *invertible or not*. Whenever a Chapter 3 document says "ideal of norm $n$" it means an
-> ideal with $[\mathcal{O}_d : \mathfrak{a}] = n$. For principal ideals the two norms agree:
+> $$N(\mathfrak{a}) := [\mathcal{O}_d : \mathfrak{a}] \qquad \text{for every nonzero ideal } \mathfrak{a},$$
+> *invertible or not*. Whenever a Chapter 3 document speaks of an "ideal of norm $n$," it
+> means an ideal with $[\mathcal{O}_d : \mathfrak{a}] = n$. For principal ideals the two norms agree:
 > $[\mathcal{O}_d : \alpha\mathcal{O}_d] = N(\alpha)$ for $\alpha \neq 0$.
 >
 > **(N6) Invertible ideals.** An ideal $\mathfrak{a} \subseteq \mathcal{O}_d$ is
 > *invertible* if
-> $$\exists\, \mathfrak{b} \subseteq \mathcal{O}_d \text{ ideal}, \;
-> \exists\, x \in \mathcal{O}_d \setminus \{0\}: \quad
-> \mathfrak{a}\,\mathfrak{b} = x\,\mathcal{O}_d .$$
+> $$\exists\, \mathfrak{b} \subseteq \mathcal{O}_d \text{ ideal}, \; \exists\, x \in \mathcal{O}_d \setminus \{0\}: \quad \mathfrak{a}\,\mathfrak{b} = x\,\mathcal{O}_d .$$
 > (This is equivalent to invertibility of $\mathfrak{a}$ as a fractional
-> $\mathcal{O}_d$-ideal, and — for these finitely generated ideals of a Noetherian domain —
+> $\mathcal{O}_d\text{-ideal}$, and — for these finitely generated ideals of a Noetherian domain —
 > to $\mathfrak{a}$ being locally principal; the equivalences are proved in the
 > invertibility-interface documents, not here.) The *class group*
 > $\operatorname{Cl}(\mathcal{O}_d) = \operatorname{Pic}(\mathcal{O}_d)$ is the group of
@@ -78,10 +71,7 @@ in full in the "Proof" section. All later documents cite these items by their la
 > $h_d := \#\operatorname{Cl}(\mathcal{O}_d)$.
 >
 > **(N7) Counting functions.** For $n \geq 1$:
-> $$r_d(n) := \#\{\mathfrak{a} \subseteq \mathcal{O}_d \text{ ideal} :
-> [\mathcal{O}_d : \mathfrak{a}] = n\}, \qquad
-> R_d(n) := \#\{\mathfrak{a} \subseteq \mathcal{O}_d \text{ ideal} :
-> \mathfrak{a} \text{ invertible},\; [\mathcal{O}_d : \mathfrak{a}] = n\}.$$
+> $$r_d(n) := \#\{\mathfrak{a} \subseteq \mathcal{O}_d \text{ ideal} : [\mathcal{O}_d : \mathfrak{a}] = n\}, \qquad R_d(n) := \#\{\mathfrak{a} \subseteq \mathcal{O}_d \text{ ideal} : \mathfrak{a} \text{ invertible},\; [\mathcal{O}_d : \mathfrak{a}] = n\}.$$
 > Both sets are finite ($\mathbb{Z}^2$ has finitely many additive subgroups of index $n$),
 > so $r_d, R_d : \mathbb{Z}_{\geq 1} \to \mathbb{Z}_{\geq 0}$ are well defined.
 > $r_d$ counts **all** ideals of norm $n$ (Theorem 3.1.2*), $R_d$ only the invertible ones
@@ -93,7 +83,7 @@ in full in the "Proof" section. All later documents cite these items by their la
 > results all take place under the following hypotheses:
 > * $d < 0$ an imaginary quadratic discriminant, $d = D f^2$ with $D$ fundamental (N2);
 > * $p$ a rational prime with $p \mid f$;
-> * $w := v_p(f) \geq 1$, where $v_p$ denotes the $p$-adic valuation;
+> * $w := v_p(f) \geq 1$, where $v_p$ denotes the $p\text{-adic}$ valuation;
 > * $m \in \mathbb{Z}_{\geq 0}$ the norm exponent (the target norm is $p^m$).
 >
 > In Lean the $d, D, f, p$ hypotheses are bundled as the class `ConductorPrimeSetup`
@@ -104,17 +94,14 @@ in full in the "Proof" section. All later documents cite these items by their la
 >
 > **(N9) The valuation $v := v_p(d/4)$.** Following ERRATA E6.8 / E4, the symbol
 > $v_p(d/4)$ is **notation**, not a literal valuation of the rational number $d/4$:
-> $$v := v_p(d/4) := \begin{cases} v_p(d), & p \text{ odd}, \\
-> v_2(d) - 2, & p = 2. \end{cases}$$
+> $$v := v_p(d/4) := \begin{cases} v_p(d), & p \text{ odd}, \\ v_2(d) - 2, & p = 2. \end{cases}$$
 > This is well defined and $\geq 0$: when $p = 2$ and $2 \mid f$ we have
 > $v_2(d) = v_2(D) + 2w \geq 2$, so $4 \mid d$. Explicitly, under (N8),
-> $$v = \begin{cases} v_p(D) + 2w \in \{2w,\, 2w + 1\}, & p \text{ odd}, \\
-> v_2(D) + 2w - 2 \in \{2w - 2,\, 2w,\, 2w + 1\}, & p = 2, \end{cases}$$
+> $$v = \begin{cases} v_p(D) + 2w \in \{2w,\, 2w + 1\}, & p \text{ odd}, \\ v_2(D) + 2w - 2 \in \{2w - 2,\, 2w,\, 2w + 1\}, & p = 2, \end{cases}$$
 > since $v_p(D) \in \{0, 1\}$ for odd $p$ and $v_2(D) \in \{0, 2, 3\}$ for fundamental $D$.
 >
 > **(N10) The parity flag $\varepsilon$.** For $m \in \mathbb{Z}_{\geq 0}$,
-> $$\varepsilon = \varepsilon(m) := \begin{cases} 1, & m \text{ even}, \\
-> 0, & m \text{ odd}. \end{cases}$$
+> $$\varepsilon = \varepsilon(m) := \begin{cases} 1, & m \text{ even}, \\ 0, & m \text{ odd}. \end{cases}$$
 > **Warning (ERRATA E6.6):** this is the *reverse* of the natural parity indicator
 > $m \bmod 2$; equivalently $\varepsilon(m) = 1 - (m \bmod 2)$. The convention is the
 > thesis's own ("let $\epsilon = 0$ or $1$ if $m$ is odd or even, respectively",
@@ -122,20 +109,13 @@ in full in the "Proof" section. All later documents cite these items by their la
 >
 > **(N11) The Kronecker symbol at $p$.** For a fundamental discriminant $D$ and a prime
 > $p$ define
-> $$\chi_p(D) := \begin{cases}
-> \left(\dfrac{D}{p}\right) \text{ (Legendre symbol)}, & p \text{ odd}, \\[2mm]
-> 1, & p = 2,\; D \equiv 1 \pmod 8, \\
-> -1, & p = 2,\; D \equiv 5 \pmod 8, \\
-> 0, & p = 2,\; 4 \mid D.
-> \end{cases}$$
+> $$\chi_p(D) := \begin{cases} \left(\dfrac{D}{p}\right) \text{ (Legendre symbol)}, & p \text{ odd}, \\[2mm] 1, & p = 2,\; D \equiv 1 \pmod 8, \\ -1, & p = 2,\; D \equiv 5 \pmod 8, \\ 0, & p = 2,\; 4 \mid D. \end{cases}$$
 > The three $p = 2$ cases are exhaustive for fundamental $D$ (an odd fundamental
 > discriminant is $\equiv 1 \pmod 4$, hence $\equiv 1$ or $5 \pmod 8$). $\chi_p(D)$ is the
 > Kronecker symbol $\left(\frac{D}{p}\right)$, and it classifies the splitting of $p$ in the
 > **maximal** order $\mathcal{O}_K$:
-> $$p \text{ splits} \iff \chi_p(D) = 1, \qquad
-> p \text{ is inert} \iff \chi_p(D) = -1, \qquad
-> p \text{ ramifies} \iff \chi_p(D) = 0 \iff p \mid D.$$
-> All corrected Chapter 3 statements are phrased $p$-uniformly through $\chi_p(D)$
+> $$p \text{ splits} \iff \chi_p(D) = 1, \qquad p \text{ is inert} \iff \chi_p(D) = -1, \qquad p \text{ ramifies} \iff \chi_p(D) = 0 \iff p \mid D.$$
+> All corrected Chapter 3 statements are phrased $p\text{-uniformly}$ through $\chi_p(D)$
 > (ERRATA E4); no separate $p = 2$ case displays are used.
 >
 > **(N12) Square-root and polynomial-root counts.** For $n \geq 1$ and $c \in \mathbb{Z}$,
@@ -165,7 +145,7 @@ Every result document in the Chapter 3 batch (`prop-3-1-1`, `thm-3-1-2`, `cor-3-
 load-bearing choice: it makes the counting statements meaningful for non-invertible ideals,
 where index multiplicativity fails (see Remark 3 below) and where Mathlib's Dedekind-gated
 `Ideal.absNorm` API is unavailable. Items (N9)–(N11) exist specifically to support the
-*corrected*, $p$-uniform statements of Theorem 3.1.2* and Corollary 3.1.3* mandated by
+*corrected*, $p\text{-uniform}$ statements of Theorem 3.1.2* and Corollary 3.1.3* mandated by
 ERRATA E4/E5. This document has no mathematical dependencies.
 
 ## Proof
@@ -183,12 +163,12 @@ roots of $g$, so $(\tau - \bar\tau)^2 = (\sqrt d)^2 = d$.
 
 **(N2): existence and uniqueness of $(D, f)$.** Let $K = \mathbb{Q}(\sqrt d)$ and
 $D := \operatorname{disc}(K)$, a fundamental discriminant. Both $d$ and $D$ equal
-$(\text{square}) \times \operatorname{disc}(K)$-type quantities of the same squarefree
+$(\text{square}) \times \operatorname{disc}(K)\text{-type}$ quantities of the same squarefree
 kernel: writing $d = 4^a d_0 \cdots$ precisely, $d / D$ is a positive rational whose square
 root $f := \sqrt{d/D}$ is a positive integer ([Cox13, §7]; [Ste12, Prop. 6.2.6] as cited in
 thesis §2.1). Uniqueness: if $D f^2 = D' f'^2$ with $D, D'$ fundamental, then $D/D'$ is a
 square in $\mathbb{Q}^\times$, and two fundamental discriminants differing by a rational
-square are equal (their squarefree kernels and $2$-adic parts coincide by the case analysis
+square are equal (their squarefree kernels and $2\text{-adic}$ parts coincide by the case analysis
 in (N2)'s definition).
 
 **(N3): $\mathcal{O}_d = \mathbb{Z} + f \mathcal{O}_K$.**
@@ -200,9 +180,7 @@ index $f$ in $\mathcal{O}_K = \mathbb{Z} + \mathbb{Z}\omega$.
 **(N4): the norm form.** Conjugation is a ring homomorphism because $\bar\tau$ satisfies
 the same monic minimal polynomial $g$; it is an involution since
 $\overline{\bar\tau} = d - (d - \tau) = \tau$. For the coordinate formula:
-$$N(x + y\tau) = (x + y\tau)(x + y\bar\tau)
-= x^2 + xy(\tau + \bar\tau) + y^2 \tau\bar\tau
-= x^2 + d\,xy + \frac{d^2 - d}{4}\,y^2 .$$
+$$N(x + y\tau) = (x + y\tau)(x + y\bar\tau) = x^2 + xy(\tau + \bar\tau) + y^2 \tau\bar\tau = x^2 + d\,xy + \frac{d^2 - d}{4}\,y^2 .$$
 For $y \neq 0$ this equals $y^2\bigl((x/y)^2 + d(x/y) + \frac{d^2-d}{4}\bigr) = y^2 g(-x/y)$.
 Multiplicativity is immediate from $N(\alpha) = \alpha\bar\alpha$ and conjugation being a
 ring map. Positive definiteness for $d < 0$: the binary form has leading coefficient
@@ -213,8 +191,8 @@ $\alpha \in \mathfrak{a} \setminus \{0\}$. Then
 $N(\alpha) = \bar\alpha \cdot \alpha \in \mathfrak{a}$ (as $\bar\alpha \in \mathcal{O}_d$
 and $\mathfrak{a}$ is an ideal) and $N(\alpha) > 0$ by (N4). Hence
 $\mathfrak{a} \supseteq N(\alpha)\,\mathcal{O}_d$ and
-$\#(\mathcal{O}_d/\mathfrak{a}) \leq \#(\mathcal{O}_d / N(\alpha)\mathcal{O}_d)
-= N(\alpha)^2 < \infty$. Consistency on principal ideals: multiplication by $\alpha$ on
+$\#(\mathcal{O}_d/\mathfrak{a}) \leq \#(\mathcal{O}_d / N(\alpha)\mathcal{O}_d) = N(\alpha)^2 < \infty$.
+Consistency on principal ideals: multiplication by $\alpha$ on
 $\mathcal{O}_d \cong \mathbb{Z}^2$ is an injective linear map whose determinant is
 $N(\alpha)$ (compute on the basis $(1, \tau)$ using $\tau^2 = d\tau - \frac{d^2-d}{4}$), and
 the index of the image of an injective endomorphism of $\mathbb{Z}^2$ is the absolute value
@@ -239,37 +217,37 @@ $4 \mid D$ or $D \equiv 1 \pmod 4$, and in the latter case $D \bmod 8 \in \{1, 5
 splitting classification of $p$ in $\mathcal{O}_K$ by $\chi_p(D)$ is standard
 ([Cox13, Prop. 5.16 and §7]; in this development it is re-proved as part of the
 prime-classification documents via factoring $g \bmod p$, cf. Prop 3.2.1 with $d = D$,
-$f = 1$). It is *stated* here only to fix the meaning of "split/inert/ramified in
-$\mathcal{O}_K$" appearing in all counting formulas.
+$f = 1$). It is *stated* here only to fix what "split", "inert", and "ramified" in
+$\mathcal{O}_K$ mean wherever they appear in the counting formulas.
 
 $\blacksquare$
 
 ## Remarks
 
-**Remark 1 (Divergence from the thesis: $p$-uniformity apparatus).** The thesis states
+**Remark 1 (Divergence from the thesis: $p\text{-uniformity}$ apparatus).** The thesis states
 Theorem 3.1.2 with a separate five-case display for $p = 2$ (thesis p. 13). ERRATA E1–E3
 show two of those five cases are false, and ERRATA E4 shows that after correction the
 $p = 2$ count coincides with the odd-$p$ formulas. The symbols $\chi_p(D)$ (N11) and
 $v = v_p(d/4)$ with its $p = 2$ branch (N9) do not appear in thesis §1.2; they are
-introduced here precisely so the corrected results can be stated once, $p$-uniformly. Any
+introduced here precisely so the corrected results can be stated once, $p\text{-uniformly}$. Any
 reader comparing against the thesis must use the ERRATA statements, not the thesis display.
 
 **Remark 2 (Divergence from the thesis: $\varepsilon$ promoted and guarded).** In the
 thesis, $\epsilon$ is defined only inline in the statement of Thm 3.1.2 and collides with
-two other $\epsilon$'s (ERRATA E6.7). We promote it to standing notation (N10) with the
+two other uses of $\epsilon$ (ERRATA E6.7). We promote it to standing notation (N10) with the
 Lean name `epsilonEven` chosen to make the reversed-parity convention (ERRATA E6.6)
 impossible to misread: $\varepsilon(m) = 1$ iff $m$ is **even**.
 
-**Remark 3 (The norm convention is not multiplicative).** With $N(\mathfrak{a}) =
-[\mathcal{O}_d : \mathfrak{a}]$ as in (N5), multiplicativity
+**Remark 3 (The norm convention is not multiplicative).** With $N(\mathfrak{a}) = [\mathcal{O}_d : \mathfrak{a}]$
+as in (N5), multiplicativity
 $N(\mathfrak{a}\mathfrak{b}) = N(\mathfrak{a})N(\mathfrak{b})$ holds when $\mathfrak{a}$ or
 $\mathfrak{b}$ is invertible, and when $\mathfrak{a} + \mathfrak{b} = \mathcal{O}_d$, but
 **fails in general**. Standard example (inside this development's own territory): $d = -12$,
 so $D = -3$, $f = 2$, $\mathcal{O}_{-12} = \mathbb{Z}[\sqrt{-3}]$ (here
 $\tau = -6 + \sqrt{-3}$), and $\mathfrak{p} = (2, 1 + \sqrt{-3})$. One checks
 $\mathfrak{p}^2 = 2\mathfrak{p}$, so
-$[\mathcal{O} : \mathfrak{p}^2] = [\mathcal{O} : 2\mathcal{O}]\,[2\mathcal{O} : 2\mathfrak{p}]
-= 4 \cdot 2 = 8 \neq 4 = [\mathcal{O} : \mathfrak{p}]^2$; in particular $\mathfrak{p}$ is
+$[\mathcal{O} : \mathfrak{p}^2] = [\mathcal{O} : 2\mathcal{O}]\,[2\mathcal{O} : 2\mathfrak{p}] = 4 \cdot 2 = 8 \neq 4 = [\mathcal{O} : \mathfrak{p}]^2$;
+in particular $\mathfrak{p}$ is
 not invertible (invertibility would allow cancelling $\mathfrak{p}$ in
 $\mathfrak{p}^2 = 2\mathfrak{p}$, giving $\mathfrak{p} = (2)$, contradicting the indices).
 This is why the formal index layer defines `idealIndex` as the raw quotient cardinality
@@ -284,7 +262,7 @@ document uses exactly one of the two symbols per statement.
 
 **Remark 5 (On ERRATA E6.8's parenthetical).** E6.8 states the convention adopted in (N9)
 and the formula $v_2(d/4) = 2w - 2 + v_2(D)$, both of which are correct and are what we
-use. Its parenthetical "$2 \mid f$ forces $16 \mid d$" is slightly too strong: for $D$ odd
+use. Its parenthetical claim that $2 \mid f$ forces $16 \mid d$ is slightly too strong: for $D$ odd
 and $w = 1$ one has $v_2(d) = 2$ (e.g. $d = -12 = -3 \cdot 2^2$), so only $4 \mid d$ holds
 in general — which is all that well-definedness of $v$ requires. For $w \geq 2$ or
 $4 \mid D$, $16 \mid d$ does hold.
@@ -305,7 +283,7 @@ $\mathbb{Z}\bigl[\frac{fD + \sqrt D}{2}\bigr]$ (§1.2, as extracted) appears to 
 $f$ on the $\sqrt D$ term — possibly a PDF text-layer artifact rather than a thesis typo;
 either way the formula above is the correct one and the one formalized.
 
-**Remark 8 (What is deliberately *not* defined here).** $p$-primary ideals, the normal form
+**Remark 8 (What is deliberately *not* defined here).** $p\text{-primary}$ ideals, the normal form
 $(p^k, p^{m-k}(\tau - A))$, localization $\mathcal{O}_\mathfrak{p}$, and the bridge
 minimality conditions belong to the Lemma 3.2.4/3.2.7 documents. Chapter 2 notation
 ($J(d_1, d_2)$, $w_i$, genus characters, $A(N)$) is out of scope for this batch and will get
@@ -344,9 +322,9 @@ notions also have working precursors from the previous pass (final column).
   (notation), §2.1 (conductor, citing [Ste12, Prop. 6.2.6]), §3.1 (statements of
   Prop 3.1.1 / Thm 3.1.2 / Cor 3.1.3), §3.2 preamble (standing hypotheses $p \mid f$,
   $w = v_p(f)$), §3.3 (the $g(x) = (x - d/2)^2 - d/4$ reduction motivating (N9)).
-- `ERRATA.md` (repo root): E4 (the $p$-uniform corrected Theorem 3.1.2, source of the
+- `ERRATA.md` (repo root): E4 (the $p\text{-uniform}$ corrected Theorem 3.1.2, source of the
   $v$ and $\chi_p$ conventions), E6.1, E6.6, E6.7, E6.8 (statement hygiene adopted here).
-- D. A. Cox, *Primes of the Form $x^2 + ny^2$*, 2nd ed., Wiley, 2013 — §5 (splitting and
+- D. A. Cox, *Primes of the Form* $x^2 + ny^2$, 2nd ed., Wiley, 2013 — §5 (splitting and
   the Legendre/Kronecker dictionary), §7 (orders, conductor,
   $\mathcal{O} = \mathbb{Z} + f\mathcal{O}_K$, class groups of orders).
 - W. Stein, *Algebraic Number Theory: A Computational Approach*, 2012 — Prop. 6.2.6

@@ -8,13 +8,11 @@ unstated bridge lemma recorded as ERRATA E6.4(a). See the Remarks.
 
 > **Setting.** Let $d < 0$ be an integer with $d \equiv 0$ or $1 \pmod 4$ (the discriminant of
 > an imaginary quadratic order). Let
-> $$g(x) := x^2 - dx + \tfrac{d^2-d}{4} \in \mathbb Z[x], \qquad
-> \mathcal O = \mathcal O_d := \mathbb Z[x]/(g(x)) = \mathbb Z[\tau], \qquad
-> \tau := \tfrac{d+\sqrt d}{2},$$
-> so that $\{1, \tau\}$ is a $\mathbb Z$-basis of $\mathcal O$ and $(\mathcal O, +) \cong \mathbb Z^2$.
+> $$g(x) := x^2 - dx + \tfrac{d^2-d}{4} \in \mathbb Z[x], \qquad \mathcal O = \mathcal O_d := \mathbb Z[x]/(g(x)) = \mathbb Z[\tau], \qquad \tau := \tfrac{d+\sqrt d}{2},$$
+> so that $\{1, \tau\}$ is a $\mathbb Z\text{-basis}$ of $\mathcal O$ and $(\mathcal O, +) \cong \mathbb Z^2$.
 > Write $d = Df^2$ with $D$ the fundamental discriminant of $K := \mathbb Q(\sqrt d)$ and
 > $f \ge 1$ the conductor of $\mathcal O_d$; for a prime $p$ set $w := v_p(f)$, where $v_p$ is
-> the $p$-adic valuation. Conjugation is $\overline{a + b\tau} := a + b\bar\tau$ with
+> the $p\text{-adic}$ valuation. Conjugation is $\overline{a + b\tau} := a + b\bar\tau$ with
 > $\bar\tau := d - \tau$, and the norm is $N(\alpha) := \alpha\bar\alpha$, explicitly
 > $N(a + b\tau) = a^2 + dab + \tfrac{d^2-d}{4}\,b^2 \in \mathbb Z$, a positive-definite form
 > since its discriminant is $d < 0$. "Ideal" always means an ideal of the ring $\mathcal O$.
@@ -24,8 +22,8 @@ unstated bridge lemma recorded as ERRATA E6.4(a). See the Remarks.
 > $$[\mathcal O : \mathfrak a] := \#\bigl(\mathcal O/\mathfrak a\bigr) \in \mathbb Z_{\ge 0},$$
 > the number of elements of the additive quotient group when it is finite, and $0$ when it is
 > infinite (the `Nat.card` convention). Equivalently, it is the index of $\mathfrak a$ as an
-> additive subgroup of $(\mathcal O, +)$. The thesis writes $N(\mathfrak a)$ for this quantity
-> and says "$\mathfrak a$ has norm $p^m$" for $[\mathcal O : \mathfrak a] = p^m$.
+> additive subgroup of $(\mathcal O, +)$. The thesis writes $N(\mathfrak a)$ for this quantity;
+> when it says "$\mathfrak a$ has norm $p^m$," it means $[\mathcal O : \mathfrak a] = p^m$.
 >
 > **(1) Finiteness** (`finite_setOf_idealIndex_eq`). For every integer $n \ge 1$, the set
 > $$\{\mathfrak a \subseteq \mathcal O \text{ ideal} : [\mathcal O : \mathfrak a] = n\}$$
@@ -43,13 +41,10 @@ unstated bridge lemma recorded as ERRATA E6.4(a). See the Remarks.
 > and write $m_p := v_p(n)$. Then the map
 > $$\mathfrak a \;\longmapsto\; \bigl(\mathfrak a + p^{m_p}\mathcal O\bigr)_{p \mid n}$$
 > is a bijection
-> $$\{\mathfrak a : [\mathcal O : \mathfrak a] = n\}
-> \;\xrightarrow{\;\sim\;}\;
-> \prod_{p \mid n} \{\mathfrak b : [\mathcal O : \mathfrak b] = p^{m_p}\},$$
+> $$\{\mathfrak a : [\mathcal O : \mathfrak a] = n\} \;\xrightarrow{\;\sim\;}\; \prod_{p \mid n} \{\mathfrak b : [\mathcal O : \mathfrak b] = p^{m_p}\},$$
 > with inverse $(\mathfrak b_p)_p \mapsto \prod_p \mathfrak b_p = \bigcap_p \mathfrak b_p$.
 > Consequently
-> $$\#\{\mathfrak a : [\mathcal O : \mathfrak a] = n\}
-> \;=\; \prod_{p \mid n} \#\{\mathfrak a : [\mathcal O : \mathfrak a] = p^{v_p(n)}\},$$
+> $$\#\{\mathfrak a : [\mathcal O : \mathfrak a] = n\} \;=\; \prod_{p \mid n} \#\{\mathfrak a : [\mathcal O : \mathfrak a] = p^{v_p(n)}\},$$
 > and the counting function $r(n) := \#\{\mathfrak a : [\mathcal O:\mathfrak a] = n\}$ is
 > multiplicative: $r(n_1 n_2) = r(n_1)\, r(n_2)$ whenever $\gcd(n_1, n_2) = 1$.
 >
@@ -59,15 +54,15 @@ unstated bridge lemma recorded as ERRATA E6.4(a). See the Remarks.
 >   prime ideal containing $p$, namely the maximal ideal
 >   $\mathfrak P := p\mathcal O + (\tau - A)\mathcal O$, of index $p$;
 > * every ideal $\mathfrak a$ with $[\mathcal O : \mathfrak a] = p^m$ for some $m \ge 1$ is
->   $\mathfrak P$-primary. (Recall: an ideal $\mathfrak q \subsetneq \mathcal O$ is *primary*
+>   $\mathfrak P\text{-primary}$. (Recall: an ideal $\mathfrak q \subsetneq \mathcal O$ is *primary*
 >   if $xy \in \mathfrak q$ implies $x \in \mathfrak q$ or $y \in \sqrt{\mathfrak q}$; it is
->   *$\mathfrak P$-primary* if moreover $\sqrt{\mathfrak q} = \mathfrak P$.)
+>   $\mathfrak P\text{-primary}$ if moreover $\sqrt{\mathfrak q} = \mathfrak P$.)
 
 ## Role in the development
 
 This is the foundation of the entire Chapter 3 counting layer (PLAN.md §4, gap-list items 2,
 3, 5). Part (4) closes the gap between the statement of the corrected Theorem 3.1.2 — which
-counts *all* ideals of index $p^m$ — and its proof, which enumerates *$\mathfrak P$-primary*
+counts *all* ideals of index $p^m$ — and its proof, which enumerates $\mathfrak P\text{-primary}$
 ideals through the normal form of Lemma 3.2.4; without (4) the enumeration would count a
 priori only a subset. Part (3) reduces the count of ideals of arbitrary index $n$ to prime
 powers, which is how Theorem 3.1.2, Corollary 3.1.3 and Proposition 3.1.1 are glued into a
@@ -94,7 +89,7 @@ Let $\mathfrak a \subseteq \mathcal O$ be an ideal.
    $n\mathcal O \subseteq \mathfrak a$.
 4. $[\mathcal O : \mathfrak a] = 1$ if and only if $\mathfrak a = \mathcal O$.
 
-*Proof.* (1) In the $\mathbb Z$-basis $\{1, \tau\}$ we have
+*Proof.* (1) In the $\mathbb Z\text{-basis}$ $\{1, \tau\}$ we have
 $\mathcal O/c\mathcal O \cong (\mathbb Z/c)^2$, of order $c^2$.
 
 (2) Pick $\alpha \in \mathfrak a$, $\alpha \ne 0$. Then
@@ -135,12 +130,10 @@ Assume $I + J = \mathcal O$.
 
 **Step 1: $IJ = I \cap J$.** The inclusion $IJ \subseteq I \cap J$ holds for any two ideals.
 Conversely, using comaximality,
-$$I \cap J = (I \cap J)\,\mathcal O = (I \cap J)(I + J)
-= (I \cap J)I + (I \cap J)J \subseteq JI + IJ = IJ.$$
+$$I \cap J = (I \cap J)\,\mathcal O = (I \cap J)(I + J) = (I \cap J)I + (I \cap J)J \subseteq JI + IJ = IJ.$$
 
 **Step 2: Chinese Remainder.** The ring homomorphism
-$$\varphi : \mathcal O \to \mathcal O/I \times \mathcal O/J, \qquad
-x \mapsto (x \bmod I,\; x \bmod J)$$
+$$\varphi : \mathcal O \to \mathcal O/I \times \mathcal O/J, \qquad x \mapsto (x \bmod I,\; x \bmod J)$$
 has kernel $I \cap J$. It is surjective: write $1 = e + h$ with $e \in I$, $h \in J$; given a
 target $(a \bmod I, \; b \bmod J)$, the element $x := ah + be$ satisfies
 $x \equiv ah \equiv a(1 - e) \equiv a \pmod I$ and
@@ -148,9 +141,7 @@ $x \equiv be \equiv b(1 - h) \equiv b \pmod J$. By the first isomorphism theorem
 $$\mathcal O/(I \cap J) \;\cong\; \mathcal O/I \times \mathcal O/J .$$
 
 **Step 3: count.** Combining Steps 1 and 2 and taking cardinalities,
-$$[\mathcal O : IJ] = [\mathcal O : I \cap J]
-= \#\bigl(\mathcal O/I \times \mathcal O/J\bigr)
-= [\mathcal O : I]\,[\mathcal O : J].$$
+$$[\mathcal O : IJ] = [\mathcal O : I \cap J] = \#\bigl(\mathcal O/I \times \mathcal O/J\bigr) = [\mathcal O : I]\,[\mathcal O : J].$$
 With the `Nat.card` convention the last equality needs no finiteness hypothesis: the
 cardinality of a product is the product of the cardinalities, where an infinite factor
 against a nonempty factor yields an infinite (= $0$) product, and quotient rings are
@@ -170,8 +161,7 @@ Let $I_1, \dots, I_k \subseteq \mathcal O$ be pairwise comaximal ideals
 
 *Proof.* First, a standard sub-claim: if $I + J_1 = \mathcal O$ and $I + J_2 = \mathcal O$
 then $I + J_1 J_2 = \mathcal O$. Indeed
-$$\mathcal O = \mathcal O \cdot \mathcal O = (I + J_1)(I + J_2)
-= I^2 + I J_2 + J_1 I + J_1 J_2 \subseteq I + J_1 J_2 .$$
+$$\mathcal O = \mathcal O \cdot \mathcal O = (I + J_1)(I + J_2) = I^2 + I J_2 + J_1 I + J_1 J_2 \subseteq I + J_1 J_2 .$$
 Now induct on $k$; the case $k = 1$ is trivial. For the step, put
 $P := I_1 \cdots I_{k-1}$. By the sub-claim iterated, $I_k + P = \mathcal O$. Then item (1)
 follows from Step 1 of (2) applied to $(P, I_k)$ together with the inductive hypothesis;
@@ -188,10 +178,10 @@ assume $n > 1$.
 
 **Preliminaries on the quotient module.** Let $\mathfrak a$ be an ideal with
 $[\mathcal O : \mathfrak a] = n$ and set $M := \mathcal O/\mathfrak a$, a finite abelian group
-of order $n$ carrying an $\mathcal O$-module structure (it is the quotient ring). For
-$p \in P(n)$ define the *$p$-primary component*
+of order $n$ carrying an $\mathcal O\text{-module}$ structure (it is the quotient ring). For
+$p \in P(n)$ define the *$p\text{-primary}$ component*
 $$M_p := \{x \in M : p^j x = 0 \text{ for some } j \ge 0\}.$$
-Each $M_p$ is an $\mathcal O$-submodule: it is clearly an additive subgroup, and for
+Each $M_p$ is an $\mathcal O\text{-submodule}$: it is clearly an additive subgroup, and for
 $r \in \mathcal O$, $x \in M_p$ we have $p^j (r x) = r(p^j x) = 0$.
 
 **Fact A (primary decomposition of $M$).** $M = \bigoplus_{p \in P(n)} M_p$ and
@@ -204,7 +194,7 @@ $\gcd_p(n_p') = 1$ and there are integers $c_p$ with $\sum_p c_p n_p' = 1$. For 
 $$x = \sum_{p} c_p\, (n_p' x), \qquad p^{m_p}(n_p' x) = n x = 0$$
 (Lagrange: $n = \#M$ annihilates $M$), so $n_p' x \in M_p$ and $M = \sum_p M_p$. For
 directness, suppose $x \in M_p \cap \sum_{q \ne p} M_q$. Every element of $M_q$ has
-$q$-power order (definition of $M_q$) dividing $n$ (Lagrange), hence order dividing
+$q\text{-power}$ order (definition of $M_q$) dividing $n$ (Lagrange), hence order dividing
 $q^{m_q}$, and $q^{m_q} \mid n_p'$ for $q \ne p$; so $\sum_{q \ne p} M_q$ is
 killed by $n_p'$, while $M_p$ is killed by some $p^{j}$; choosing $u, v$ with
 $u p^{j} + v n_p' = 1$ gives $x = u p^{j} x + v n_p' x = 0$. So the sum is direct. Finally,
@@ -219,11 +209,11 @@ $$p^{m_p} M = \bigoplus_{q \ne p} M_q, \qquad M / p^{m_p} M \cong M_p .$$
 
 *Proof.* $\#M_p = p^{m_p}$ annihilates $M_p$ by Lagrange. On $M_q$: if
 $p^{m_p} x = 0$ with $x \in M_q$, then the order of $x$ divides both $p^{m_p}$ and the
-$q$-power $\#M_q$, hence is $1$; so multiplication by $p^{m_p}$ is injective on the finite
+$q\text{-power}$ $\#M_q$, hence is $1$; so multiplication by $p^{m_p}$ is injective on the finite
 group $M_q$, hence bijective. The displayed identities follow by applying multiplication by
 $p^{m_p}$ summand-wise in Fact A. $\square$
 
-Now define, for $p \in P(n)$, the *$p$-part*
+Now define, for $p \in P(n)$, the $p\text{-part}$
 $$\mathfrak a_p := \mathfrak a + p^{m_p}\mathcal O .$$
 
 **(i) Index of the parts.** The image of $\mathfrak a_p$ in $M = \mathcal O/\mathfrak a$ is
@@ -248,8 +238,7 @@ $[\mathcal O : \mathfrak b_p] = p^{m_p}$. By Lemma 0(3), $p^{m_p} \in \mathfrak 
 (ii), the $\mathfrak b_p$ are pairwise comaximal. Set
 $\mathfrak a := \bigcap_p \mathfrak b_p = \prod_p \mathfrak b_p$ (Lemma 0′(1)). By
 Lemma 0′(3),
-$$[\mathcal O : \mathfrak a] = \prod_{p} [\mathcal O : \mathfrak b_p]
-= \prod_p p^{m_p} = n .$$
+$$[\mathcal O : \mathfrak a] = \prod_{p} [\mathcal O : \mathfrak b_p] = \prod_p p^{m_p} = n .$$
 It remains to check that the parts of $\mathfrak a$ are the $\mathfrak b_p$, i.e.
 $\mathfrak a + p^{m_p}\mathcal O = \mathfrak b_p$. Let
 $$\psi : \mathcal O/\mathfrak a \xrightarrow{\ \sim\ } \prod_{q \in P(n)} \mathcal O/\mathfrak b_q$$
@@ -257,7 +246,7 @@ be the isomorphism of Lemma 0′(2), induced by $x \mapsto (x \bmod \mathfrak b_
 
 *The image of $\mathfrak b_p/\mathfrak a$ under $\psi$ is
 $H_p := 0 \times \prod_{q \ne p} \mathcal O/\mathfrak b_q$.* Indeed, for $x \in \mathcal O$,
-the $p$-component of $\psi(x + \mathfrak a)$ vanishes iff $x \in \mathfrak b_p$; this gives
+the $p\text{-component}$ of $\psi(x + \mathfrak a)$ vanishes iff $x \in \mathfrak b_p$; this gives
 $\psi(\mathfrak b_p/\mathfrak a) \subseteq H_p$, and conversely any $t \in H_p$ is
 $\psi(x + \mathfrak a)$ for some $x$ by surjectivity of $\psi$, and then $x \in \mathfrak b_p$
 because $t_p = 0$.
@@ -267,7 +256,7 @@ by $p^{m_p}$ acts componentwise on the product; it kills $\mathcal O/\mathfrak b
 of order $p^{m_p}$, Lagrange) and is bijective on each $\mathcal O/\mathfrak b_q$, $q \ne p$
 (kernel elements have order dividing both $p^{m_p}$ and $q^{m_q}$, hence trivial; injective
 on a finite group implies bijective). So
-$p^{m_p} \prod_q \mathcal O/\mathfrak b_q = H_p$, and $\psi$ is $\mathcal O$-linear.
+$p^{m_p} \prod_q \mathcal O/\mathfrak b_q = H_p$, and $\psi$ is $\mathcal O\text{-linear}$.
 
 Therefore $p^{m_p}(\mathcal O/\mathfrak a) = \mathfrak b_p/\mathfrak a$ as subgroups of
 $\mathcal O/\mathfrak a$; taking preimages under $\pi_{\mathfrak a}$ (both sides contain
@@ -276,8 +265,7 @@ $$\mathfrak a + p^{m_p}\mathcal O = \mathfrak b_p ,$$
 as required. Hence the map of (3) is surjective with the stated inverse.
 
 **(v) Conclusion.** The two sides of the bijection are finite sets by (1), so
-$$\#\{\mathfrak a : [\mathcal O:\mathfrak a] = n\}
-= \prod_{p \mid n} \#\{\mathfrak b : [\mathcal O:\mathfrak b] = p^{m_p}\} .$$
+$$\#\{\mathfrak a : [\mathcal O:\mathfrak a] = n\} = \prod_{p \mid n} \#\{\mathfrak b : [\mathcal O:\mathfrak b] = p^{m_p}\} .$$
 For the multiplicativity of $r$: if $\gcd(n_1, n_2) = 1$ then every prime divisor of
 $n_1 n_2$ divides exactly one of $n_1, n_2$, and $v_p(n_1 n_2)$ equals the corresponding
 $v_p(n_i)$; grouping the factors of the product formula for $n_1 n_2$ accordingly gives
@@ -315,8 +303,7 @@ $g \bmod p$, with $g_i$ any lift), Step 1 gives that the *only* prime of $\mathc
 containing $p$ is
 $$\mathfrak P := p\mathcal O + (\tau - A)\mathcal O .$$
 Moreover
-$$\mathcal O/\mathfrak P \cong \mathbb F_p[x]\big/\bigl(g \bmod p,\; x - A\bigr)
-= \mathbb F_p[x]/(x - A) \cong \mathbb F_p$$
+$$\mathcal O/\mathfrak P \cong \mathbb F_p[x]\big/\bigl(g \bmod p,\; x - A\bigr) = \mathbb F_p[x]/(x - A) \cong \mathbb F_p$$
 (the middle equality because $g \equiv (x-A)^2 \in (x - A)$), so $\mathfrak P$ is maximal and
 $[\mathcal O : \mathfrak P] = p$.
 
@@ -326,11 +313,10 @@ Lemma 0(3), $p^m \in \mathfrak a$. Let $\mathfrak q$ be any prime ideal with
 $\mathfrak q \supseteq \mathfrak a$. Then $p^m \in \mathfrak q$, so $p \in \mathfrak q$
 (primality), and by Step 2, $\mathfrak q = \mathfrak P$. The set of primes containing
 $\mathfrak a$ is nonempty ($\mathfrak a$ is proper and $\mathcal O$ is Noetherian — a
-finitely generated $\mathbb Z$-module — so $\mathfrak a$ lies in some maximal ideal). Since
+finitely generated $\mathbb Z\text{-module}$ — so $\mathfrak a$ lies in some maximal ideal). Since
 the radical of an ideal is the intersection of the primes containing it
 [AM, Prop. 1.14],
-$$\sqrt{\mathfrak a} = \bigcap_{\mathfrak q \supseteq \mathfrak a \text{ prime}} \mathfrak q
-= \mathfrak P .$$
+$$\sqrt{\mathfrak a} = \bigcap_{\mathfrak q \supseteq \mathfrak a \text{ prime}} \mathfrak q = \mathfrak P .$$
 
 **Step 4: maximal radical implies primary.** Suppose $xy \in \mathfrak a$ and
 $y \notin \sqrt{\mathfrak a}$; we must show $x \in \mathfrak a$. Pass to
@@ -341,7 +327,7 @@ contains the nilradical; but the nilradical $\mathfrak P/\mathfrak a$ is itself 
 $\mathfrak P/\mathfrak a$. Now $\bar y \notin \mathfrak P/\mathfrak a$, so $\bar y$ is a unit
 of $R$; from $\bar x \bar y = 0$ we get $\bar x = 0$, i.e. $x \in \mathfrak a$. Hence
 $\mathfrak a$ is primary, and by Step 3 its radical is $\mathfrak P$: $\mathfrak a$ is
-$\mathfrak P$-primary. (This is the standard fact that an ideal whose radical is maximal is
+$\mathfrak P\text{-primary}$. (This is the standard fact that an ideal whose radical is maximal is
 primary [AM, Prop. 4.2]; in Mathlib, `Ideal.isPrimary_of_isMaximal_radical`.)
 $\qquad\blacksquare$
 
@@ -351,12 +337,12 @@ $\qquad\blacksquare$
 used silently:
 
 * The proof of Theorem 3.1.2 (§3.3) opens by counting ideals via the normal form of
-  Lemma 3.2.4, which applies to *$\mathfrak P$-primary* ideals of index $p^m$, whereas the
+  Lemma 3.2.4, which applies to $\mathfrak P\text{-primary}$ ideals of index $p^m$, whereas the
   theorem's left-hand side is $\#\{\mathfrak a \subseteq \mathcal O : [\mathcal O : \mathfrak a] = p^m\}$,
-  over *all* ideals. Part (4) — recorded as ERRATA E6.4(a), "every ideal of index $p^m$ is
-  automatically $p$-primary when $p \mid f$" — is exactly the missing bridge. (ERRATA
-  E6.4(b), the minimality/no-double-counting bridge for Lemma 3.2.4's converse, belongs to
-  the Lemma 3.2.4 document, not here.)
+  over *all* ideals. Part (4) — "every ideal of index $p^m$ is automatically
+  $p\text{-primary}$ when $p \mid f$," recorded as ERRATA E6.4(a) — is exactly the missing
+  bridge. (ERRATA E6.4(b), the minimality/no-double-counting bridge for Lemma 3.2.4's
+  converse, belongs to the Lemma 3.2.4 document, not here.)
 * The proof of Lemma 3.2.2 (§3.2) uses the display
   $\beta\bar\beta = N(\beta) = \prod_{\mathfrak q} [\mathcal O : \beta\mathcal O_{\mathfrak q} \cap \mathcal O]$,
   which presupposes a comaximal (primary) decomposition of $\beta\mathcal O$ and the
@@ -377,7 +363,7 @@ $[\mathcal O : 2\mathfrak P] = [\mathcal O : 2\mathcal O]\,[2\mathcal O : 2\math
 with $[2\mathcal O : 2\mathfrak P] = [\mathcal O : \mathfrak P]$ (multiplication by $2$ is
 injective),
 $$[\mathcal O : \mathfrak P^2] = 4 \cdot 2 = 8 \;\ne\; 4 = [\mathcal O : \mathfrak P]^2 .$$
-(Directly: $\mathfrak P^2 = 2\mathfrak P$ has $\mathbb Z$-basis $\{4,\, 2 + 2\sqrt{-3}\}$,
+(Directly: $\mathfrak P^2 = 2\mathfrak P$ has $\mathbb Z\text{-basis}$ $\{4,\, 2 + 2\sqrt{-3}\}$,
 of index $8$; verified by explicit lattice enumeration.) The identity
 $\mathfrak P^2 = 2\mathfrak P$ with $\mathfrak P \neq 2\mathcal O$ also witnesses that
 $\mathfrak P$ is not invertible.
@@ -393,21 +379,21 @@ index layer must therefore be built directly on the raw quotient-cardinality
 (`Submodule.cardQuot` / `AddSubgroup.index` / `Nat.card`), with multiplicativity available
 only in the comaximal form (2) (and, elsewhere in this development, for invertible ideals).
 
-**Remark 3 (terminology: "$p$-parts" are not always primary ideals).** The decomposition in
+**Remark 3 (terminology: $p\text{-parts}$ are not always primary ideals).** The decomposition in
 (3) is a *Sylow-style coprime decomposition*, not Lasker–Noether primary decomposition: the
-$p$-part $\mathfrak a + p^{v_p(n)}\mathcal O$ has $p$-power index but need **not** be a
+$p\text{-part}$ $\mathfrak a + p^{v_p(n)}\mathcal O$ has $p\text{-power}$ index but need **not** be a
 primary ideal. Example: if $p \nmid f$ splits in $\mathcal O$, say
 $p\mathcal O = \mathfrak p_1 \mathfrak p_2$ with $\mathfrak p_1 \neq \mathfrak p_2$, the
 ideal $\mathfrak a = \mathfrak p_1\mathfrak p_2$ has index $p^2$ and radical
 $\mathfrak p_1 \cap \mathfrak p_2$, which is not prime, so $\mathfrak a$ is not primary.
 Part (4) says precisely that at primes $p \mid f$ — where there is a unique prime
-$\mathfrak P$ over $p$ — this distinction disappears: $p$-power index *does* imply
-$\mathfrak P$-primary. We therefore say "$p$-part" rather than "$p$-primary part" in (3),
+$\mathfrak P$ over $p$ — this distinction disappears: $p\text{-power}$ index *does* imply
+$\mathfrak P\text{-primary}$. We therefore say "$p\text{-part}$," rather than "$p\text{-primary}$ part," in (3),
 diverging from the informal usage in the planning documents.
 
 **Remark 4 (conventions and degenerate cases).** With the `Nat.card` convention
 ($\#X = 0$ for $X$ infinite): $[\mathcal O : 0] = 0$ (for $d < 0$, $\mathcal O$ is
-infinite), and by Lemma 0(2) the zero ideal is the *only* ideal of "index $0$"; statements
+infinite), and by Lemma 0(2) the zero ideal is the *only* ideal of index $0$; statements
 (1)–(3) are made for $n \ge 1$ and never touch it. In (2), no finiteness hypothesis is
 needed. In (3), $n = 1$ gives the empty product and the singleton $\{\mathcal O\}$ on both
 sides.
@@ -432,7 +418,7 @@ statements. Names are relative to the `QuadraticOrder` namespace.
 | (1) finiteness of $\{\mathfrak a : [\mathcal O:\mathfrak a] = n\}$, $n \ge 1$ | `QuadraticOrder.finite_setOf_idealIndex_eq` | `QuadraticOrder/Index/Basic.lean` | **Proved** (WP-A; sorry-free). |
 | (2) $I + J = \mathcal O \Rightarrow [\mathcal O : IJ] = [\mathcal O:I][\mathcal O:J]$ | `QuadraticOrder.idealIndex_mul_of_codisjoint` | `QuadraticOrder/Index/Basic.lean` | **Proved** (WP-A; sorry-free). |
 | (3) $\#\{[\mathcal O:\mathfrak a] = n\} = \prod_p \#\{[\mathcal O:\mathfrak a] = p^{v_p(n)}\}$ (the frozen Lean statement is the equivalent coprime-multiplicativity form `idealCount d (m*n) = idealCount d m * idealCount d n` for coprime `m, n ≥ 1`) | `QuadraticOrder.idealCount_multiplicative` | `QuadraticOrder/Index/Basic.lean` | **Proved** (WP-A; sorry-free). |
-| (4) $p \mid f$, $[\mathcal O : \mathfrak a] = p^m$, $m \ge 1$ $\Rightarrow$ $\mathfrak a$ is $\mathfrak P$-primary | `QuadraticOrder.isPrimary_of_idealIndex_prime_pow` | `QuadraticOrder/Index/Primary.lean` | **Proved** (WP-A; sorry-free). |
+| (4) $p \mid f$, $[\mathcal O : \mathfrak a] = p^m$, $m \ge 1$ $\Rightarrow$ $\mathfrak a$ is $\mathfrak P\text{-primary}$ | `QuadraticOrder.isPrimary_of_idealIndex_prime_pow` | `QuadraticOrder/Index/Primary.lean` | **Proved** (WP-A; sorry-free). |
 
 Implementation notes. `idealIndex` is `Nat.card` of the quotient ring (equal to
 `Submodule.cardQuot` and to `AddSubgroup.index` of the coerced additive subgroup), **not**
@@ -469,5 +455,5 @@ needs Facts A/B for the quotient by each individual ideal.
   (verification that Mathlib's `Ideal.absNorm` multiplicative API is Dedekind-gated).
 * M. F. Atiyah, I. G. Macdonald, *Introduction to Commutative Algebra*: Prop. 1.10 (CRT),
   Prop. 1.14 (radical = intersection of primes), Prop. 4.2 (maximal radical ⟹ primary).
-* D. A. Cox, *Primes of the Form $x^2 + ny^2$*, §7 (orders in imaginary quadratic fields,
+* D. A. Cox, *Primes of the Form* $x^2 + ny^2$, §7 (orders in imaginary quadratic fields,
   conductor, index/norm of ideals).
