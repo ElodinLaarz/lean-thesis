@@ -10,7 +10,11 @@ jobs:
     runs-on: lean   # leanprovercommunity/lean:latest (no node -> manual checkout)
     steps:
       - name: Checkout
-        run: git clone --depth 1 "http://x-access-token:${{ github.token }}@forgejo:3000/${{ github.repository }}.git" .
+        run: |
+          git init .
+          git remote add origin "http://x-access-token:${{ github.token }}@forgejo:3000/${{ github.repository }}.git"
+          git fetch --depth 1 origin "${{ github.sha }}"
+          git checkout --detach FETCH_HEAD
       - name: Build singular_moduli
         run: |
           cd singular_moduli
@@ -24,7 +28,11 @@ jobs:
     runs-on: ubuntu-latest  # node:20-bookworm; supports actions and package installation
     steps:
       - name: Checkout
-        run: git clone --depth 1 "http://x-access-token:${{ github.token }}@forgejo:3000/${{ github.repository }}.git" .
+        run: |
+          git init .
+          git remote add origin "http://x-access-token:${{ github.token }}@forgejo:3000/${{ github.repository }}.git"
+          git fetch --depth 1 origin "${{ github.sha }}"
+          git checkout --detach FETCH_HEAD
       - name: Install the documentation toolchain
         run: |
           apt-get update
