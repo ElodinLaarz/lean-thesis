@@ -5,7 +5,6 @@ import QuadraticOrder.Verification
 import QuadraticOrder.Defs.Setup
 import QuadraticOrder.Defs.Counting
 import QuadraticOrder.RootCounting
-import QuadraticOrder.RootCounting.TwoPower
 import QuadraticOrder.Prime
 import QuadraticOrder.Prime.ConductorPrime
 import QuadraticOrder.Index.Basic

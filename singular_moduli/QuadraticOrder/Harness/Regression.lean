@@ -1,4 +1,5 @@
 import QuadraticOrder.Harness.Enumerate
+import QuadraticOrder.RootCounting.TwoPower
 
 /-!
 # Regression vectors (ERRATA ground truth)
@@ -6,11 +7,12 @@ import QuadraticOrder.Harness.Enumerate
 **Thesis.** Corrected Theorem 3.1.2* and Corollary 3.1.3*, specifically the
 counterexamples and boundary cases in ERRATA E1, E2, and E5.
 
-**Human-readable companion.** `proofs/thm-3-1-2.md` and
-`proofs/cor-3-1-3.md` explain every family of rows and the formulas they pin.
+**Human-readable companion.** `proofs/lem-3-2-6.md`, `proofs/thm-3-1-2.md`,
+and `proofs/cor-3-1-3.md` explain every family of rows and the formulas they pin.
 
-**This file proves:** closed Boolean equalities for the total and invertible
-counts returned by `Harness/Enumerate.lean` on the ERRATA data set.
+**This file proves:** closed Boolean equalities for the square-root counts and
+for the total and invertible counts returned by `Harness/Enumerate.lean` on the
+ERRATA data set.
 
 Every data point that exposed an error in the thesis — plus boundary and
 maximal-order sanity rows — pinned as `native_decide` facts about the brute
@@ -30,8 +32,9 @@ harness is a test oracle, not part of the proof development (see
 enumerator and discharged with `native_decide`; the rows are deliberately
 redundant with the two independent computations recorded in `ERRATA.md`.
 
-**Status.** WP-0 regression gate.  These vectors are ground truth and must not
-be weakened to accommodate a later closed form.
+**Status.** WP-0 regression gate, extended by WP-B with the complete residual
+exponent grid for the corrected two-adic square-root count.  These vectors are
+ground truth and must not be weakened to accommodate a later closed form.
 -/
 
 -- The harness is a test oracle, not part of the proof development; compiler
@@ -39,6 +42,31 @@ be weakened to accommodate a later closed form.
 set_option linter.style.nativeDecide false
 
 namespace QuadraticOrder.Harness
+
+/-! ## Square-root counts (Lemma 3.2.6, corrected two-adic branch) -/
+
+-- Residual exponent one: every odd unit gives one residual root, hence `2^r` roots.
+example : cardSqrts 2 (1 : ZMod 2) = 1 := by native_decide
+example : cardSqrts 8 ((4 : ℤ) : ZMod 8) = 2 := by native_decide
+example : cardSqrts 8 ((12 : ℤ) : ZMod 8) = 2 := by native_decide
+
+-- Residual exponent two: precisely the units congruent to one modulo four contribute.
+example : cardSqrts 4 (1 : ZMod 4) = 2 := by native_decide
+example : cardSqrts 4 (3 : ZMod 4) = 0 := by native_decide
+example : cardSqrts 16 ((4 : ℤ) : ZMod 16) = 4 := by native_decide
+example : cardSqrts 16 ((12 : ℤ) : ZMod 16) = 0 := by native_decide
+
+-- Residual exponent at least three: precisely the units congruent to one modulo eight.
+example : cardSqrts 8 (1 : ZMod 8) = 4 := by native_decide
+example : cardSqrts 8 (3 : ZMod 8) = 0 := by native_decide
+example : cardSqrts 8 (5 : ZMod 8) = 0 := by native_decide
+example : cardSqrts 8 (7 : ZMod 8) = 0 := by native_decide
+example : cardSqrts 32 ((4 : ℤ) : ZMod 32) = 8 := by native_decide
+example : cardSqrts 32 ((12 : ℤ) : ZMod 32) = 0 := by native_decide
+
+-- The prime-uniform companion cases: odd valuation has no roots; zero has the stated count.
+example : cardSqrts 8 (2 : ZMod 8) = 0 := by native_decide
+example : cardSqrts 16 (0 : ZMod 16) = 4 := by native_decide
 
 /-! ## Total counts (Theorem 3.1.2*) -/
 
