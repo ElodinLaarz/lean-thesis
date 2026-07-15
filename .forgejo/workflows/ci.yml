@@ -23,15 +23,23 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest  # node:20-bookworm; supports actions and package installation
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Lean and build the declaration-check workspace
-        uses: leanprover/lean-action@v1
-      - name: Check and build the proof blueprint
+      - name: Checkout
+        run: git clone --depth 1 "http://x-access-token:${{ github.token }}@forgejo:3000/${{ github.repository }}.git" .
+      - name: Install the documentation toolchain
         run: |
           apt-get update
-          apt-get install -y python3 python3-pip graphviz libgraphviz-dev \
+          apt-get install -y elan python3 python3-pip graphviz libgraphviz-dev \
             build-essential texlive-binaries
           python3 -m pip install --break-system-packages -r blueprint/requirements.txt
+      - name: Build the declaration-check workspace
+        run: |
+          cd singular_moduli
+          lake exe cache get
+          lake build
+          cd ..
+          lake build LeanThesisBlueprint
+      - name: Check and build the proof blueprint
+        run: |
           leanblueprint web
           leanblueprint checkdecls
       - name: Build API documentation
