@@ -1,12 +1,22 @@
 # Lean / Lake
 .lake/
 lake-manifest.json
+!/lake-manifest.json
+!singular_moduli/docbuild/lake-manifest.json
 lean-toolchain
+!/lean-toolchain
 
 # Other
 *.pdf
+blueprint/web/
+blueprint/print/
+blueprint/src/web/
+blueprint/lean_decls
+blueprint/src/*.paux
+blueprint/src/*.aux
+blueprint/src/*.log
+singular_moduli/docbuild/.lake/
 .DS_Store
 
 # LLMs
 GEMINI.md
-CLAUDE.md

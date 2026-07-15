@@ -1,0 +1,210 @@
+% Lemma 3.2.6 (corrected/completed): solutions of x^2 = p^{2r} u mod p^s
+% Ground truth: thesis §3.2 Lemma 3.2.6 as corrected by ERRATA E3 / E6.5.
+% Parts (ii) and (iii) are promoted from inline arguments in thesis §3.3.
+
+\begin{definition}[Square-root count modulo a prime power]\label{lem-3-2-6-cardSqrts}
+  \lean{QuadraticOrder.cardSqrts}
+  \uses{notation}
+  Let $p$ be a rational prime and $s \geq 1$. For $c \in \mathbb{Z}/p^s$ set
+  \[
+    N_s(c) \;:=\; \#\{\, x \in \mathbb{Z}/p^s : x^2 = c \,\}.
+  \]
+  Here $v_p$ denotes the $p$-adic valuation on $\mathbb{Z}$ (with $v_p(0) = \infty$),
+  and for odd $p$ and $\gcd(u,p) = 1$ we write $\left(\frac{u}{p}\right)$ for the
+  Legendre symbol.
+\end{definition}
+
+\begin{lemma}[Lemma 3.2.6, corrected and completed]\label{lem-3-2-6}
+  \lean{QuadraticOrder.cardSqrts_prime, QuadraticOrder.cardSqrts_prime_pow_coprime, QuadraticOrder.cardSqrts_prime_pow_even_val, QuadraticOrder.cardSqrts_odd_val_eq_zero, QuadraticOrder.cardSqrts_zero, QuadraticOrder.cardSqrts_two, QuadraticOrder.cardSqrts_four_odd, QuadraticOrder.cardSqrts_eight, QuadraticOrder.cardSqrts_two_pow_even_val}
+  \uses{lem-3-2-6-cardSqrts, notation}
+  Let $p$ be a prime, $s \geq 1$ and $r \geq 0$ integers, and $u \in \mathbb{Z}$
+  with $\gcd(u,p) = 1$.
+
+  \emph{(i) (Even valuation.)} Assume $2r < s$. If $p$ is odd, then
+  \[
+    N_s\bigl(p^{2r}u\bigr) \;=\;
+    \begin{cases}
+      2p^{r} & \text{if } \left(\frac{u}{p}\right) = 1,\\
+      0      & \text{if } \left(\frac{u}{p}\right) = -1,
+    \end{cases}
+  \]
+  where the condition $\left(\frac{u}{p}\right) = 1$, i.e.\ $u$ a quadratic residue
+  \emph{modulo $p$}, is equivalent to $u$ being a quadratic residue modulo
+  $p^{s-2r}$ (and modulo every positive power of $p$).
+  If $p = 2$, the count is governed by the difference $s - 2r$, \emph{not} by $s$:
+  \[
+    N_s\bigl(2^{2r}u\bigr) \;=\;
+    \begin{cases}
+      2^{r}   & \text{if } s - 2r = 1 \text{ (no condition on } u\text{)},\\
+      2^{r+1} & \text{if } s - 2r = 2 \text{ and } u \equiv 1 \pmod{4},\\
+      2^{r+2} & \text{if } s - 2r \geq 3 \text{ and } u \equiv 1 \pmod{8},\\
+      0       & \text{if } s - 2r = 2,\ u \equiv 3 \pmod{4},
+                \text{ or } s - 2r \geq 3,\ u \not\equiv 1 \pmod{8}.
+    \end{cases}
+  \]
+
+  \emph{(ii) (Odd valuation.)} If $2r + 1 < s$, then $N_s\bigl(p^{2r+1}u\bigr) = 0$,
+  for every prime $p$ including $p = 2$.
+
+  \emph{(iii) (Zero.)} $N_s(0) = p^{\lfloor s/2 \rfloor}$.
+
+  Moreover, every $c \in \mathbb{Z}/p^s$ falls under exactly one of (i)--(iii):
+  a nonzero $c$ has a well-defined valuation $v := v_p(c) < s$ and unit part $u$,
+  and the hypotheses $2r < s$, resp.\ $2r + 1 < s$, are automatic; $c = 0$ is (iii).
+  All cases of (i) are instances of the reduction identity
+  \[
+    N_s\bigl(p^{2r}u\bigr) \;=\; p^{r}\cdot N_{s-2r}(u)
+    \qquad (2r < s,\ \gcd(u,p) = 1). \tag{$*$}
+  \]
+\end{lemma}
+
+\begin{proof}
+  \uses{lem-3-2-6-cardSqrts}
+  \textbf{Step 1: the reduction identity ($*$).}
+  Assume $2r < s$, $\gcd(u,p) = 1$, and put $t := s - 2r \geq 1$. Consider
+  \[
+    \rho : \mathbb{Z}/p^{s-r} \twoheadrightarrow \mathbb{Z}/p^{t}
+    \qquad\text{and}\qquad
+    \mu : \mathbb{Z}/p^{s-r} \to \mathbb{Z}/p^{s},
+  \]
+  where $\rho$ is reduction (well defined since $t \leq s - r$) and
+  $\mu(b) := p^{r}\tilde{b} \bmod p^{s}$ for any integer lift $\tilde{b}$ of $b$
+  (well defined: replacing $\tilde{b}$ by $\tilde{b} + p^{s-r}c$ changes
+  $p^{r}\tilde{b}$ by $p^{s}c$).
+
+  $\mu$ is injective: $\mu(b) = \mu(b')$ gives
+  $p^{s} \mid p^{r}(\tilde{b} - \tilde{b}')$, hence
+  $p^{s-r} \mid \tilde{b} - \tilde{b}'$, i.e.\ $b = b'$.
+
+  Every solution of $x^2 = p^{2r}u$ lies in the image of $\mu$: let $a$ be an
+  integer lift of a solution $x$, so $p^{s} \mid a^2 - p^{2r}u$. If
+  $v_p(a) \leq r - 1$, then $v_p(a^2) = 2v_p(a) \leq 2r - 2 < 2r = v_p(p^{2r}u)$,
+  so by the ultrametric equality for distinct valuations
+  $v_p(a^2 - p^{2r}u) = 2v_p(a) < 2r < s$, a contradiction. Hence
+  $v_p(a) \geq r$, and writing $a = p^{r}\tilde{b}$ we get $x = \mu(b)$ with
+  $b := \tilde{b} \bmod p^{s-r}$.
+
+  Solution criterion: for $b \in \mathbb{Z}/p^{s-r}$ with lift $\tilde{b}$,
+  \[
+    \mu(b)^2 = p^{2r}u \text{ in } \mathbb{Z}/p^{s}
+    \iff p^{s} \mid p^{2r}\bigl(\tilde{b}^2 - u\bigr)
+    \iff p^{t} \mid \tilde{b}^2 - u
+    \iff \rho(b)^2 = u \text{ in } \mathbb{Z}/p^{t},
+  \]
+  the last step because $\tilde{b}^2 \bmod p^{t}$ depends only on $\rho(b)$.
+  Therefore $\mu$ restricts to a bijection from
+  $\rho^{-1}\bigl(\{y \in \mathbb{Z}/p^{t} : y^2 = u\}\bigr)$ onto
+  $\{x \in \mathbb{Z}/p^{s} : x^2 = p^{2r}u\}$. Since $\rho$ is a surjective
+  homomorphism of cyclic groups of orders $p^{s-r}$ and $p^{t}$, each fiber has
+  exactly $p^{(s-r)-t} = p^{r}$ elements, proving ($*$).
+
+  \textbf{Step 2: square roots of a unit modulo $p^{t}$, $t \geq 1$.}
+  Any solution of $y^2 = u$ with $\gcd(u,p) = 1$ is a unit (else $p \mid u$).
+  So the solutions lie in the abelian group $G := (\mathbb{Z}/p^{t})^\times$ of
+  order $\varphi(p^{t}) = p^{t-1}(p-1)$. Let $\sigma : G \to G$,
+  $\sigma(y) = y^2$. Fibers of the homomorphism $\sigma$ over its image are
+  cosets of $\ker\sigma$; hence
+  \[
+    N_t(u) =
+    \begin{cases} |\ker\sigma| & u \in \sigma(G),\\ 0 & u \notin \sigma(G),\end{cases}
+    \qquad\text{and}\qquad
+    |\sigma(G)| = |G|/|\ker\sigma|. \tag{2.1}
+  \]
+
+  \emph{(a) Kernel, $p$ odd.} If $y^2 = 1$ with odd-prime modulus, an integer
+  lift $\tilde{y}$ satisfies $p^{t} \mid (\tilde{y}-1)(\tilde{y}+1)$; since
+  $\gcd(\tilde{y}-1, \tilde{y}+1) \mid 2$ and $p$ is odd, $p^{t}$ divides one
+  factor, so $y = \pm 1$, distinct as $p^{t} \geq 3$. Thus $|\ker\sigma| = 2$.
+
+  \emph{(b) Image, $p$ odd.} Claim: $u \in \sigma(G) \iff
+  \left(\frac{u}{p}\right) = 1$. The reduction
+  $\pi : (\mathbb{Z}/p^{t})^\times \to (\mathbb{Z}/p)^\times$ is surjective with
+  $|\ker\pi| = p^{t-1}$ odd; in a group of odd order $q$ every element is a
+  square, $h = (h^{(q+1)/2})^2$. If $u = v^2$ then $\pi(u) = \pi(v)^2$ is a
+  square mod $p$. Conversely if $\pi(u) = \bar{w}^2$, pick $w$ with
+  $\pi(w) = \bar{w}$; then $uw^{-2} \in \ker\pi$ is a square $v^2$, so
+  $u = (wv)^2$. With (a) and (2.1): $N_t(u) = 2$ if
+  $\left(\frac{u}{p}\right) = 1$, else $0$; in particular being a quadratic
+  residue mod $p^{t}$ is, for units, independent of $t \geq 1$.
+  (Equivalently: the two simple roots mod $p$ lift uniquely through each
+  modulus by Hensel's lemma, the route taken by the Lean proof.)
+
+  \emph{(c) $p = 2$, $t = 1$.} In $\mathbb{Z}/2$, odd $u$ means $u = 1$ and
+  $y^2 = y$, so $N_1(u) = 1$ unconditionally.
+
+  \emph{(d) $p = 2$, $t = 2$.} $(\mathbb{Z}/4)^\times = \{1,3\}$ with
+  $1^2 = 3^2 = 1$: $N_2(u) = 2$ if $u \equiv 1 \pmod 4$, else $0$.
+
+  \emph{(e) Kernel, $p = 2$, $t \geq 3$.} If $y^2 = 1$, an odd lift $\tilde{y}$
+  satisfies $2^{t} \mid (\tilde{y}-1)(\tilde{y}+1)$, a product of consecutive
+  even integers of which exactly one is $\equiv 2 \pmod 4$; the other therefore
+  has $2$-adic valuation $\geq t-1$, so $y \in \{\pm 1,\ 2^{t-1} \pm 1\}$.
+  Conversely $(\varepsilon + c\,2^{t-1})^2 = 1 + \varepsilon c\,2^{t} +
+  c^2 2^{2t-2} \equiv 1 \pmod{2^{t}}$ for $\varepsilon = \pm 1$, $c \in \{0,1\}$,
+  since $2t - 2 \geq t$. The four elements are pairwise distinct mod $2^{t}$
+  for $t \geq 3$ (pairwise differences $2$, $2^{t-1}$, $2^{t-1} \pm 2$). Thus
+  $|\ker\sigma| = 4$.
+
+  \emph{(f) Image, $p = 2$, $t \geq 3$.} Every odd $\tilde{y} = 2z+1$ has
+  $\tilde{y}^2 = 4z(z+1) + 1 \equiv 1 \pmod 8$ since $z(z+1)$ is even, so
+  $\sigma(G) \subseteq H := \{u \in G : u \equiv 1 \bmod 8\}$. By (2.1) and (e),
+  $|\sigma(G)| = 2^{t-1}/4 = 2^{t-3}$, while $|H| = 2^{t}/8 = 2^{t-3}$; hence
+  $\sigma(G) = H$ and $N_t(u) = 4$ if $u \equiv 1 \pmod 8$, else $0$.
+
+  \textbf{Step 3: part (i).} Combine ($*$) with Step 2 at $t = s - 2r$:
+  for odd $p$, $N_s(p^{2r}u) = 2p^{r}$ or $0$ according to
+  $\left(\frac{u}{p}\right)$; for $p = 2$ and $t = 1, 2, {\geq}3$ respectively,
+  $N_s(2^{2r}u) = 2^{r}\cdot 1$, $2^{r}\cdot 2\,[u \equiv 1 \bmod 4]$,
+  $2^{r}\cdot 4\,[u \equiv 1 \bmod 8]$, as displayed. (For $t = 1$ the condition
+  $u \equiv 1 \bmod 2$ is automatic.)
+
+  \textbf{Step 4: part (ii).} Assume $2r+1 < s$ and let $a$ lift a putative
+  solution, so $p^{s} \mid a^2 - p^{2r+1}u$. Then
+  $p^{2r+1} \mid a^2$, so $2v_p(a) \geq 2r+1$ and, being even,
+  $2v_p(a) \geq 2r+2 > 2r+1 = v_p(p^{2r+1}u)$. The ultrametric equality for
+  distinct valuations gives $v_p(a^2 - p^{2r+1}u) = 2r+1 < s$ (also when
+  $a = 0$, with $v_p(a^2) = \infty$), contradicting
+  $p^{s} \mid a^2 - p^{2r+1}u$. Hence no solutions exist.
+
+  \textbf{Step 5: part (iii).} Set $\kappa := \lceil s/2 \rceil$, so
+  $s - \kappa = \lfloor s/2 \rfloor$. If $x = p^{\kappa}y$ then
+  $x^2 = p^{2\kappa}y^2 = 0$ since $2\kappa \geq s$. Conversely $x^2 = 0$ with
+  lift $a$ gives $2v_p(a) \geq s$, hence $v_p(a) \geq \kappa$ as $v_p(a)$ is an
+  integer (or $\infty$), so $x \in p^{\kappa}(\mathbb{Z}/p^{s})$. Multiplication
+  by $p^{\kappa}$ on $\mathbb{Z}/p^{s}$ has kernel of order $p^{\kappa}$, so its
+  image — the solution set — has order $p^{s}/p^{\kappa} = p^{\lfloor s/2\rfloor}$.
+\end{proof}
+
+\begin{remark}[Divergences from the thesis]\label{lem-3-2-6-divergence}
+  \uses{lem-3-2-6}
+  (1) \emph{Glyph loss (ERRATA E6.5).} The thesis display prints
+  ``$2p^{r}$, when $p = 2$''; the intended condition is $p \neq 2$.
+  (2) \emph{Statement form (ERRATA E6.5).} The thesis routes the count through
+  ``$u$ a quadratic residue mod $p^{s-2r}$'' plus a count of
+  $\tilde{x} \in \mathbb{Z}/p^{s-r}$ with $\tilde{x}^2 \equiv 1 \bmod p^{s-2r}$,
+  i.e.\ through a chosen square root of $u$. For $p = 2$ the residue condition
+  must be parsed as $u \equiv 1 \bmod \min(2^{s-2r}, 8)$; the statement above
+  gives the counts directly with explicit congruence conditions.
+  (3) \emph{Completion.} Parts (ii) and (iii) are stated in the thesis only
+  inline in the proof of Theorem~3.1.2 (\S 3.3): the zero case as the stratum
+  count $p^{k - \lceil m/2\rceil}$, the odd-valuation case in the ramified
+  argument. They are promoted to explicit parts here, and the three parts
+  jointly compute $N_s(c)$ for every $c \in \mathbb{Z}/p^{s}$.
+\end{remark}
+
+\begin{remark}[Critical warning: the condition is on $s - 2r$, not $s$ (ERRATA E3)]\label{lem-3-2-6-e3-warning}
+  \uses{lem-3-2-6}
+  For $p = 2$ the case split in part (i) is governed by $s - 2r$. In \S 3.3 of
+  the thesis the lemma is applied with the modulus exponent $s = 2k - m$ varying
+  over the ideal strata while $r$ is fixed ($r = w - 1$ for $D$ odd, $r = w$
+  for $D \equiv 4 \bmod 8$, where $w = v_2(f)$). The thesis proof instead tested
+  ``$2k - m \in \{1, 2\}$'', i.e.\ read the condition as one on $s$; the two
+  readings agree only when $r = 0$ (i.e.\ $w = 1$ in the $D$-odd cases). The
+  dropped strata contribute nonzero counts ($2^{w-1}$ or $2^{w}$ for $D$ odd;
+  $2^{w}$ for $D \equiv 4 \bmod 8$, $m$ odd) for \emph{every} $w$, which is the
+  root cause of the two false 2-adic cases of thesis Theorem~3.1.2
+  (ERRATA E1, E2), confirmed by explicit enumeration at $d = -48, -192, -16$.
+  With the corrected counts, the $p = 2$ case of Theorem~3.1.2 coincides with
+  the odd-$p$ formulas evaluated at $p = 2$ (ERRATA E4). Any use of this lemma
+  must bind $r$ and $s$ explicitly before case-splitting.
+\end{remark}

@@ -10,7 +10,11 @@ jobs:
     runs-on: lean   # leanprovercommunity/lean:latest (no node -> manual checkout)
     steps:
       - name: Checkout
-        run: git clone --depth 1 "http://x-access-token:${{ github.token }}@forgejo:3000/${{ github.repository }}.git" .
+        run: |
+          git init .
+          git remote add origin "http://x-access-token:${{ github.token }}@forgejo:3000/${{ github.repository }}.git"
+          git fetch --depth 1 origin "${{ github.sha }}"
+          git checkout --detach FETCH_HEAD
       - name: Build singular_moduli
         run: |
           cd singular_moduli
@@ -18,3 +22,35 @@ jobs:
           # otherwise lake would compile all of Mathlib from source.
           lake exe cache get
           lake build
+
+  docs:
+    needs: ci
+    runs-on: ubuntu-latest  # node:20-bookworm; supports actions and package installation
+    steps:
+      - name: Checkout
+        run: |
+          git init .
+          git remote add origin "http://x-access-token:${{ github.token }}@forgejo:3000/${{ github.repository }}.git"
+          git fetch --depth 1 origin "${{ github.sha }}"
+          git checkout --detach FETCH_HEAD
+      - name: Install the documentation toolchain
+        run: |
+          apt-get update
+          apt-get install -y elan python3 python3-pip graphviz libgraphviz-dev \
+            build-essential texlive-binaries
+          python3 -m pip install --break-system-packages -r blueprint/requirements.txt
+      - name: Build the declaration-check workspace
+        run: |
+          cd singular_moduli
+          lake exe cache get
+          lake build
+          cd ..
+          lake build LeanThesisBlueprint
+      - name: Check and build the proof blueprint
+        run: |
+          leanblueprint web
+          leanblueprint checkdecls
+      - name: Build API documentation
+        run: |
+          cd singular_moduli/docbuild
+          DOCGEN_SRC=file lake build QuadraticOrder:docs

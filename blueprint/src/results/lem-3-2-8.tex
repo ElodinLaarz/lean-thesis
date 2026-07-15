@@ -1,0 +1,154 @@
+% lem-3-2-8: Equality criterion for principal local ideals (thesis Lemma 3.2.8).
+% Blueprint fragment; \input into the results chapter. No preamble here.
+
+\begin{lemma}[Equality criterion for principal local ideals]
+  \label{lem-3-2-8}
+  \lean{QuadraticOrder.map_span_tau_sub_eq_iff}
+  \uses{notation, lem-3-2-2, lem-3-2-7, lem-3-2-4}
+  Let $d < 0$ be a quadratic discriminant ($d \equiv 0, 1 \bmod 4$), let
+  $\mathcal{O} = \mathcal{O}_d = \mathbb{Z}[\tau]$ with $\tau = \tfrac{d+\sqrt d}{2}$,
+  and let $g(x) = x^2 - dx + \tfrac{d^2-d}{4}$ be the minimal polynomial of $\tau$.
+  Writing $\bar\tau := d - \tau$ for the conjugate of $\tau$ and $N$ for the norm of
+  $K = \mathbb{Q}(\sqrt d)$, we have
+  $N(\tau - t) = (\tau - t)(\bar\tau - t) = g(t) \neq 0$ for every
+  $t \in \mathbb{Z}$. Write
+  $d = Df^2$ with $D$ fundamental and $f = \operatorname{cond}(d)$, and let $p$ be a
+  rational prime with $p \mid f$ (standing hypothesis of \S 3.2 of the thesis, made
+  explicit per ERRATA E6.2). Let $\mathfrak{p}$ be the unique prime of $\mathcal{O}$
+  above $p$, so that $\mathcal{O}_\mathfrak{p} = \mathbb{Z}_{(p)}[\tau]$ by
+  Lemma~\ref{lem-3-2-2}.
+
+  Then for all $\alpha, \beta \in \mathbb{Z}$ and all integers $r \geq 0$,
+  \[
+    p^r(\tau - \alpha)\,\mathcal{O}_\mathfrak{p} \;=\; p^r(\tau - \beta)\,\mathcal{O}_\mathfrak{p}
+    \quad\Longleftrightarrow\quad
+    v_p\bigl(g(\alpha)\bigr) = v_p\bigl(g(\beta)\bigr)
+    \ \text{ and }\
+    \alpha \equiv \beta \pmod{p^{\,v_p(g(\alpha))}} .
+  \]
+\end{lemma}
+
+The thesis proof is a two-line delegation to Lemma~\ref{lem-3-2-7} and the uniqueness
+clause of Lemma~\ref{lem-3-2-4}; the proof below spells out the contraction
+normal-form identification that the delegation hides (Step~2), which a formal proof
+needs explicitly. The hypothesis $p \mid f$ is used only through the identification
+$\mathcal{O}_\mathfrak{p} = \mathbb{Z}_{(p)}[\tau]$: every step below happens inside
+$\mathbb{Z}_{(p)}[\tau]$, so the criterion for the mapped ideals
+$p^r(\tau-\alpha)\,\mathbb{Z}_{(p)}[\tau]$ holds for every prime $p$; the Lean
+declaration \texttt{map\_span\_tau\_sub\_eq\_iff} nevertheless follows this
+statement --- it is phrased at the localization of $\mathcal{O}$ at $\mathfrak{p}$
+and carries the standing hypothesis $p \mid f$ --- because the statement about the
+localization of $\mathcal{O}$ at a prime ideal is false for split $p$ (e.g.\ $d = -4$, $p = 5$,
+$\mathfrak{p} = (5, \tau)$: $(\tau-1)\mathcal{O}_\mathfrak{p} =
+(\tau-2)\mathcal{O}_\mathfrak{p} = \mathcal{O}_\mathfrak{p}$ although
+$v_5(g(1)) = 1 \neq 0 = v_5(g(2))$).
+
+\begin{proof}
+  \uses{notation, lem-3-2-2, lem-3-2-7, lem-3-2-4}
+  Put $\nu := v_p(g(\alpha))$ and $\mu := v_p(g(\beta))$, both finite since
+  $g(\alpha), g(\beta) \neq 0$ ($g$ has no rational roots as $d < 0$), and write
+  $g(\alpha) = p^{\nu}u$ with $u \in \mathbb{Z}$, $p \nmid u$.
+
+  \textbf{Step 0 (bases).}
+  $\{1, \tau\}$ is a $\mathbb{Z}$-basis of $\mathcal{O}$ and a $\mathbb{Q}$-basis of
+  $K = \mathbb{Q}(\sqrt d)$; for $t \in \mathbb{Z}$ the unimodular change of basis
+  shows the same for $\{1, \tau - t\}$. Hence
+  $\mathcal{O} = \mathbb{Z} \oplus \mathbb{Z}(\tau - t)$ and
+  $\mathcal{O}_\mathfrak{p} = \mathbb{Z}_{(p)} \oplus \mathbb{Z}_{(p)}(\tau - t)$,
+  coordinates in $K$ are unique, and an element of $\mathcal{O}_\mathfrak{p}$ lies in
+  $\mathcal{O}$ iff both coordinates are integers. Also
+  $\mathbb{Z} \cap p^{j}\mathbb{Z}_{(p)} = p^{j}\mathbb{Z}$ for all $j \geq 0$.
+
+  \textbf{Step 1 ($p$-power membership).}
+  Since $(\tau - \alpha)(\bar\tau - \alpha) = N(\tau - \alpha) = g(\alpha) = p^{\nu}u$
+  with $\bar\tau - \alpha = (d - \alpha) - \tau \in \mathcal{O}$ and
+  $u^{-1} \in \mathbb{Z}_{(p)}$, we get
+  \[
+    p^{\nu} \;=\; (\tau - \alpha)\cdot u^{-1}(\bar\tau - \alpha)
+    \;\in\; (\tau - \alpha)\,\mathcal{O}_\mathfrak{p}.
+  \]
+
+  \textbf{Step 2 (contraction in normal form).}
+  Set $k_\alpha := r + \nu$, $m_\alpha := 2r + \nu$ and
+  $\mathfrak{a}_\alpha := p^{k_\alpha}\mathbb{Z} \oplus p^{r}(\tau - \alpha)\mathbb{Z}
+  \subseteq \mathcal{O}$. We claim
+  \[
+    p^r(\tau - \alpha)\,\mathcal{O}_\mathfrak{p} \cap \mathcal{O}
+    \;=\; \mathfrak{a}_\alpha,
+  \]
+  and that $\mathfrak{a}_\alpha$ is an $\mathcal{O}$-ideal of index $p^{m_\alpha}$
+  with $\mathfrak{a}_\alpha \cap \mathbb{Z} = p^{k_\alpha}\mathbb{Z}$; that is,
+  $\mathfrak{a}_\alpha$ is exactly the normal-form ideal
+  $(p^{k}, p^{m-k}(\tau - A))$ of Lemma~\ref{lem-3-2-4} with $k = k_\alpha$,
+  $m = m_\alpha$ (so $m/2 \leq k \leq m$, $m - k = r$, $2k - m = \nu$) and residue
+  class $[A] = [\alpha] \in \mathbb{Z}/p^{\nu}$, the root condition
+  $g(\alpha) \equiv 0 \bmod p^{2k-m}$ holding by definition of $\nu$, and $p^{k}$
+  being the minimal positive integer of the ideal as in Lemma~\ref{lem-3-2-7}.
+
+  ($\supseteq$) $p^{r}(\tau - \alpha)$ lies in both sides since $r \geq 0$ and
+  $\alpha \in \mathbb{Z}$; and $p^{k_\alpha} = p^{r}p^{\nu} \in
+  p^{r}(\tau-\alpha)\mathcal{O}_\mathfrak{p} \cap \mathbb{Z}$ by Step~1. The
+  left-hand side is an additive group, so it contains $\mathfrak{a}_\alpha$.
+
+  ($\subseteq$) Let $\xi = p^{r}(\tau - \alpha)\gamma \in \mathcal{O}$ with
+  $\gamma = e_0 + e_1(\tau - \alpha)$, $e_0, e_1 \in \mathbb{Z}_{(p)}$ (Step~0).
+  From $\tau^2 = d\tau - \tfrac{d^2 - d}{4}$ one computes
+  $(\tau - \alpha)^2 = (d - 2\alpha)(\tau - \alpha) - g(\alpha)$, whence
+  \[
+    \xi \;=\; \underbrace{-\,e_1 u\, p^{k_\alpha}}_{b_0}\cdot 1
+    \;+\; \underbrace{p^{r}\bigl(e_0 + e_1(d - 2\alpha)\bigr)}_{b_1}\cdot(\tau - \alpha),
+    \qquad b_0 \in p^{k_\alpha}\mathbb{Z}_{(p)},\; b_1 \in p^{r}\mathbb{Z}_{(p)}.
+  \]
+  As $\xi \in \mathcal{O}$, Step~0 gives $b_0, b_1 \in \mathbb{Z}$, hence
+  $b_0 \in p^{k_\alpha}\mathbb{Z}$ and $b_1 \in p^{r}\mathbb{Z}$, so
+  $\xi = (b_0 p^{-k_\alpha})\,p^{k_\alpha} + (b_1 p^{-r})\,p^{r}(\tau - \alpha)
+  \in \mathfrak{a}_\alpha$ with integer coefficients.
+
+  $\mathfrak{a}_\alpha$ is an ideal: it is $\tau$-stable by
+  \[
+    \tau\, p^{k_\alpha} = \alpha\, p^{k_\alpha} + p^{\nu}\,\bigl[p^{r}(\tau-\alpha)\bigr],
+    \qquad
+    \tau\, p^{r}(\tau - \alpha) = -u\, p^{k_\alpha} + (d - \alpha)\,\bigl[p^{r}(\tau-\alpha)\bigr],
+  \]
+  all coefficients integral (this is Remark~3.2.5 of the thesis for these
+  generators). Its index is $p^{k_\alpha}\cdot p^{r} = p^{m_\alpha}$ (diagonal basis
+  matrix in the basis $\{1, \tau - \alpha\}$). Its integers: an element
+  $c_1 p^{k_\alpha} + c_2 p^{r}(\tau - \alpha)$ is rational iff $c_2 = 0$, so
+  $\mathfrak{a}_\alpha \cap \mathbb{Z} = p^{k_\alpha}\mathbb{Z}$; in particular the
+  minimal positive integer of $p^{r}(\tau - \alpha)\mathcal{O}_\mathfrak{p}$ is
+  $p^{\,r + v_p(N(\tau - \alpha))}$, recovering Lemma~\ref{lem-3-2-7}. This proves
+  the claim.
+
+  \textbf{Step 3 (sufficiency).}
+  Assume $\nu = \mu$ and $\beta = \alpha + t p^{\nu}$, $t \in \mathbb{Z}$. By Step~1,
+  $\tau - \beta = (\tau - \alpha) - t p^{\nu} \in (\tau - \alpha)\mathcal{O}_\mathfrak{p}$,
+  so $(\tau - \beta)\mathcal{O}_\mathfrak{p} \subseteq (\tau - \alpha)\mathcal{O}_\mathfrak{p}$;
+  exchanging $\alpha$ and $\beta$ (legitimate since $v_p(g(\beta)) = \nu$ as well)
+  gives the reverse inclusion, and multiplying by $p^{r}$ concludes.
+
+  \textbf{Step 4 (necessity).}
+  Assume $J := p^r(\tau - \alpha)\mathcal{O}_\mathfrak{p}
+  = p^r(\tau - \beta)\mathcal{O}_\mathfrak{p}$.
+
+  (i) By Lemma~\ref{lem-3-2-7} (or Step~2), the minimal positive integer of $J$
+  equals both $p^{r+\nu}$ and $p^{r+\mu}$, so $\nu = \mu$. If $\nu = 0$ the
+  congruence is modulo $p^{0} = 1$ and there is nothing more to prove; assume
+  $\nu \geq 1$ and set $k := r + \nu$.
+
+  (ii) Intersecting $J$ with $\mathcal{O}$ and applying Step~2 on each side,
+  \[
+    p^{k}\mathbb{Z} \oplus p^{r}(\tau - \alpha)\mathbb{Z}
+    \;=\; J \cap \mathcal{O}
+    \;=\; p^{k}\mathbb{Z} \oplus p^{r}(\tau - \beta)\mathbb{Z}.
+  \]
+  In particular $p^{r}(\tau - \alpha) = a_1 p^{k} + a_2\, p^{r}(\tau - \beta)$ for
+  some $a_1, a_2 \in \mathbb{Z}$ --- the ``$\mathcal{O}$-combinations are
+  $\mathbb{Z}$-combinations'' step that Remark~3.2.5 supplies inside
+  Lemma~\ref{lem-3-2-4}, immediate here because the contraction is computed as a
+  $\mathbb{Z}$-span. Comparing $\tau$-coordinates in the basis $\{1, \tau\}$ gives
+  $p^{r} = a_2 p^{r}$, so $a_2 = 1$; the constant coordinates then give
+  $p^{r}(\beta - \alpha) = a_1 p^{k}$, i.e.\
+  $\beta - \alpha = a_1 p^{k - r} = a_1 p^{\nu}$, which is the uniqueness computation
+  of Lemma~\ref{lem-3-2-4} applied to the two normal-form presentations of
+  $J \cap \mathcal{O}$. Hence $\alpha \equiv \beta \bmod p^{\nu}$.
+\end{proof}

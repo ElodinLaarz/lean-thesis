@@ -1,0 +1,209 @@
+% Theorem 3.1.2* (CORRECTED): all ideals of norm p^m in O_d, p | f.
+% Corrected p-uniform form per ERRATA E1, E2, E4. Do NOT restore the thesis's
+% separate five-case 2-adic display: two of its branches are false as stated.
+
+\begin{theorem}[Ideals of norm $p^m$ in $\mathcal{O}_d$, $p \mid f$; corrected Theorem 3.1.2]
+\label{thm-3-1-2}
+\lean{QuadraticOrder.idealCount_prime_pow_of_le, QuadraticOrder.idealCount_prime_pow_ramified, QuadraticOrder.idealCount_prime_pow_inert, QuadraticOrder.idealCount_prime_pow_split}
+\uses{notation, infra-index}
+Let $D < 0$ be a fundamental discriminant, $K = \mathbb{Q}(\sqrt D)$ with maximal
+order $\mathcal{O}_K = \mathbb{Z}[(D + \sqrt D)/2]$, let $f \geq 1$ and
+$d := D f^2$, and let $\mathcal{O}_d = \mathbb{Z}[\tau]$, $\tau := (d + \sqrt d)/2$,
+be the order of discriminant $d$ and conductor $f$, so that
+$\mathcal{O}_d \cong \mathbb{Z}[x]/(g)$ with
+$g(x) := x^2 - d\,x + \tfrac{d^2 - d}{4}$. Write
+$[\mathcal{O}_d : \mathfrak a]$ for the (finite) index of a nonzero ideal
+$\mathfrak a \subseteq \mathcal{O}_d$, i.e.\ its norm.
+
+Let $p$ be a prime with $p \mid f$, set $w := v_p(f) \geq 1$, let $m \geq 0$, and
+let $\varepsilon := 1$ if $m$ is even and $\varepsilon := 0$ if $m$ is odd. Define
+\[
+v := v_p(d/4) :=
+\begin{cases}
+v_p(d) & p \text{ odd},\\
+v_2(d) - 2 & p = 2 \quad (\text{legitimate: } 2 \mid f \Rightarrow 4 \mid d),
+\end{cases}
+\qquad\text{so } v =
+\begin{cases}
+v_p(D) + 2w & p \text{ odd},\\
+v_2(D) + 2w - 2 & p = 2.
+\end{cases}
+\]
+Then the number of ideals of norm $p^m$ in $\mathcal{O}_d$ (invertible or not) is
+given as follows.
+\begin{itemize}
+\item If $v \geq m$:
+\[
+\#\{\mathfrak a \subseteq \mathcal{O}_d : [\mathcal{O}_d : \mathfrak a] = p^m\}
+= \sum_{i=0}^{\lfloor m/2 \rfloor} p^i
+= \frac{p^{\lfloor m/2 \rfloor + 1} - 1}{p - 1}.
+\]
+\item If $v < m$:
+\[
+\#\{\mathfrak a \subseteq \mathcal{O}_d : [\mathcal{O}_d : \mathfrak a] = p^m\}
+= \begin{cases}
+\displaystyle\sum_{i=0}^{w} p^i
+  & p \text{ ramified in } \mathcal{O}_K \ (p \mid D),\\[2ex]
+\displaystyle\sum_{i=0}^{w + \varepsilon - 1} p^i
+  & p \text{ inert in } \mathcal{O}_K,\\[2ex]
+\displaystyle\sum_{i=0}^{w + \varepsilon - 1} p^i + p^w\,(m + 1 - 2w - \varepsilon)
+  & p \text{ split in } \mathcal{O}_K.
+\end{cases}
+\]
+\end{itemize}
+The statement is uniform in $p$: there is no separate display for $p = 2$.
+\end{theorem}
+
+\begin{proof}
+\uses{lem-3-2-4, lem-3-2-6}
+Write $r(p^m) := \#\{\mathfrak a \subseteq \mathcal{O}_d :
+[\mathcal{O}_d : \mathfrak a] = p^m\}$ and $\mu := m \bmod 2 = 1 - \varepsilon$.
+
+\emph{Step 1 (reduction to root counting).} By the normal-form bijection of
+Lemma~\ref{lem-3-2-4} (in its corrected form, which applies to \emph{all} ideals of
+index $p^m$ --- since $p \mid f$, the polynomial $g \bmod p$ is the square of a linear
+polynomial, so $\mathcal{O}_d/p\mathcal{O}_d$ is local, there is a unique prime of
+$\mathcal{O}_d$ above $p$, and every ideal of $p$-power index is primary for it ---
+and which includes the minimal-integer normalization
+$\mathfrak a_{k,A} \cap \mathbb{Z} = p^k\mathbb{Z}$ preventing double counting), the
+ideals of index $p^m$ are exactly the
+\[
+\mathfrak a_{k,A} = p^k\,\mathbb{Z} \oplus p^{m-k}(\tau - A)\,\mathbb{Z},
+\qquad
+\lceil m/2 \rceil \leq k \leq m,\quad
+[A] \in \mathbb{Z}/p^{2k-m},\quad
+g(A) \equiv 0 \bmod p^{2k-m},
+\]
+each exactly once. Hence
+\[
+r(p^m) = \sum_{k=\lceil m/2 \rceil}^{m} N_k,
+\qquad
+N_k := \#\{A \in \mathbb{Z}/p^{2k-m} : g(A) \equiv 0 \bmod p^{2k-m}\}.
+\]
+Set $s := 2k - m$; as $k$ runs over its range, $s$ runs over the integers of the same
+parity as $m$ with $\mu \leq s \leq m$, and
+$k - \lceil m/2 \rceil = (s - \mu)/2 = \lfloor s/2 \rfloor$.
+
+\emph{Step 2 (completing the square).} In $\mathbb{Z}[\tfrac12][x]$ one has
+$g(x) = (x - d/2)^2 - d/4$. If $p$ is odd, $2$ is invertible mod $p^s$ and the
+substitution $x \mapsto x + d\,\bar 2$ (with $\bar 2 := 2^{-1} \bmod p^s$) is a
+bijection of $\mathbb{Z}/p^s$; if $p = 2$ then $4 \mid d$ and the identity is exact
+in $\mathbb{Z}[x]$. In both cases
+\[
+N_k = \#\{y \in \mathbb{Z}/p^s : y^2 \equiv q \bmod p^s\},
+\qquad
+q := \begin{cases} d\,\bar 4 & p \text{ odd},\\ d/4 & p = 2,\end{cases}
+\]
+and any integer lift of $q$ has $p$-adic valuation exactly $v$ when $v < s$, while
+$q \equiv 0 \bmod p^s$ when $v \geq s$.
+
+\emph{Step 3 (valuation dichotomy; the case $v \geq m$).} Put
+$\kappa := (v + m)/2$, so $k \leq \kappa \iff s \leq v$. If $s \leq v$ then
+$y^2 \equiv 0 \bmod p^s$, whose solutions are exactly the multiples of
+$p^{\lceil s/2 \rceil}$, giving
+$N_k = p^{\lfloor s/2 \rfloor} = p^{\,k - \lceil m/2 \rceil}$. If $v \geq m$ every
+$k$ in range satisfies $s \leq m \leq v$, so
+\[
+r(p^m) = \sum_{k = \lceil m/2 \rceil}^{m} p^{\,k - \lceil m/2 \rceil}
+= \sum_{i=0}^{\lfloor m/2 \rfloor} p^i,
+\]
+proving the first branch (this also covers $m = 0$). Assume $v < m$ from now on.
+
+\emph{Step 4 (the sub-$\kappa$ geometric block).} The terms with $k \leq \kappa$
+total $\Sigma_0 := \sum_{i=0}^{i_0} p^i$ with
+$i_0 := \lfloor (v+m)/2 \rfloor - \lceil m/2 \rceil$ (an empty sum, $= 0$, if
+$i_0 < 0$). A direct computation gives: $i_0 = (v-1)/2$ if $v$ is odd (both parities
+of $m$), and $i_0 = v/2 - 1 + \varepsilon$ if $v$ is even.
+
+\emph{Step 5 (beyond $\kappa$).} The remaining terms have
+$s \in S := \{s : v < s \leq m,\ s \equiv m \bmod 2\}$, which is nonempty; its least
+element $s_1$ is $v+1$ or $v+2$.
+
+\emph{(a) $v$ odd} --- exactly the cases $p$ odd with $p \mid D$ (then $v_p(D) = 1$,
+$v = 2w+1$) and $p = 2$ with $D \equiv 8 \bmod 16$ ($v = 2w+1$); both ramified. Then
+$N_k = 0$ for all $s > v$: a solution would force $v_p(y^2) = v$ by the ultrametric
+inequality (any integer lift of $q$ has valuation $v < s$), impossible since
+$v_p(y^2)$ is even. Hence $r(p^m) = \Sigma_0 = \sum_{i=0}^{w} p^i$, the ramified
+formula.
+
+\emph{(b) $v$ even.} Write $r := v/2$ and choose an integer $u$ coprime to $p$ with
+$q \equiv p^{2r} u \bmod p^s$. Concretely: for $p$ odd unramified, $r = w$ and
+$u \equiv D (f/p^w)^2\, \bar 4 \bmod p$, so the Legendre symbol satisfies
+$(\tfrac up) = (\tfrac Dp)$; for $p = 2$ with $D$ odd, $r = w - 1$ and, writing
+$f = 2^w f'$ with $f'$ odd, $u = D f'^2 \equiv D \bmod 8$; for $p = 2$ with
+$D \equiv 4 \bmod 8$, $r = w$ and $u = (D/4) f'^2 \equiv 3 \bmod 4$. Since
+$2r = v < s$ on $S$, Lemma~\ref{lem-3-2-6} (corrected form) applies: for $p$ odd
+there are $2p^r$ solutions if $(\tfrac up) = 1$ and none otherwise; for $p = 2$
+there are $2^r$ solutions if $s - 2r = 1$ (unconditionally), $2^{r+1}$ if
+$s - 2r = 2$ and $u \equiv 1 \bmod 4$, $2^{r+2}$ if $s - 2r \geq 3$ and
+$u \equiv 1 \bmod 8$, and none otherwise. \textbf{The case distinction is governed by
+$s - 2r$, not by $s$}; failing to track this is precisely the error in the thesis
+proof (ERRATA E3).
+
+\emph{(b1) $p$ odd inert} ($(\tfrac Dp) = -1$): no contributions, and
+$r(p^m) = \Sigma_0 = \sum_{i=0}^{w-1+\varepsilon} p^i$, the inert formula
+($v = 2w$).
+
+\emph{(b2) $p$ odd split} ($(\tfrac Dp) = 1$): every $s \in S$ contributes $2p^w$.
+Counting, $\#S = (m + 1 - 2w - \varepsilon)/2 \geq 1$, so
+\[
+r(p^m) = \sum_{i=0}^{w-1+\varepsilon} p^i
++ 2p^w \cdot \frac{m + 1 - 2w - \varepsilon}{2}
+= \sum_{i=0}^{w+\varepsilon-1} p^i + p^w (m + 1 - 2w - \varepsilon),
+\]
+the split formula.
+
+\emph{(b3) $p = 2$, $D \equiv 4 \bmod 8$} (ramified, $v = 2w$, $r = w$,
+$u \equiv 3 \bmod 4$): the only admissible value is $s - 2r = 1$, i.e.\
+$s = 2w + 1 \in S$ iff $m$ is odd (and then $2w + 1 \leq m$ since $v = 2w < m$),
+contributing $2^w$; the cases $s - 2r = 2$ and $s - 2r \geq 3$ are excluded by
+$u \equiv 3 \bmod 4$. Hence
+\[
+r(2^m) = \sum_{i=0}^{w-1+\varepsilon} 2^i + (1 - \varepsilon)2^w
+= \sum_{i=0}^{w} 2^i
+\]
+for both parities of $m$ (for $m$ even this is $\Sigma_0$ alone; for $m$ odd it is
+$(2^w - 1) + 2^w$), the ramified formula. This corrects ERRATA E2: the thesis
+claimed $2^{w+\varepsilon} - 1$, wrong for $m$ odd.
+
+\emph{(b4) $p = 2$, $D$ odd} ($v = 2w - 2$, $r = w - 1$, $u \equiv D \bmod 8$; here
+$s - 2r = s - 2w + 2$). By Lemma~\ref{lem-3-2-6}: $s = 2w - 1$ ($\in S$ iff $m$ odd)
+contributes $2^{w-1}$ unconditionally; $s = 2w$ ($\in S$ iff $m$ even) contributes
+$2^w$ since $u \equiv D \equiv 1 \bmod 4$; and each $s \geq 2w + 1$ in $S$
+contributes $2^{w+1}$ if $D \equiv 1 \bmod 8$ ($2$ split) and $0$ if
+$D \equiv 5 \bmod 8$ ($2$ inert). In particular the least element $s_1$ of $S$
+contributes exactly $2^{\,w - 1 + \varepsilon}$ \emph{for every} $w \geq 1$ --- the
+term the thesis found only at $w = 1$ (ERRATA E1/E3). Therefore, with
+$\Sigma_0 = \sum_{i=0}^{w-2+\varepsilon} 2^i = 2^{w-1+\varepsilon} - 1$ (empty when
+$w = 1$, $m$ odd):
+\[
+\text{inert:}\quad
+r(2^m) = (2^{w-1+\varepsilon} - 1) + 2^{w-1+\varepsilon}
+= \sum_{i=0}^{w+\varepsilon-1} 2^i;
+\]
+\[
+\text{split:}\quad
+r(2^m) = (2^{w-1+\varepsilon} - 1) + 2^{w-1+\varepsilon}
++ 2^{w+1}\cdot\frac{m+1-2w-\varepsilon}{2}
+= \sum_{i=0}^{w+\varepsilon-1} 2^i + 2^w(m + 1 - 2w - \varepsilon),
+\]
+where the number of $s \in S$ with $s \geq 2w+1$ is
+$(m + 1 - 2w - \varepsilon)/2 \geq 0$, exactly as in (b2).
+
+Cases (a) and (b3) together are exactly ``$p$ ramified''; (b1) and the inert half of
+(b4) are ``$p$ inert''; (b2) and the split half of (b4) are ``$p$ split''. Every
+total matches the claimed $p$-uniform display.
+\end{proof}
+
+\paragraph{Divergence from the thesis.} This node states the corrected form of
+Theorem 3.1.2 (ERRATA E1, E2, E4): the thesis's $2$-adic inert branch for
+$w \neq 1$ ($2^{w-1+\varepsilon} - 1$) is replaced by $2^{w+\varepsilon} - 1$ for all
+$w \geq 1$ (E1); the $2$-adic ramified branch with $D \equiv 4 \bmod 8$
+($2^{w+\varepsilon} - 1$) is replaced by $2^{w+1} - 1$ for both parities of $m$ (E2);
+after these corrections the five-case $2$-adic display coincides with the odd-$p$
+formulas at $p = 2$ and is therefore dissolved into the single $p$-uniform statement
+above (E4). Sanity anchors (verified by explicit enumeration; ERRATA E1/E2):
+$d = -16$, $m = 3 \mapsto 3$; $d = -48$, $m = 3 \mapsto 3$ and $m = 4 \mapsto 7$;
+$d = -192$, $m = 5 \mapsto 7$. These are enforced at build time as
+\texttt{native\_decide} regression vectors in
+\texttt{QuadraticOrder/Harness/Regression.lean}.

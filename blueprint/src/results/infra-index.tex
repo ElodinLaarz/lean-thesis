@@ -1,0 +1,347 @@
+% infra-index — The index layer: ideal index, finiteness, and multiplicativity.
+% Infrastructure (layer L0). NOT in the thesis: used silently in thesis §3.1–3.3.
+% Part (4) is the unstated bridge lemma ERRATA E6.4(a).
+%
+% Standing notation (restated from the `notation' node): $d < 0$, $d \equiv 0, 1 \pmod 4$;
+% $g(x) = x^2 - dx + \frac{d^2-d}{4}$; $\mathcal{O} = \mathcal{O}_d = \mathbb{Z}[x]/(g) =
+% \mathbb{Z}[\tau]$, $\tau = \frac{d+\sqrt{d}}{2}$, with $\mathbb{Z}$-basis $\{1, \tau\}$;
+% $d = Df^2$ with $D$ fundamental and $f \ge 1$ the conductor; $w = v_p(f)$;
+% $N(\alpha) = \alpha\bar{\alpha}$ with $\bar{\tau} = d - \tau$.
+
+\begin{definition}[Ideal index]\label{infra-index}
+  \lean{QuadraticOrder.idealIndex}
+  \uses{notation}
+  Let $d < 0$ be an integer with $d \equiv 0$ or $1 \pmod 4$ and let
+  $\mathcal{O} = \mathcal{O}_d = \mathbb{Z}[\tau]$, $\tau = \tfrac{d + \sqrt{d}}{2}$, be the
+  imaginary quadratic order of discriminant $d$, a free $\mathbb{Z}$-module with basis
+  $\{1, \tau\}$. For an ideal $\mathfrak{a} \subseteq \mathcal{O}$, the \emph{index} (or
+  \emph{norm}) of $\mathfrak{a}$ is
+  \[
+    [\mathcal{O} : \mathfrak{a}] \;:=\; \#\bigl(\mathcal{O}/\mathfrak{a}\bigr)
+    \in \mathbb{Z}_{\ge 0},
+  \]
+  the cardinality of the additive quotient group when finite and $0$ when infinite (the
+  \texttt{Nat.card} convention); equivalently, the index of $\mathfrak{a}$ as an additive
+  subgroup of $(\mathcal{O}, +) \cong \mathbb{Z}^2$. The thesis writes $N(\mathfrak{a})$ for
+  this quantity, and ``$\mathfrak{a}$ has norm $p^m$'' means
+  $[\mathcal{O} : \mathfrak{a}] = p^m$.
+\end{definition}
+
+\begin{lemma}[Basic facts about the index]\label{infra-index-basic}
+  \uses{infra-index}
+  Let $\mathfrak{a} \subseteq \mathcal{O}$ be an ideal.
+  \begin{enumerate}
+    \item For an integer $c \ge 1$, $[\mathcal{O} : c\mathcal{O}] = c^2$.
+    \item If $\mathfrak{a} \ne 0$ then $[\mathcal{O} : \mathfrak{a}] \ge 1$, i.e.\ the
+      quotient is finite.
+    \item (Lagrange) If $[\mathcal{O} : \mathfrak{a}] = n \ge 1$ then $n \in \mathfrak{a}$,
+      hence $n\mathcal{O} \subseteq \mathfrak{a}$.
+    \item $[\mathcal{O} : \mathfrak{a}] = 1$ if and only if $\mathfrak{a} = \mathcal{O}$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  \uses{infra-index, notation}
+  (1) In the $\mathbb{Z}$-basis $\{1, \tau\}$ we have
+  $\mathcal{O}/c\mathcal{O} \cong (\mathbb{Z}/c)^2$, of order $c^2$.
+
+  (2) Pick $\alpha \in \mathfrak{a}$, $\alpha \ne 0$. Then
+  $N(\alpha) = \alpha\bar{\alpha} \in \mathfrak{a} \cap \mathbb{Z}$ (it lies in
+  $\mathfrak{a}$ because $\mathfrak{a}$ is an ideal and $\bar{\alpha} \in \mathcal{O}$), and
+  $N(\alpha) > 0$ because the norm form
+  $N(a + b\tau) = a^2 + dab + \tfrac{d^2-d}{4}b^2$ has discriminant $d < 0$ and is positive
+  definite. With $c := N(\alpha)$ we get $c\mathcal{O} \subseteq \mathfrak{a}$, so
+  $\mathcal{O}/\mathfrak{a}$ is a quotient group of the finite group
+  $\mathcal{O}/c\mathcal{O}$ and is finite, of order dividing $c^2$.
+
+  (3) The additive group $\mathcal{O}/\mathfrak{a}$ has order $n$, so by Lagrange's theorem
+  $n \cdot \bar{1} = \bar{0}$, i.e.\ $n \in \mathfrak{a}$; since $\mathfrak{a}$ is an ideal,
+  $n\mathcal{O} \subseteq \mathfrak{a}$.
+
+  (4) An additive subgroup has index $1$ exactly when it is the whole group.
+\end{proof}
+
+\begin{lemma}[Finiteness of the set of ideals of index $n$]\label{infra-index-finite}
+  \lean{QuadraticOrder.finite_setOf_idealIndex_eq}
+  \uses{infra-index}
+  For every integer $n \ge 1$, the set
+  \[
+    \{\mathfrak{a} \subseteq \mathcal{O} \text{ ideal} :
+      [\mathcal{O} : \mathfrak{a}] = n\}
+  \]
+  is finite.
+\end{lemma}
+
+\begin{proof}
+  \uses{infra-index-basic}
+  Let $\mathfrak{a}$ have index $n$. By Lemma~\ref{infra-index-basic}(3),
+  $n\mathcal{O} \subseteq \mathfrak{a} \subseteq \mathcal{O}$, so $\mathfrak{a}$ is the
+  preimage under $\pi : \mathcal{O} \to \mathcal{O}/n\mathcal{O}$ of its image
+  $\mathfrak{a}/n\mathcal{O}$. Hence $\mathfrak{a} \mapsto \mathfrak{a}/n\mathcal{O}$ is
+  injective on the set in question, with target the set of subsets of
+  $\mathcal{O}/n\mathcal{O} \cong (\mathbb{Z}/n)^2$
+  (Lemma~\ref{infra-index-basic}(1)), a finite set of size $2^{n^2}$. Only the fact that
+  $(\mathcal{O}, +)$ is a finitely generated abelian group is used: equivalently, an ideal
+  of index $n$ is a sublattice of $\mathbb{Z}^2$ of index $n$ containing $n\mathcal{O}$, and
+  there are finitely many such (by Hermite normal form, exactly
+  $\sigma(n) = \sum_{t \mid n} t$ subgroups of $\mathbb{Z}^2$ have index $n$).
+\end{proof}
+
+\begin{proposition}[Comaximal multiplicativity of the index]\label{infra-index-mul}
+  \lean{QuadraticOrder.idealIndex_mul_of_codisjoint}
+  \uses{infra-index}
+  Let $I, J \subseteq \mathcal{O}$ be ideals with $I + J = \mathcal{O}$ (in Lean, the
+  hypothesis $I \sqcup J = \top$). Then
+  \[
+    [\mathcal{O} : IJ] \;=\; [\mathcal{O} : I] \cdot [\mathcal{O} : J].
+  \]
+  No finiteness hypothesis is needed under the \texttt{Nat.card} convention.
+\end{proposition}
+
+\begin{proof}
+  \uses{infra-index}
+  \emph{Step 1: $IJ = I \cap J$.} The inclusion $IJ \subseteq I \cap J$ holds for any two
+  ideals. Conversely, by comaximality,
+  \[
+    I \cap J = (I \cap J)\,\mathcal{O} = (I \cap J)(I + J)
+    = (I \cap J)I + (I \cap J)J \subseteq JI + IJ = IJ.
+  \]
+
+  \emph{Step 2: Chinese Remainder.} The ring homomorphism
+  $\varphi : \mathcal{O} \to \mathcal{O}/I \times \mathcal{O}/J$,
+  $x \mapsto (x \bmod I, x \bmod J)$, has kernel $I \cap J$ and is surjective: writing
+  $1 = e + h$ with $e \in I$, $h \in J$, the element $x := ah + be$ satisfies
+  $x \equiv a(1-e) \equiv a \pmod{I}$ and $x \equiv b(1-h) \equiv b \pmod{J}$. Hence
+  $\mathcal{O}/(I \cap J) \cong \mathcal{O}/I \times \mathcal{O}/J$.
+
+  \emph{Step 3.} Taking cardinalities,
+  $[\mathcal{O} : IJ] = [\mathcal{O} : I \cap J]
+  = \#(\mathcal{O}/I \times \mathcal{O}/J)
+  = [\mathcal{O} : I]\,[\mathcal{O} : J]$;
+  the last equality holds unconditionally for \texttt{Nat.card} since quotient rings are
+  nonempty. The whole argument is valid in any commutative ring.
+\end{proof}
+
+\begin{remark}[Warning: multiplicativity fails without comaximality]\label{infra-index-warning}
+  \uses{infra-index-mul}
+  For non-invertible ideals of a non-maximal order the index is \emph{not} multiplicative.
+  In $\mathcal{O}_{-12} = \mathbb{Z}[\sqrt{-3}]$ (here $D = -3$, $f = 2$,
+  $\tau = -6 + \sqrt{-3}$), the unique prime over $2$ is
+  $\mathfrak{P} = (2,\, 1 + \sqrt{-3})$ with $[\mathcal{O} : \mathfrak{P}] = 2$, and since
+  $(1+\sqrt{-3})^2 = 2(1+\sqrt{-3}) - 4$ one computes
+  $\mathfrak{P}^2 = (4,\, 2 + 2\sqrt{-3}) = 2\mathfrak{P}$, whence
+  \[
+    [\mathcal{O} : \mathfrak{P}^2] = 8 \;\ne\; 4 = [\mathcal{O} : \mathfrak{P}]^2 .
+  \]
+  ($\mathfrak{P}^2 = 2\mathfrak{P}$ with $\mathfrak{P} \ne 2\mathcal{O}$ also shows
+  $\mathfrak{P}$ is not invertible.) This is why Mathlib's bundled \texttt{Ideal.absNorm}
+  (a \texttt{MonoidWithZeroHom} from ideals to $\mathbb{N}$) cannot be used for
+  $\mathcal{O}_d$ with $f > 1$:
+  multiplicativity is baked into the monoid-homomorphism type, and its proof
+  (\texttt{Submodule.cardQuot\_mul}) requires \texttt{[IsDedekindDomain S]}, which fails
+  because $\mathcal{O}_d$ is not integrally closed. The failure is mathematical, not an API
+  gap: no multiplicative extension of the index to all ideals exists. The index layer is
+  therefore built directly on \texttt{Submodule.cardQuot} / \texttt{AddSubgroup.index} /
+  \texttt{Nat.card}.
+\end{remark}
+
+\begin{lemma}[Comaximal families]\label{infra-index-family}
+  \uses{infra-index}
+  Let $I_1, \dots, I_k \subseteq \mathcal{O}$ be pairwise comaximal ideals
+  ($I_i + I_j = \mathcal{O}$ for $i \ne j$). Then
+  \begin{enumerate}
+    \item $I_1 \cdots I_k = I_1 \cap \dots \cap I_k$;
+    \item the natural map
+      $\mathcal{O}/(I_1 \cdots I_k) \to \prod_{j=1}^{k} \mathcal{O}/I_j$ is a ring
+      isomorphism;
+    \item $[\mathcal{O} : I_1 \cdots I_k] = \prod_{j=1}^{k} [\mathcal{O} : I_j]$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  \uses{infra-index-mul}
+  First, if $I + J_1 = \mathcal{O}$ and $I + J_2 = \mathcal{O}$ then
+  \[
+    \mathcal{O} = (I + J_1)(I + J_2)
+    = I^2 + IJ_2 + J_1 I + J_1 J_2 \subseteq I + J_1 J_2,
+  \]
+  so $I$ is comaximal with $J_1 J_2$. Now induct on $k$, the case $k = 1$ being trivial. Put
+  $P := I_1 \cdots I_{k-1}$; by the sub-claim iterated, $I_k + P = \mathcal{O}$. Then (1)
+  follows from Step~1 of the proof of Proposition~\ref{infra-index-mul} applied to
+  $(P, I_k)$ together with the inductive hypothesis; (2) from Step~2 applied to $(P, I_k)$
+  composed with the inductive isomorphism for $P$; and (3) from (2) by taking cardinalities.
+\end{proof}
+
+\begin{theorem}[Prime-power factorization of the ideal count]\label{infra-index-count}
+  \lean{QuadraticOrder.idealCount_multiplicative}
+  \uses{infra-index}
+  Let $n \ge 1$ and write $m_p := v_p(n)$ for each prime $p \mid n$. Then the map
+  \[
+    \mathfrak{a} \;\longmapsto\; \bigl(\mathfrak{a} + p^{m_p}\mathcal{O}\bigr)_{p \mid n}
+  \]
+  is a bijection
+  \[
+    \{\mathfrak{a} \subseteq \mathcal{O} : [\mathcal{O} : \mathfrak{a}] = n\}
+    \;\xrightarrow{\ \sim\ }\;
+    \prod_{p \mid n} \{\mathfrak{b} \subseteq \mathcal{O} :
+      [\mathcal{O} : \mathfrak{b}] = p^{m_p}\},
+  \]
+  with inverse $(\mathfrak{b}_p)_p \mapsto \prod_p \mathfrak{b}_p = \bigcap_p \mathfrak{b}_p$.
+  Consequently
+  \[
+    \#\{\mathfrak{a} : [\mathcal{O} : \mathfrak{a}] = n\}
+    \;=\; \prod_{p \mid n} \#\{\mathfrak{a} :
+      [\mathcal{O} : \mathfrak{a}] = p^{v_p(n)}\},
+  \]
+  and the counting function
+  $r(n) := \#\{\mathfrak{a} : [\mathcal{O} : \mathfrak{a}] = n\}$ is multiplicative:
+  $r(n_1 n_2) = r(n_1)\,r(n_2)$ for $\gcd(n_1, n_2) = 1$.
+\end{theorem}
+
+\begin{proof}
+  \uses{infra-index-basic, infra-index-mul, infra-index-family, infra-index-finite}
+  Write $P(n)$ for the set of primes dividing $n$, so
+  $n = \prod_{p \in P(n)} p^{m_p}$ with all $m_p \ge 1$. If $n = 1$ both sides are
+  singletons ($\{\mathcal{O}\}$ on the left by Lemma~\ref{infra-index-basic}(4), the empty
+  product on the right); assume $n > 1$.
+
+  \emph{Preliminaries.} Let $[\mathcal{O} : \mathfrak{a}] = n$ and set
+  $M := \mathcal{O}/\mathfrak{a}$, a finite $\mathcal{O}$-module of order $n$, with quotient
+  map $\pi : \mathcal{O} \to M$. For $p \in P(n)$ let
+  $M_p := \{x \in M : p^j x = 0 \text{ for some } j \ge 0\}$, an $\mathcal{O}$-submodule
+  (scalar multiplication commutes with the $\mathbb{Z}$-action).
+
+  \emph{Fact A: $M = \bigoplus_{p \in P(n)} M_p$ with $\#M_p = p^{m_p}$.}
+  Write $n = p^{m_p} n_p'$ with $p \nmid n_p'$. The integers $\{n_p'\}_{p \in P(n)}$ have no
+  common prime divisor (a prime $q \notin P(n)$ divides no $n_p'$; a prime $q \in P(n)$ does
+  not divide $n_q'$), so $\sum_p c_p n_p' = 1$ for some $c_p \in \mathbb{Z}$. For $x \in M$,
+  $x = \sum_p c_p (n_p' x)$ and $p^{m_p}(n_p' x) = nx = 0$ (Lagrange: $\#M = n$ annihilates
+  $M$), so $n_p' x \in M_p$ and $M = \sum_p M_p$. For directness: every element of $M_q$ has
+  $q$-power order dividing $n$, hence order dividing $q^{m_q}$; thus
+  $\sum_{q \ne p} M_q$ is killed by $n_p'$ while $M_p$ is killed by some $p^j$, and
+  $\gcd(p^j, n_p') = 1$ forces $M_p \cap \sum_{q \ne p} M_q = 0$. Finally each $\#M_p$ is a
+  power of $p$ (by Cauchy's theorem all prime divisors of $\#M_p$ are $p$), so
+  $n = \prod_p \#M_p$ and unique factorization give $\#M_p = p^{m_p}$.
+
+  \emph{Fact B: multiplication by $p^{m_p}$ is zero on $M_p$ and bijective on $M_q$ for
+  $q \ne p$; hence $p^{m_p} M = \bigoplus_{q \ne p} M_q$ and $M/p^{m_p}M \cong M_p$.}
+  Indeed $\#M_p = p^{m_p}$ annihilates $M_p$ (Lagrange), and on $M_q$ a kernel element has
+  order dividing both $p^{m_p}$ and $q^{m_q}$, hence is $0$; injectivity on a finite group
+  gives bijectivity.
+
+  Define $\mathfrak{a}_p := \mathfrak{a} + p^{m_p}\mathcal{O}$ for $p \in P(n)$.
+
+  \emph{(i) $[\mathcal{O} : \mathfrak{a}_p] = p^{m_p}$.} The image of $\mathfrak{a}_p$ in
+  $M$ is $p^{m_p}M$ and $\mathfrak{a} \subseteq \mathfrak{a}_p$, so
+  $\mathcal{O}/\mathfrak{a}_p \cong M/p^{m_p}M \cong M_p$ by Fact~B.
+
+  \emph{(ii) Pairwise comaximality.} For $p \ne q$, the coprime integers $p^{m_p}$ and
+  $q^{m_q}$ satisfy $u p^{m_p} + v q^{m_q} = 1$, so
+  $1 \in \mathfrak{a}_p + \mathfrak{a}_q$.
+
+  \emph{(iii) Injectivity.} By Fact~B,
+  $\mathfrak{a}_p = \pi^{-1}\bigl(\bigoplus_{q \ne p} M_q\bigr)$, and
+  $\bigcap_{p} \bigoplus_{q \ne p} M_q = 0$ componentwise, so
+  $\bigcap_p \mathfrak{a}_p = \pi^{-1}(0) = \mathfrak{a}$: the tuple of parts determines
+  $\mathfrak{a}$. By (ii) and Lemma~\ref{infra-index-family}(1) also
+  $\prod_p \mathfrak{a}_p = \mathfrak{a}$.
+
+  \emph{(iv) Surjectivity and the inverse.} Let $(\mathfrak{b}_p)_{p \in P(n)}$ satisfy
+  $[\mathcal{O} : \mathfrak{b}_p] = p^{m_p}$. By Lemma~\ref{infra-index-basic}(3),
+  $p^{m_p} \in \mathfrak{b}_p$, so as in (ii) the $\mathfrak{b}_p$ are pairwise comaximal.
+  Set $\mathfrak{a} := \bigcap_p \mathfrak{b}_p = \prod_p \mathfrak{b}_p$
+  (Lemma~\ref{infra-index-family}(1)); then
+  $[\mathcal{O} : \mathfrak{a}] = \prod_p p^{m_p} = n$ by
+  Lemma~\ref{infra-index-family}(3). Let
+  $\psi : \mathcal{O}/\mathfrak{a} \xrightarrow{\sim} \prod_q \mathcal{O}/\mathfrak{b}_q$
+  be the isomorphism of Lemma~\ref{infra-index-family}(2). For $x \in \mathcal{O}$ the
+  $p$-component of $\psi(x + \mathfrak{a})$ vanishes iff $x \in \mathfrak{b}_p$; combined
+  with surjectivity of $\psi$ this gives
+  $\psi(\mathfrak{b}_p/\mathfrak{a}) = H_p := 0 \times \prod_{q \ne p}
+  \mathcal{O}/\mathfrak{b}_q$. On the other hand, multiplication by $p^{m_p}$ kills the
+  factor $\mathcal{O}/\mathfrak{b}_p$ (a group of order $p^{m_p}$) and is bijective on each
+  $\mathcal{O}/\mathfrak{b}_q$, $q \ne p$ (kernel elements have order dividing the coprime
+  integers $p^{m_p}$ and $q^{m_q}$), so
+  $\psi\bigl(p^{m_p}(\mathcal{O}/\mathfrak{a})\bigr) = p^{m_p}\prod_q
+  \mathcal{O}/\mathfrak{b}_q = H_p$ as well. Hence
+  $p^{m_p}(\mathcal{O}/\mathfrak{a}) = \mathfrak{b}_p/\mathfrak{a}$, and taking preimages
+  under $\pi_{\mathfrak{a}}$ (both sides contain $\mathfrak{a}$),
+  $\mathfrak{a} + p^{m_p}\mathcal{O} = \mathfrak{b}_p$.
+
+  \emph{(v) Conclusion.} Both sides of the bijection are finite sets
+  (Lemma~\ref{infra-index-finite}), so the cardinalities multiply as displayed. For coprime
+  $n_1, n_2$: every prime of $n_1 n_2$ divides exactly one $n_i$, with
+  $v_p(n_1 n_2) = v_p(n_i)$; grouping the factors of the product formula for $n_1 n_2$
+  gives $r(n_1 n_2) = r(n_1) r(n_2)$. For $p \nmid n$ the factor is
+  $\#\{\mathfrak{b} : [\mathcal{O} : \mathfrak{b}] = 1\} = 1$ by
+  Lemma~\ref{infra-index-basic}(4), so the product may be extended over all primes. The
+  argument is valid in any commutative ring.
+\end{proof}
+
+\begin{remark}[$p$-parts need not be primary ideals]\label{infra-index-not-primary}
+  \uses{infra-index-count}
+  The decomposition in Theorem~\ref{infra-index-count} is a Sylow-style coprime
+  decomposition, \emph{not} Lasker--Noether primary decomposition: a $p$-part
+  $\mathfrak{a} + p^{v_p(n)}\mathcal{O}$ has $p$-power index but need not be a primary
+  ideal. For instance, if $p \nmid f$ splits in $\mathcal{O}$, say
+  $p\mathcal{O} = \mathfrak{p}_1\mathfrak{p}_2$ with distinct primes $\mathfrak{p}_i$, then
+  $\mathfrak{a} = \mathfrak{p}_1\mathfrak{p}_2$ has index $p^2$ and radical
+  $\mathfrak{p}_1 \cap \mathfrak{p}_2$, which is not prime, so $\mathfrak{a}$ is not
+  primary. Lemma~\ref{infra-index-primary} shows that at primes $p \mid f$ the distinction
+  disappears.
+\end{remark}
+
+\begin{lemma}[Bridge lemma: $p$-power index implies $\mathfrak{P}$-primary at conductor
+  primes (ERRATA E6.4(a))]\label{infra-index-primary}
+  \lean{QuadraticOrder.isPrimary_of_idealIndex_prime_pow}
+  \uses{infra-index, prop-3-2-1}
+  Suppose $p \mid f$. Then $g(x) \equiv (x - A)^2 \pmod p$ for some integer $A$, and
+  $\mathcal{O}$ has a unique prime ideal containing $p$, namely the maximal ideal
+  $\mathfrak{P} := p\mathcal{O} + (\tau - A)\mathcal{O}$, of index $p$. Moreover, every
+  ideal $\mathfrak{a} \subseteq \mathcal{O}$ with $[\mathcal{O} : \mathfrak{a}] = p^m$ for
+  some $m \ge 1$ is $\mathfrak{P}$-primary; that is, $\mathfrak{a}$ is proper,
+  $xy \in \mathfrak{a}$ implies $x \in \mathfrak{a}$ or $y \in \sqrt{\mathfrak{a}}$, and
+  $\sqrt{\mathfrak{a}} = \mathfrak{P}$.
+\end{lemma}
+
+\begin{proof}
+  \uses{infra-index-basic, prop-3-2-1}
+  \emph{Step 1: $g \bmod p$ is the square of a linear polynomial.} The discriminant of $g$
+  is $d = Df^2$. If $p$ is odd, then $p \mid f$ gives
+  $v_p(d) = v_p(D) + 2 v_p(f) \ge 2$, in particular $p \mid d$; completing the square in
+  $\mathbb{F}_p[x]$ (where $2$ is invertible),
+  $g(x) = (x - d \cdot 2^{-1})^2 - d \cdot 4^{-1} \equiv (x - d \cdot 2^{-1})^2 \pmod p$,
+  and we take $A$ a lift of $d \cdot 2^{-1} \bmod p$. If $p = 2$, then $2 \mid f$ gives
+  $v_2(d) = v_2(D) + 2 v_2(f) \ge 2$, so $4 \mid d$ and the linear coefficient $-d$ of $g$
+  is even; hence in $\mathbb{F}_2[x]$, with $c := \tfrac{d^2 - d}{4} \bmod 2$,
+  $g(x) \equiv x^2 + c = (x + c)^2 \pmod 2$ (using $c^2 = c$ in $\mathbb{F}_2$), and we take
+  $A := c$. In both cases $x - A$ is the unique monic irreducible factor of $g \bmod p$.
+
+  \emph{Step 2: unique prime over $p$.} By Proposition~3.2.1 (\ref{prop-3-2-1}), the primes
+  of $\mathcal{O} = \mathbb{Z}[x]/(g)$ containing $p$ are exactly
+  $p\mathcal{O} + (g_i(\tau))$ for $g_i$ the monic irreducible factors of $g \bmod p$; by
+  Step~1 there is exactly one, $\mathfrak{P} = p\mathcal{O} + (\tau - A)\mathcal{O}$.
+  Moreover
+  $\mathcal{O}/\mathfrak{P} \cong \mathbb{F}_p[x]/(g \bmod p,\, x - A)
+  = \mathbb{F}_p[x]/(x - A) \cong \mathbb{F}_p$
+  (the middle equality since $g \equiv (x - A)^2 \in (x - A)$), so $\mathfrak{P}$ is maximal
+  of index $p$.
+
+  \emph{Step 3: $\sqrt{\mathfrak{a}} = \mathfrak{P}$.} Since $p^m > 1$, $\mathfrak{a}$ is
+  proper. By Lemma~\ref{infra-index-basic}(3), $p^m \in \mathfrak{a}$. If
+  $\mathfrak{q} \supseteq \mathfrak{a}$ is prime, then $p^m \in \mathfrak{q}$ forces
+  $p \in \mathfrak{q}$, so $\mathfrak{q} = \mathfrak{P}$ by Step~2. The set of primes
+  containing $\mathfrak{a}$ is nonempty ($\mathfrak{a}$ is proper, and $\mathcal{O}$ is
+  Noetherian, being a finitely generated $\mathbb{Z}$-module). Since the radical of an
+  ideal is the intersection of the primes containing it,
+  $\sqrt{\mathfrak{a}} = \mathfrak{P}$.
+
+  \emph{Step 4: maximal radical implies primary.} Pass to
+  $R := \mathcal{O}/\mathfrak{a}$; its nilradical is $\mathfrak{P}/\mathfrak{a}$, which is
+  maximal by Step~2. Every maximal ideal of $R$ contains the nilradical, so
+  $\mathfrak{P}/\mathfrak{a}$ is the unique maximal ideal and $R$ is local. If
+  $xy \in \mathfrak{a}$ with $y \notin \sqrt{\mathfrak{a}} = \mathfrak{P}$, then $\bar{y}$
+  lies outside the maximal ideal of $R$, hence is a unit, and $\bar{x}\bar{y} = 0$ gives
+  $\bar{x} = 0$, i.e.\ $x \in \mathfrak{a}$. Thus $\mathfrak{a}$ is primary with radical
+  $\mathfrak{P}$ (in Mathlib: \texttt{Ideal.isPrimary\_of\_isMaximal\_radical}).
+\end{proof}
