@@ -88,7 +88,21 @@ name exists.
 - [ ] Module docstrings and inline step-comments meet §3.
 - [ ] Build green including linter warnings for NEW files; PR into `main` (PR-gated).
 
-## 6. Repository map
+## 6. No automated upstream contributions (Mathlib / Lean GitHub repos)
+
+Agents must **not** open pull requests, issues, or review comments on Mathlib or any
+other upstream Lean repository (leanprover / leanprover-community). Their contribution
+guidelines require the PR — including its description, commentary, and review
+responses — to be authored by the human contributor. This is a hard rule regardless of
+how upstream-ready a result looks.
+
+When something here is a genuine upstreaming candidate (e.g. the Lemma 3.2.6
+square-root counts, flagged in `proofs/lem-3-2-6.md`), record it as a `TODO(upstream):`
+line in the relevant Lean file's module docstring or in WORKPLAN.md, with a one-line
+justification and the declaration names — and stop there. The human decides if and
+when to open the PR and writes it themselves.
+
+## 7. Repository map
 
 | Path | What |
 |------|------|
