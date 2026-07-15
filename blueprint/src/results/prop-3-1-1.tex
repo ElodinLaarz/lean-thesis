@@ -1,0 +1,162 @@
+% Prop 3.1.1 — ideal counts in the maximal order.
+% Blueprint fragment (plasTeX / leanblueprint); \input from the results chapter.
+% Ground truth: thesis §3.1 with ERRATA E6.9 (holds for ANY quadratic field).
+
+\begin{proposition}[Ideal counts in the maximal order]
+  \label{prop-3-1-1}
+  \lean{QuadraticOrder.maximalIdealCount_split, QuadraticOrder.maximalIdealCount_inert, QuadraticOrder.maximalIdealCount_ramified}
+  \uses{notation}
+  Let $K$ be a quadratic field --- real or imaginary --- of discriminant $D$ (a
+  fundamental discriminant), with ring of integers
+  $\mathcal{O}_K = \mathbb{Z}[\tau_K]$, $\tau_K = \tfrac{D+\sqrt{D}}{2}$. For a nonzero
+  ideal $\mathfrak{a} \subseteq \mathcal{O}_K$ write
+  $N(\mathfrak{a}) = [\mathcal{O}_K : \mathfrak{a}]$ for the index of $\mathfrak{a}$ in the
+  additive group of $\mathcal{O}_K$. Let $p$ be a rational prime, let $m \ge 0$ be an
+  integer, and let $\left(\frac{D}{p}\right)$ denote the Kronecker symbol at $p$: the
+  Legendre symbol of $D$ for odd $p$, and, for $p = 2$, equal to $0$ if $D$ is even, $1$
+  if $D \equiv 1 \pmod 8$, and $-1$ if $D \equiv 5 \pmod 8$. Then
+  \[
+    \#\bigl\{\, \mathfrak{a} \subseteq \mathcal{O}_K \text{ ideal} \;:\;
+      N(\mathfrak{a}) = p^m \,\bigr\}
+    \;=\; \sum_{j=0}^{m} \left(\frac{D}{p}\right)^{\!j}
+  \]
+  (convention $0^0 = 1$); explicitly, the count equals
+  \[
+    \begin{cases}
+      m + 1
+        & \text{if } \left(\frac{D}{p}\right) = 1 \text{ ($p$ split)},\\[3pt]
+      1
+        & \text{if } \left(\frac{D}{p}\right) = -1 \text{ and } m \text{ even ($p$ inert)},
+          \text{ or } \left(\frac{D}{p}\right) = 0 \text{ ($p$ ramified)},\\[3pt]
+      0
+        & \text{if } \left(\frac{D}{p}\right) = -1 \text{ and } m \text{ odd ($p$ inert)}.
+    \end{cases}
+  \]
+  Here $p$ \emph{splits}, is \emph{inert}, resp.\ \emph{ramifies} in $\mathcal{O}_K$
+  according as $p\mathcal{O}_K = \mathfrak{p}_1\mathfrak{p}_2$ with
+  $\mathfrak{p}_1 \neq \mathfrak{p}_2$ prime, $p\mathcal{O}_K$ is prime, resp.\
+  $p\mathcal{O}_K = \mathfrak{p}^2$; the proof shows the trichotomy is detected by
+  $\left(\frac{D}{p}\right)$ as indicated. (The thesis states this for imaginary quadratic
+  $K$ only; by ERRATA~E6.9 imaginarity is not needed.)
+\end{proposition}
+
+\begin{proof}
+  \uses{notation, prop-3-2-1}
+  Write $\mathcal{O} := \mathcal{O}_K = \mathbb{Z}[\tau] \cong \mathbb{Z}[x]/(g)$ with
+  $\tau := \tau_K$ and $g(x) := x^2 - Dx + \tfrac{D^2-D}{4}$, the minimal polynomial of
+  $\tau$; note $\operatorname{disc}(g) = D$. Bars denote reduction mod~$p$.
+
+  \textbf{Dedekind toolkit.} $\mathcal{O}_K$ is a Dedekind domain; we use the following
+  standard facts.
+  (i)~Every nonzero ideal factors uniquely as a finite product of nonzero primes, all
+  nonzero primes are maximal, and $\mathfrak{a} \subseteq \mathfrak{b}$ iff
+  $\mathfrak{b} \mid \mathfrak{a}$.
+  (ii)~Every nonzero ideal $\mathfrak{a}$ has finite index: for
+  $0 \neq \alpha \in \mathfrak{a}$ the nonzero integer
+  $n = |\alpha\bar{\alpha}| = |N_{K/\mathbb{Q}}(\alpha)|$ lies in $\mathfrak{a}$, so
+  $n\mathcal{O} \subseteq \mathfrak{a}$ and
+  $[\mathcal{O} : \mathfrak{a}] \le n^2$. Consequently an ideal of norm $p^m$ is
+  automatically nonzero.
+  (iii)~If $\mathfrak{a} + \mathfrak{b} = \mathcal{O}$ then
+  $\mathfrak{a}\mathfrak{b} = \mathfrak{a} \cap \mathfrak{b}$ and
+  $\mathcal{O}/\mathfrak{a}\mathfrak{b} \cong \mathcal{O}/\mathfrak{a} \times
+  \mathcal{O}/\mathfrak{b}$ (CRT), so $N(\mathfrak{a}\mathfrak{b}) =
+  N(\mathfrak{a})N(\mathfrak{b})$; and powers of distinct nonzero primes are comaximal (a
+  maximal ideal containing $\mathfrak{q}^a + \mathfrak{q}'^b$ would divide both
+  $\mathfrak{q}^a$ and $\mathfrak{q}'^b$, forcing $\mathfrak{q} = \mathfrak{q}'$).
+  (iv)~$N(\mathfrak{q}^k) = N(\mathfrak{q})^k$ for a nonzero prime $\mathfrak{q}$: in the
+  filtration $\mathcal{O} \supseteq \mathfrak{q} \supseteq \cdots \supseteq \mathfrak{q}^k$
+  each quotient $\mathfrak{q}^i/\mathfrak{q}^{i+1}$ is an
+  $\mathcal{O}/\mathfrak{q}$-vector space whose subspaces are the ideals between
+  $\mathfrak{q}^{i+1}$ and $\mathfrak{q}^i$; by (i) these are only
+  $\mathfrak{q}^i, \mathfrak{q}^{i+1}$ themselves, and
+  $\mathfrak{q}^{i+1} \subsetneq \mathfrak{q}^i$, so each quotient is one-dimensional of
+  cardinality $N(\mathfrak{q})$.
+  (v)~A nonzero prime $\mathfrak{q}$ satisfies $\mathfrak{q} \cap \mathbb{Z} = (q)$ for a
+  rational prime $q$, and $N(\mathfrak{q}) \in \{q, q^2\}$, since
+  $\mathcal{O}/\mathfrak{q}$ is a field quotient of $\mathcal{O}/q\mathcal{O}$, which has
+  order $q^2$.
+
+  \textbf{Step 1: primes above $p$ and the trichotomy.} By
+  Proposition~\ref{prop-3-2-1} applied to $\mathcal{O} = \mathbb{Z}[x]/(g)$, the primes of
+  $\mathcal{O}$ containing $p$ are exactly $\mathfrak{p}_i = (p, g_i(\tau))$, where
+  $\bar{g} = \prod_i \bar{g}_i$ is the factorization into monic irreducibles over
+  $\mathbb{F}_p$ and $g_i$ lifts $\bar{g}_i$; moreover
+  $\mathcal{O}/\mathfrak{p}_i \cong \mathbb{F}_p[x]/(\bar{g}_i)$, so
+  $N(\mathfrak{p}_i) = p^{\deg \bar{g}_i}$. As $\bar{g}$ is a monic quadratic over a
+  field, it is either a product of two distinct monic linear factors, irreducible, or the
+  square of a linear factor; we claim these correspond to
+  $\left(\frac{D}{p}\right) = 1, -1, 0$ respectively.
+
+  For $p$ odd, complete the square:
+  $\bar{g}(x) = \bigl(x - \tfrac{\bar{D}}{2}\bigr)^2 - \tfrac{\bar{D}}{4}$, so $\bar{g}$
+  has two distinct roots iff $\bar{D}$ is a nonzero square, a double root iff
+  $\bar{D} = 0$, and is irreducible iff $\bar{D}$ is a nonsquare --- matching the
+  Legendre symbol. For $p = 2$, write $c := \tfrac{D(D-1)}{4}$ for the constant term of
+  $g$; the middle coefficient reduces to $\bar{D}$. If $D$ is even, then
+  $c \equiv \tfrac{D}{4} \pmod 2$ ($D - 1$ odd) and
+  $\bar{g} = x^2 + \bar{c} = (x + \bar{c})^2$ --- a double root. If
+  $D \equiv 1 \pmod 8$, then $\tfrac{D-1}{4}$ is even, so $c$ is even and
+  $\bar{g} = x^2 + x = x(x+1)$ --- two distinct roots. If $D \equiv 5 \pmod 8$, then
+  $\tfrac{D-1}{4}$ and $D$ are odd, so $c$ is odd and $\bar{g} = x^2 + x + 1$, which has
+  no root in $\mathbb{F}_2$ and is irreducible. Since an odd fundamental discriminant is
+  $\equiv 1 \pmod 4$, the residues $1, 5 \bmod 8$ exhaust the odd case.
+
+  \textbf{Step 2: splitting behavior and norms.} If $\bar{h} \mid \bar{g}$ with
+  complementary factor $\bar{\tilde{h}}$ and integral lifts $h, \tilde{h}$, then
+  $g = h\tilde{h} + pr$ for some $r \in \mathbb{Z}[x]$, so evaluating at $\tau$,
+  \[
+    h(\tau)\,\tilde{h}(\tau) = -p\,r(\tau) \in p\mathcal{O}. \tag{$*$}
+  \]
+
+  \emph{Split case} $\left(\frac{D}{p}\right) = 1$:
+  $\bar{g} = (x-\bar{a})(x-\bar{b})$ with $\bar{a} \neq \bar{b}$, so the primes above $p$
+  are $\mathfrak{p}_1 = (p, \tau - a)$ and $\mathfrak{p}_2 = (p, \tau - b)$, each of norm
+  $p$. They are distinct: otherwise their common value contains both $p$ and
+  $(\tau - a) - (\tau - b) = b - a$ with $p \nmid b - a$, hence contains $1$. Moreover
+  $\mathfrak{p}_1\mathfrak{p}_2$ is generated by $p^2$, $p(\tau-a)$, $p(\tau-b)$ and
+  $(\tau-a)(\tau-b) \in p\mathcal{O}$ by ($*$), so
+  $\mathfrak{p}_1\mathfrak{p}_2 \subseteq p\mathcal{O}$; both sides have index $p^2$
+  ($N(\mathfrak{p}_1\mathfrak{p}_2) = N(\mathfrak{p}_1)N(\mathfrak{p}_2)$ by
+  toolkit~(iii), and $[\mathcal{O} : p\mathcal{O}] = p^2$ since
+  $\mathcal{O} \cong \mathbb{Z}^2$ additively), so
+  $p\mathcal{O} = \mathfrak{p}_1\mathfrak{p}_2$ and $p$ splits.
+
+  \emph{Inert case} $\left(\frac{D}{p}\right) = -1$: $\bar{g}$ irreducible, so the unique
+  prime above $p$ is $(p, g(\tau)) = p\mathcal{O}$ (as $g(\tau) = 0$), with
+  $\mathcal{O}/p\mathcal{O} \cong \mathbb{F}_p[x]/(\bar{g}) \cong \mathbb{F}_{p^2}$ and
+  $N(p\mathcal{O}) = p^2$; $p$ is inert.
+
+  \emph{Ramified case} $\left(\frac{D}{p}\right) = 0$: $\bar{g} = (x - \bar{a})^2$, so
+  the unique prime above $p$ is $\mathfrak{p} = (p, \tau - a)$, of norm $p$; by ($*$)
+  with $h = \tilde{h} = x - a$ we get
+  $\mathfrak{p}^2 = (p^2, p(\tau - a), (\tau-a)^2) \subseteq p\mathcal{O}$, and both
+  sides have index $p^2$ (toolkit~(iv)), so $p\mathcal{O} = \mathfrak{p}^2$ and $p$
+  ramifies.
+
+  \textbf{Step 3: reduction to primes above $p$.} Let $N(\mathfrak{a}) = p^m$; then
+  $\mathfrak{a} \neq 0$ by toolkit~(ii), so
+  $\mathfrak{a} = \mathfrak{q}_1^{a_1} \cdots \mathfrak{q}_t^{a_t}$ uniquely with
+  $\mathfrak{q}_i$ distinct primes, $a_i \ge 1$. By toolkit~(iii)--(iv),
+  $p^m = \prod_i N(\mathfrak{q}_i)^{a_i}$, and by (v) each $N(\mathfrak{q}_i)$ is a power
+  $> 1$ of the rational prime under $\mathfrak{q}_i$; unique factorization in
+  $\mathbb{Z}$ forces every $\mathfrak{q}_i$ to lie above $p$. Conversely every product
+  of primes above $p$ has $p$-power norm, and distinct exponent vectors give distinct
+  ideals. Hence the ideals of norm $p^m$ biject with exponent vectors
+  $(a_{\mathfrak{q}})_{\mathfrak{q} \mid p}$ satisfying
+  $\prod_{\mathfrak{q}} N(\mathfrak{q})^{a_{\mathfrak{q}}} = p^m$. (For $m = 0$: the zero
+  vector, i.e.\ $\mathfrak{a} = \mathcal{O}$, count $1$.)
+
+  \textbf{Step 4: counting.} Split: two distinct primes of norm $p$; solutions of
+  $r + s = m$ with $r, s \ge 0$ give the $m+1$ pairwise distinct ideals
+  $\mathfrak{p}_1^{r}\mathfrak{p}_2^{m-r}$, $0 \le r \le m$. Inert: one prime of norm
+  $p^2$; the equation $p^{2r} = p^m$ has one solution ($\mathfrak{a} =
+  p^{m/2}\mathcal{O}$) if $m$ is even, none if $m$ is odd. Ramified: one prime
+  $\mathfrak{p}$ of norm $p$; the unique solution is $\mathfrak{a} = \mathfrak{p}^m$,
+  for every $m$.
+
+  \textbf{Step 5: uniform form.} With $\chi := \left(\frac{D}{p}\right)$ and $0^0 = 1$:
+  $\sum_{j=0}^{m} \chi^j$ equals $m+1$ if $\chi = 1$; equals $1$ ($m$ even) or $0$
+  ($m$ odd) if $\chi = -1$; and equals $1$ if $\chi = 0$ (only the $j = 0$ term). This
+  matches Step~4 in every case.
+\end{proof}

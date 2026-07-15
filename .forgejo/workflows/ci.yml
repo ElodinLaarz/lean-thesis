@@ -18,3 +18,15 @@ jobs:
           # otherwise lake would compile all of Mathlib from source.
           lake exe cache get
           lake build
+      - name: Check and build the proof blueprint
+        run: |
+          apt-get update
+          apt-get install -y python3 python3-pip graphviz libgraphviz-dev \
+            build-essential texlive-binaries
+          python3 -m pip install --break-system-packages -r blueprint/requirements.txt
+          leanblueprint web
+          leanblueprint checkdecls
+      - name: Build API documentation
+        run: |
+          cd singular_moduli/docbuild
+          DOCGEN_SRC=file lake build QuadraticOrder:docs

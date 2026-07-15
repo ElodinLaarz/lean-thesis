@@ -1,0 +1,149 @@
+% Lemma 3.2.7 — minimal p-power in a principal local ideal.
+% Thesis §3.2 (pp. 18–19), corrected per ERRATA E6.2 (standing hypotheses
+% restated; false for split p) and E6.7 (shift variable renamed s -> a).
+
+\begin{lemma}[Minimal $p$-power in a principal local ideal]
+  \label{lem-3-2-7}
+  \lean{QuadraticOrder.comap_map_span_tau_sub_eq_canonicalIdeal}
+  \uses{notation, lem-3-2-2, lem-3-2-4}
+  Let $d < 0$ be a discriminant ($d \equiv 0, 1 \pmod 4$), $d = D f^2$ with
+  $D$ fundamental and $f \geq 1$ the conductor, and let
+  $\mathcal{O} = \mathbb{Z}[\tau]$ with $\tau = (d + \sqrt{d})/2$ be the order
+  of discriminant $d$ in $K = \mathbb{Q}(\sqrt{d})$, so that the minimal
+  polynomial of $\tau$ is $g(x) = x^2 - dx + \frac{d^2 - d}{4}$, the
+  conjugate is $\bar{\tau} = d - \tau$, and $N(\tau - a) = g(a) > 0$ for all
+  $a \in \mathbb{Z}$. Let $p$ be a rational prime with $p \mid f$; then
+  $g \bmod p$ is the square of a linear polynomial, so $\mathcal{O}$ has a
+  unique prime ideal $\mathfrak{p}$ containing $p$, and the localization
+  $\mathcal{O}_{\mathfrak{p}} \subseteq K$ satisfies
+  $\mathcal{O}_{\mathfrak{p}} = \mathbb{Z}_{(p)}[\tau]$ by
+  Lemma~\ref{lem-3-2-2}.
+
+  Let $r \geq 0$ be an integer, let $a \in \mathbb{Z}$, and set
+  \[
+    \nu := v_p\bigl(N(\tau - a)\bigr) = v_p\bigl(g(a)\bigr) \geq 0 .
+  \]
+  Then the contraction to $\mathcal{O}$ of the principal ideal
+  $p^r(\tau - a)\,\mathcal{O}_{\mathfrak{p}}$ is the canonical ideal of
+  Lemma~\ref{lem-3-2-4} with parameters $k = r + \nu$, $m = 2r + \nu$,
+  $A = a$:
+  \[
+    p^r(\tau - a)\,\mathcal{O}_{\mathfrak{p}} \cap \mathcal{O}
+      = \bigl(p^{r+\nu},\; p^r(\tau - a)\bigr) .
+  \]
+  In particular, every nonzero rational number lying in
+  $p^r(\tau - a)\,\mathcal{O}_{\mathfrak{p}}$ has $p$-adic valuation at least
+  $r + \nu$, and the smallest positive rational integer (equivalently, the
+  smallest power of $p$) contained in
+  $p^r(\tau - a)\,\mathcal{O}_{\mathfrak{p}}$ is exactly $p^{r+\nu}$.
+\end{lemma}
+
+\begin{proof}
+  \uses{notation, lem-3-2-2, lem-3-2-4}
+  Since $d < 0$, $g(a) = (a - d/2)^2 - d/4$ is a positive rational integer,
+  so we may write $g(a) = p^{\nu} u$ with $u \in \mathbb{Z}_{>0}$ and
+  $p \nmid u$; note $u \in \mathbb{Z}_{(p)}^{\times}$.
+
+  \emph{Step 1: quadratic relation.} The elements $\tau - a$ and
+  $\bar{\tau} - a$ have sum $d - 2a$ and product $N(\tau - a) = g(a)$, so
+  \begin{equation}
+    (\tau - a)^2 = (d - 2a)(\tau - a) - g(a). \tag{1}
+  \end{equation}
+
+  \emph{Step 2: the local ring as a free module.} By
+  Lemma~\ref{lem-3-2-2} and $p \mid f$ (which makes $p$ non-split),
+  $\mathcal{O}_{\mathfrak{p}} = \mathbb{Z}_{(p)}[\tau]$. Since
+  $\tau^2 = d\tau - \frac{d^2 - d}{4}$, we have
+  $\mathbb{Z}_{(p)}[\tau] = \mathbb{Z}_{(p)} \oplus \mathbb{Z}_{(p)}\tau$,
+  the sum being direct because $1, \tau$ are $\mathbb{Q}$-linearly
+  independent ($\tau \notin \mathbb{Q}$ as $d < 0$). Likewise
+  $\mathcal{O} = \mathbb{Z} \oplus \mathbb{Z}\tau$, and coordinates with
+  respect to the $\mathbb{Q}$-basis $(1, \tau)$ of $K$ are unique.
+
+  \emph{Step 3: normal form of the local ideal.} We claim
+  \begin{equation}
+    p^r(\tau - a)\,\mathcal{O}_{\mathfrak{p}}
+      = \mathbb{Z}_{(p)}\, p^{r+\nu} + \mathbb{Z}_{(p)}\, p^r(\tau - a).
+      \tag{2}
+  \end{equation}
+  For $\beta = e_0 + e_1\tau \in \mathcal{O}_{\mathfrak{p}}$
+  ($e_0, e_1 \in \mathbb{Z}_{(p)}$), write
+  $\beta = (e_0 + a e_1) + e_1(\tau - a)$; then by (1),
+  \begin{equation}
+    p^r(\tau - a)\beta
+      = \lambda \cdot p^r(\tau - a) + \mu \cdot p^{r+\nu},
+    \qquad
+    \lambda := e_0 + (d - a)e_1, \quad \mu := -u e_1 . \tag{3}
+  \end{equation}
+  The $\mathbb{Z}_{(p)}$-linear map $(e_0, e_1) \mapsto (\lambda, \mu)$ has
+  determinant $-u \in \mathbb{Z}_{(p)}^{\times}$, hence is a bijection of
+  $\mathbb{Z}_{(p)}^2$. As the principal ideal consists exactly of the
+  elements $p^r(\tau - a)\beta$ with $\beta \in \mathcal{O}_{\mathfrak{p}}$,
+  claim (2) follows.
+
+  \emph{Step 4: containment $\supseteq$.} Clearly
+  $p^r(\tau - a)$ lies in both $\mathcal{O}$ and the local ideal. For the
+  integer generator, $\bar{\tau} - a = (d - a) - \tau \in \mathcal{O}$ and
+  $p^r(\tau - a)(\bar{\tau} - a) = p^r g(a) = p^{r+\nu} u$, so
+  \[
+    p^{r+\nu}
+      = p^r(\tau - a) \cdot u^{-1}(\bar{\tau} - a)
+      \in p^r(\tau - a)\,\mathcal{O}_{\mathfrak{p}},
+  \]
+  using $u^{-1} \in \mathbb{Z}_{(p)} \subseteq \mathcal{O}_{\mathfrak{p}}$.
+  The contraction is an ideal of $\mathcal{O}$ containing both generators,
+  hence contains $\bigl(p^{r+\nu}, p^r(\tau - a)\bigr)$.
+
+  \emph{Step 5: containment $\subseteq$.} Let
+  $\xi \in p^r(\tau - a)\,\mathcal{O}_{\mathfrak{p}} \cap \mathcal{O}$. By
+  (2), $\xi = \mu\, p^{r+\nu} + \lambda\, p^r(\tau - a)$ with
+  $\lambda, \mu \in \mathbb{Z}_{(p)}$, and in the basis $(1, \tau)$,
+  \[
+    \xi = \bigl(\mu\, p^{r+\nu} - a\lambda\, p^r\bigr) \cdot 1
+        + \bigl(\lambda\, p^r\bigr) \cdot \tau .
+  \]
+  Since $\xi \in \mathcal{O} = \mathbb{Z} \oplus \mathbb{Z}\tau$ and
+  coordinates are unique, $\lambda p^r \in \mathbb{Z}$ and
+  $\mu p^{r+\nu} - a\lambda p^r \in \mathbb{Z}$. From
+  $\lambda \in \mathbb{Z}_{(p)}$ we get $v_p(\lambda) \geq 0$, and from
+  $\lambda p^r \in \mathbb{Z}$ we get $v_q(\lambda) \geq 0$ for every prime
+  $q \neq p$; hence $\lambda \in \mathbb{Z}$. Then
+  $a \lambda p^r \in \mathbb{Z}$ forces $\mu p^{r+\nu} \in \mathbb{Z}$, and
+  the same argument gives $\mu \in \mathbb{Z}$. Thus $\xi$ is a
+  $\mathbb{Z}$-linear (in particular $\mathcal{O}$-linear) combination of
+  $p^{r+\nu}$ and $p^r(\tau - a)$, so
+  $\xi \in \bigl(p^{r+\nu}, p^r(\tau - a)\bigr)$.
+
+  Steps 4 and 5 prove the contraction identity. The parameters are
+  admissible for Lemma~\ref{lem-3-2-4}: with $k = r + \nu$ and
+  $m = 2r + \nu$ we have $m/2 \leq k \leq m$ and
+  $g(a) \equiv 0 \pmod{p^{2k - m}}$ since $2k - m = \nu = v_p(g(a))$.
+
+  \emph{Step 6: minimality.} Let
+  $\rho \in p^r(\tau - a)\,\mathcal{O}_{\mathfrak{p}} \cap \mathbb{Q}$ be
+  nonzero. By (2), $\rho = \mu\, p^{r+\nu} + \lambda\, p^r(\tau - a)$ with
+  $\lambda, \mu \in \mathbb{Z}_{(p)}$; its $\tau$-coordinate $\lambda p^r$
+  must vanish, so $\lambda = 0$, $\rho = \mu p^{r+\nu}$, and
+  $v_p(\rho) = v_p(\mu) + r + \nu \geq r + \nu$. Conversely, every
+  $n \in \mathbb{Z}$ with $v_p(n) \geq r + \nu$ lies in the local ideal,
+  since $n = (n / p^{r+\nu}) \cdot p^{r+\nu}$ with
+  $n / p^{r+\nu} \in \mathbb{Z}_{(p)}$ and $p^{r+\nu}$ is in the ideal by
+  Step 4. Hence the rational integers in the local ideal are exactly those
+  with $v_p \geq r + \nu$, and the smallest positive one is $p^{r+\nu}$.
+\end{proof}
+
+% Divergences from the thesis (flagged per ERRATA):
+% (1) E6.7 — the thesis's shift variable s is renamed a, avoiding the
+%     collision with Lemma 3.2.6's modulus exponent s; both lemmas are used
+%     simultaneously in §3.3.
+% (2) E6.2 — the standing hypothesis p | f (whence p non-split, unique
+%     prime above p, and O_p = Z_(p)[tau]) is restated in the lemma; the
+%     statement is FALSE for split p (e.g. d = -4, p = 5, a = 0, r = 0 at
+%     the prime (5, tau - 1): the local ideal is the unit ideal, minimal
+%     integer 1, not 5^{r+nu} = 5).
+% (3) The thesis asserts only the minimal-positive-integer claim; the
+%     contraction identity stated here is what the thesis's proof of
+%     Lemma 3.2.8 actually uses and attributes to 3.2.7. The proof above
+%     (normal form (2), in the (1, tau)-basis rather than the thesis's
+%     (1, sqrt(d)/2)-basis with its rank-1 determinant argument) yields
+%     both claims at once.

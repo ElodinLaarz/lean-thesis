@@ -1,0 +1,168 @@
+% infra-units — Units of imaginary quadratic orders (infrastructure)
+%
+% Throughout: d < 0, d ≡ 0,1 (mod 4) a discriminant; O_d = Z[tau], tau = (d+sqrt d)/2,
+% minimal polynomial g(x) = x^2 - dx + (d^2-d)/4; N(x+y·tau) = x^2 + dxy + ((d^2-d)/4)y^2.
+% No ERRATA item applies to this result (it is used, not proved, in the thesis).
+
+\begin{definition}[Unit count of an imaginary quadratic order]\label{infra-units-w}
+  \uses{notation}
+  Let $d < 0$ with $d \equiv 0, 1 \pmod 4$ be a discriminant and
+  $\mathcal{O}_d = \mathbb{Z}[\tau]$, $\tau = \tfrac{d+\sqrt d}{2}$, the imaginary
+  quadratic order of discriminant $d$. The \emph{unit count} of $\mathcal{O}_d$ is
+  \[
+    w(d) \;:=\; \#\mathcal{O}_d^\times .
+  \]
+  (In the thesis this quantity appears as $w_i = \#\mathcal{O}_{d_i}^\times$ in the
+  exponents $8/(w_1w_2)$ and $4/(w_1w_2)$ of Chapter~2. It must not be confused with
+  the Chapter~3 valuation $w = v_p(f)$ of the conductor; in every node of this batch
+  $w(d)$ means the unit count.)
+\end{definition}
+
+\begin{lemma}[Completed square; positive definiteness of the norm]\label{infra-units-norm-pos}
+  \uses{notation}
+  Let $d < 0$ with $d \equiv 0, 1 \pmod 4$, and let
+  $N(x + y\tau) = x^2 + d\,xy + \tfrac{d^2-d}{4}\,y^2$ be the norm form of
+  $\mathcal{O}_d$. Then for all $x, y \in \mathbb{Z}$,
+  \[
+    4\,N(x + y\tau) \;=\; (2x + dy)^2 - d\,y^2 \;=\; (2x + dy)^2 + |d|\,y^2 .
+  \]
+  Consequently $N(\alpha) \ge 0$ for every $\alpha \in \mathcal{O}_d$, with
+  $N(\alpha) = 0$ if and only if $\alpha = 0$; in particular $N(\alpha) \ge 1$
+  for all $\alpha \ne 0$.
+\end{lemma}
+
+\begin{proof}
+  \uses{notation}
+  Since $d \equiv 0, 1 \pmod 4$, the constant term $q := \tfrac{d^2-d}{4}$ of the
+  minimal polynomial $g(x) = x^2 - dx + q$ of $\tau$ is an integer with
+  $4q = d^2 - d$ exactly. Hence
+  \[
+    4N(x+y\tau)
+      = 4x^2 + 4d\,xy + (d^2-d)\,y^2
+      = \bigl(4x^2 + 4d\,xy + d^2y^2\bigr) - d\,y^2
+      = (2x+dy)^2 - d\,y^2 ,
+  \]
+  and $-d = |d|$ because $d < 0$. Both summands are squares times nonnegative
+  integers, so $4N \ge 0$, i.e.\ $N \ge 0$. If $N(x+y\tau) = 0$ then
+  $|d|\,y^2 = 0$ and $(2x+dy)^2 = 0$; since $|d| \ge 3 > 0$, the first equation
+  forces $y = 0$ and then the second forces $x = 0$. As $\{1, \tau\}$ is a
+  $\mathbb{Z}$-basis of $\mathcal{O}_d$, this means $\alpha = 0$.
+\end{proof}
+
+\begin{lemma}[Units have norm one]\label{infra-units-norm-unit}
+  \uses{notation, infra-units-norm-pos}
+  With the hypotheses of Lemma~\ref{infra-units-norm-pos}, an element
+  $\alpha \in \mathcal{O}_d$ is a unit if and only if $N(\alpha) = 1$.
+\end{lemma}
+
+\begin{proof}
+  \uses{infra-units-norm-pos}
+  Write $\bar\tau := d - \tau$; from $g(\tau) = 0$ one computes
+  $g(\bar\tau) = (d-\tau)^2 - d(d-\tau) + q = \tau^2 - d\tau + q = 0$, so
+  $\bar\tau$ is the other root of $g$ and the universal property of
+  $\mathbb{Z}[x]/(g)$ yields a ring homomorphism
+  $\sigma : \mathcal{O}_d \to \mathcal{O}_d$ with $\sigma(\tau) = \bar\tau$,
+  explicitly $\sigma(x+y\tau) = (x+dy) - y\tau$; it is an involution fixing
+  $\mathbb{Z}$. Vieta gives $\tau + \bar\tau = d$ and $\tau\bar\tau = q$, whence
+  \[
+    \alpha\,\sigma(\alpha)
+      = (x+y\tau)(x+y\bar\tau)
+      = x^2 + xy(\tau + \bar\tau) + y^2\tau\bar\tau
+      = N(\alpha)\cdot 1 ,
+  \]
+  and since $\sigma$ is a ring homomorphism, $N$ is multiplicative:
+  $N(\alpha\beta) = \alpha\beta\,\sigma(\alpha)\,\sigma(\beta) = N(\alpha)N(\beta)$,
+  $N(1) = 1$.
+
+  If $\alpha\beta = 1$, then $N(\alpha)N(\beta) = 1$ with both factors
+  nonnegative integers by Lemma~\ref{infra-units-norm-pos} (both $\alpha, \beta
+  \neq 0$), so $N(\alpha) = 1$. Conversely, if $N(\alpha) = 1$ then
+  $\alpha\,\sigma(\alpha) = 1$ with $\sigma(\alpha) \in \mathcal{O}_d$, so
+  $\alpha$ is a unit.
+\end{proof}
+
+\begin{theorem}[Units of $\mathcal{O}_d$ for $d < -4$]\label{infra-units}
+  \lean{QuadraticOrder.units_eq_one_or_neg_one}
+  \uses{notation}
+  Let $d < -4$ with $d \equiv 0, 1 \pmod 4$. Then
+  \[
+    \mathcal{O}_d^\times = \{1, -1\} .
+  \]
+\end{theorem}
+
+\begin{proof}
+  \uses{infra-units-norm-pos, infra-units-norm-unit}
+  Let $\alpha = x + y\tau$ be a unit. By Lemma~\ref{infra-units-norm-unit} and
+  Lemma~\ref{infra-units-norm-pos},
+  \[
+    (2x + dy)^2 + |d|\,y^2 \;=\; 4\,N(\alpha) \;=\; 4 .
+  \]
+  If $y \neq 0$, then $|d|\,y^2 \ge |d| \ge 5$ (since $d < -4$ means $d \le -5$),
+  which exceeds $4$ while $(2x+dy)^2 \ge 0$ — a contradiction. Hence $y = 0$ and
+  $4x^2 = 4$, so $x = \pm 1$, i.e.\ $\alpha = \pm 1$. Conversely $N(\pm 1) = 1$,
+  so both are units, and $1 \neq -1$ because $\mathcal{O}_d$ is a free
+  $\mathbb{Z}$-module of rank $2$, hence of characteristic $0$.
+\end{proof}
+
+\begin{corollary}[$w(d) = 2$ for $d < -4$]\label{infra-units-card}
+  \lean{QuadraticOrder.card_units_eq_two}
+  \uses{infra-units, infra-units-w}
+  Let $d < -4$ with $d \equiv 0, 1 \pmod 4$. Then $w(d) = \#\mathcal{O}_d^\times = 2$.
+\end{corollary}
+
+\begin{proof}
+  \uses{infra-units}
+  Immediate from Theorem~\ref{infra-units}: the unit group is $\{1, -1\}$ and
+  these two elements are distinct in characteristic $0$.
+\end{proof}
+
+\begin{proposition}[Exceptional discriminants; the unit-count trichotomy]\label{infra-units-torsion}
+  \uses{infra-units-w, infra-units-norm-pos, infra-units-norm-unit, infra-units}
+  For the two remaining negative discriminants:
+  \begin{enumerate}
+    \item $\mathcal{O}_{-4}^\times = \{\pm 1, \pm(2+\tau)\} \cong \mathbb{Z}/4$,
+      generated by $2+\tau$ (which is $i$ under
+      $\mathcal{O}_{-4} \cong \mathbb{Z}[i]$, $\tau \mapsto -2+i$); so $w(-4) = 4$.
+    \item $\mathcal{O}_{-3}^\times = \{\pm 1, \pm(1+\tau), \pm(2+\tau)\} \cong \mathbb{Z}/6
+      = \mu_6$, with $1+\tau \mapsto \zeta_3$ and $2+\tau \mapsto \zeta_6$ under
+      $\tau \mapsto \tfrac{-3+\sqrt{-3}}{2}$; so $w(-3) = 6$.
+  \end{enumerate}
+  Consequently, for every negative discriminant $d$:
+  $w(d) \in \{2, 4, 6\}$; $w(d) = 4$ iff $d = -4$; $w(d) = 6$ iff $d = -3$; and
+  every unit of $\mathcal{O}_d$ is a root of unity, so $w(d)$ also equals the
+  number of roots of unity in $\mathcal{O}_d$ (reconciling the two definitions of
+  $w_i$ used in the thesis, \S2.1 vs \S2.2).
+\end{proposition}
+
+\begin{proof}
+  \uses{infra-units-norm-pos, infra-units-norm-unit, infra-units}
+  \emph{Case $d = -4$.} Here $q = 5$, so $\tau^2 = -4\tau - 5$, and
+  Lemma~\ref{infra-units-norm-pos} gives
+  $4N = (2x-4y)^2 + 4y^2$, i.e.\ $N(x+y\tau) = (x-2y)^2 + y^2$. By
+  Lemma~\ref{infra-units-norm-unit}, units correspond to
+  $(x-2y)^2 + y^2 = 1$, i.e.\ $(x-2y, y) \in \{(\pm 1, 0), (0, \pm 1)\}$, i.e.\
+  $(x,y) \in \{(\pm 1, 0), (2, 1), (-2, -1)\}$: the four elements
+  $\pm 1, \pm(2+\tau)$. Moreover
+  $(2+\tau)^2 = 4 + 4\tau + \tau^2 = -1$, so $2+\tau$ has order $4$ and the
+  group is cyclic.
+
+  \emph{Case $d = -3$.} Here $q = 3$, so $\tau^2 = -3\tau - 3$, and units
+  correspond to $(2x-3y)^2 + 3y^2 = 4$. From $3y^2 \le 4$ we get
+  $y \in \{0, \pm 1\}$: $y = 0$ gives $x = \pm 1$; $y = 1$ gives
+  $(2x-3)^2 = 1$, so $x \in \{1, 2\}$; $y = -1$ gives $(2x+3)^2 = 1$, so
+  $x \in \{-1, -2\}$. That is six units
+  $\pm 1, \pm(1+\tau), \pm(2+\tau)$. Moreover
+  $(1+\tau)^2 = 1 + 2\tau + \tau^2 = -(2+\tau)$ and
+  $(1+\tau)^3 = -(1+\tau)(2+\tau) = -(2 + 3\tau + \tau^2) = 1$, so $1+\tau$ has
+  order $3$ and $-(1+\tau)$ has order $6$: the group is cyclic of order $6$.
+
+  \emph{Trichotomy.} The integers $-1, -2, -5, -6$ are not discriminants
+  ($\equiv 3, 2, 3, 2 \pmod 4$ respectively), so every negative discriminant
+  other than $-3, -4$ satisfies $d \le -7 < -4$ and falls under
+  Theorem~\ref{infra-units}. Hence $w(d) = 2$ for $d < -4$, $w(-4) = 4$,
+  $w(-3) = 6$, which is the stated trichotomy.
+
+  \emph{Torsion.} $\mathcal{O}_d^\times$ is a finite group of order $w(d)$, so by
+  Lagrange $u^{w(d)} = 1$ for every unit $u$; conversely every root of unity is
+  a unit. Hence the number of units equals the number of roots of unity.
+\end{proof}

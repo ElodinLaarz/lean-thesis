@@ -1,0 +1,173 @@
+% notation — Notation and standing conventions (thesis §1.2, §3.2 preamble)
+% Definition document: no proofs, only well-definedness remarks.
+% Ground truth for statement conventions: ERRATA.md E4, E6.1, E6.6, E6.7, E6.8.
+
+\begin{definition}[Notation and standing conventions]
+  \label{notation}
+  \lean{QuadraticOrder.IsDiscriminant, QuadraticOrder.IsFundamentalDiscriminant,
+    QuadraticOrder.ConductorPrimeSetup, QuadraticOrder.valD4, QuadraticOrder.epsilonEven,
+    QuadraticOrder.kroneckerAtPrime, QuadraticOrder.normForm, QuadraticOrder.tauConj,
+    QuadraticOrder.normEval, QuadraticOrder.idealIndex,
+    QuadraticOrder.idealCount, QuadraticOrder.IsInvertibleIdeal,
+    QuadraticOrder.invertibleIdealCount, QuadraticOrder.rootCountMod}
+  Throughout the Chapter~3 development the following notation is in force.
+  \begin{enumerate}
+    \item[(N1)] \textbf{Discriminants.} An integer $d$ is a \emph{discriminant} if
+      $d \equiv 0$ or $1 \pmod 4$; an \emph{imaginary quadratic discriminant} if moreover
+      $d < 0$. The letter $d$ always denotes an imaginary quadratic discriminant.
+    \item[(N2)] \textbf{Fundamental discriminant and conductor.} A discriminant $D$ is
+      \emph{fundamental} if either $D \equiv 1 \pmod 4$ and $D$ is squarefree, or $D = 4m$
+      with $m$ squarefree and $m \equiv 2, 3 \pmod 4$. Every imaginary quadratic
+      discriminant factors uniquely as $d = D f^2$ with $D$ fundamental and
+      $f \in \mathbb{Z}_{\geq 1}$, the \emph{conductor}. We write
+      $K := \mathbb{Q}(\sqrt d) = \mathbb{Q}(\sqrt D)$,
+      $\mathcal{O}_K = \mathbb{Z}[\omega]$ with $\omega := \frac{D + \sqrt D}{2}$, so
+      $D = \operatorname{disc}(K)$.
+    \item[(N3)] \textbf{The order.} Set
+      $g(x) := x^2 - d\,x + \frac{d^2 - d}{4} \in \mathbb{Z}[x]$ and
+      $\tau := \frac{d + \sqrt d}{2}$ (square root with positive imaginary part); $g$ is
+      the minimal polynomial of $\tau$ and $\operatorname{disc}(g) = d$. Define
+      $\mathcal{O}_d := \mathbb{Z}[\tau] \cong \mathbb{Z}[x]/(g(x))$, free over
+      $\mathbb{Z}$ with basis $(1, \tau)$. With $d = D f^2$ one has
+      $\tau = f\omega + \frac{Df(f-1)}{2}$, hence
+      $\mathcal{O}_d = \mathbb{Z} + f\mathcal{O}_K$ and
+      $[\mathcal{O}_K : \mathcal{O}_d] = f$. We write $\mathcal{O}$ for $\mathcal{O}_d$
+      when $d$ is clear.
+    \item[(N4)] \textbf{Conjugation and norm form.} $\bar\tau := d - \tau$ (the other root
+      of $g$); $\alpha \mapsto \bar\alpha$ is the ring involution of $\mathcal{O}_d$ fixing
+      $\mathbb{Z}$ with $\tau \mapsto \bar\tau$. Vieta: $\tau + \bar\tau = d$,
+      $\tau\bar\tau = \frac{d^2 - d}{4}$, $(\tau - \bar\tau)^2 = d$. The norm is
+      $N(\alpha) := \alpha\bar\alpha$; in coordinates
+      \[
+        N(x + y\tau) = x^2 + d\,xy + \tfrac{d^2 - d}{4}\,y^2,
+      \]
+      the homogenization of $g$ (for $y \neq 0$, $N(x + y\tau) = y^2 g(-x/y)$; in
+      particular $N(x - \tau) = g(x)$). It is multiplicative and, since $d < 0$, positive
+      definite: $N(\alpha) > 0$ for $\alpha \neq 0$.
+    \item[(N5)] \textbf{Ideal index --- the norm convention.} For an ideal
+      $\mathfrak{a} \subseteq \mathcal{O}_d$,
+      $[\mathcal{O}_d : \mathfrak{a}] := \#(\mathcal{O}_d/\mathfrak{a})$, with value $0$
+      when the quotient is infinite (only for $\mathfrak{a} = (0)$); every nonzero ideal
+      has finite index. \emph{The norm of an ideal is by definition its index},
+      $N(\mathfrak{a}) := [\mathcal{O}_d : \mathfrak{a}]$, for \emph{all} nonzero ideals,
+      invertible or not; ``ideal of norm $n$'' always means
+      $[\mathcal{O}_d : \mathfrak{a}] = n$. On principal ideals the conventions agree:
+      $[\mathcal{O}_d : \alpha\mathcal{O}_d] = N(\alpha)$ for $\alpha \neq 0$.
+    \item[(N6)] \textbf{Invertible ideals.} An ideal $\mathfrak{a} \subseteq \mathcal{O}_d$
+      is \emph{invertible} if there exist an ideal $\mathfrak{b} \subseteq \mathcal{O}_d$
+      and $x \in \mathcal{O}_d \setminus \{0\}$ with
+      $\mathfrak{a}\mathfrak{b} = x\mathcal{O}_d$. (Equivalence with local principality is
+      proved in the invertibility-interface nodes, not assumed here.)
+      $\operatorname{Cl}(\mathcal{O}_d) = \operatorname{Pic}(\mathcal{O}_d)$ denotes
+      invertible ideals modulo nonzero principal ideals,
+      $h_d := \#\operatorname{Cl}(\mathcal{O}_d)$.
+    \item[(N7)] \textbf{Counting functions.} For $n \geq 1$,
+      \[
+        r_d(n) := \#\{\mathfrak{a} \subseteq \mathcal{O}_d \text{ ideal} :
+          [\mathcal{O}_d : \mathfrak{a}] = n\}, \qquad
+        R_d(n) := \#\{\mathfrak{a} \text{ invertible ideal} :
+          [\mathcal{O}_d : \mathfrak{a}] = n\}.
+      \]
+      Both sets are finite. $r_d$ is the count of Theorem~3.1.2*, $R_d$ that of
+      Corollary~3.1.3*; the thesis prints both with the same display (ERRATA~E6.1), we
+      never do.
+    \item[(N8)] \textbf{Standing local setup.} The Chapter~3 counting results assume:
+      $d < 0$ an imaginary quadratic discriminant, $d = Df^2$ with $D$ fundamental, and
+      $p$ a rational prime with $p \mid f$; write $w := v_p(f) \geq 1$ ($v_p$ the
+      $p$-adic valuation) and $m \in \mathbb{Z}_{\geq 0}$ for the norm exponent. In Lean
+      the $d, D, f, p$ hypotheses are bundled as the class
+      \texttt{ConductorPrimeSetup}; $w$ is derived notation (not a field of the bundle)
+      and $m$ is a separate parameter carried by each statement.
+    \item[(N9)] \textbf{The valuation $v$.} Following ERRATA E6.8/E4, $v_p(d/4)$ is
+      notation:
+      \[
+        v := v_p(d/4) :=
+        \begin{cases}
+          v_p(d), & p \text{ odd},\\
+          v_2(d) - 2, & p = 2.
+        \end{cases}
+      \]
+      Well defined and nonnegative under (N8): for $p = 2$, $2 \mid f$ gives
+      $v_2(d) = v_2(D) + 2w \geq 2$. Explicitly $v = v_p(D) + 2w$ for odd $p$
+      ($v_p(D) \in \{0,1\}$) and $v = v_2(D) + 2w - 2$ for $p = 2$
+      ($v_2(D) \in \{0,2,3\}$).
+    \item[(N10)] \textbf{Parity flag.} $\varepsilon = \varepsilon(m) := 1$ if $m$ is even,
+      $0$ if $m$ is odd; equivalently $\varepsilon(m) = 1 - (m \bmod 2)$.
+      \emph{Warning} (ERRATA E6.6): this is the reverse of the natural parity indicator;
+      the convention is the thesis's own and is kept.
+    \item[(N11)] \textbf{Kronecker symbol at $p$.} For fundamental $D$,
+      \[
+        \chi_p(D) :=
+        \begin{cases}
+          \left(\frac{D}{p}\right) \text{ (Legendre)}, & p \text{ odd},\\
+          1, & p = 2,\ D \equiv 1 \pmod 8,\\
+          -1, & p = 2,\ D \equiv 5 \pmod 8,\\
+          0, & p = 2,\ 4 \mid D,
+        \end{cases}
+      \]
+      the cases being exhaustive since odd fundamental $D$ is $\equiv 1 \pmod 4$. Then
+      $p$ splits in $\mathcal{O}_K$ iff $\chi_p(D) = 1$, is inert iff $\chi_p(D) = -1$,
+      ramifies iff $\chi_p(D) = 0$ iff $p \mid D$. All corrected Chapter~3 statements are
+      phrased $p$-uniformly through $\chi_p(D)$ (ERRATA E4); there are no separate
+      $p = 2$ displays.
+    \item[(N12)] \textbf{Square-root and polynomial-root counts.} For $n \geq 1$ and
+      $c \in \mathbb{Z}$,
+      \[
+        \mathrm{rc}(c; n) := \#\{x \in \mathbb{Z}/n\mathbb{Z} : x^2 \equiv c \bmod n\},
+      \]
+      the quantity computed by Lemma~3.2.6 for $n = p^s$, $c = p^{2r}u$, $p \nmid u$.
+      Distinct from it is the count of roots of the defining polynomial,
+      $\#\{A \in \mathbb{Z}/N\mathbb{Z} : g(A) \equiv 0 \bmod N\}$ ($N \geq 1$), into
+      which the normal-form bijection (Lemma~3.2.4) converts ideal counting and which
+      Lemma~3.2.6 evaluates after completing the square (Lean:
+      \texttt{rootCountMod}; the square-root count is \texttt{cardSqrts}).
+    \item[(N13)] \textbf{Name-collision resolutions} (ERRATA E6.7):
+      \begin{itemize}
+        \item $R_d(n)$ always denotes the invertible-ideal count (N7); Dorman's
+          maximal-order count (thesis \S 2.3) is written $R^{\mathrm{Dor}}(n)$ in
+          Chapter~2 documents.
+        \item $\varepsilon(m)$ always denotes the parity flag (N10); the Gross--Zagier
+          character is $\epsilon_{\mathrm{GZ}}$ and the Lauter--Viray weight
+          $\tilde\epsilon$ in Chapter~2 documents.
+        \item $s$ is reserved for the modulus exponent of Lemma~3.2.6; the integer shift
+          of Lemma~3.2.7 is renamed $t$ (that lemma concerns $p^r(\tau - t)$).
+      \end{itemize}
+  \end{enumerate}
+  Well-definedness: $\frac{d^2 - d}{4} \in \mathbb{Z}$ iff $d \equiv 0, 1 \pmod 4$;
+  uniqueness of $(D, f)$ is standard (take $D = \operatorname{disc} K$,
+  $f = [\mathcal{O}_K : \mathcal{O}_d]$); a nonzero ideal $\mathfrak{a}$ contains
+  $N(\alpha) = \bar\alpha\alpha > 0$ for any $0 \neq \alpha \in \mathfrak{a}$, hence
+  $\mathfrak{a} \supseteq N(\alpha)\mathcal{O}_d$ has finite index; ideals of index $n$
+  are among the finitely many index-$n$ subgroups of $\mathbb{Z}^2$.
+\end{definition}
+
+\begin{remark}[Divergence from the thesis]
+  \label{notation-divergence}
+  \uses{notation}
+  (i) The symbols $\chi_p(D)$ and the $p = 2$ branch of $v = v_p(d/4)$ do not appear in
+  thesis \S 1.2; they are introduced so the \emph{corrected} Theorem~3.1.2* and
+  Corollary~3.1.3* (ERRATA E1--E5) can be stated once, $p$-uniformly, instead of via the
+  thesis's partly false five-case $p = 2$ display.
+  (ii) $\varepsilon$ is promoted from an inline definition in Thm~3.1.2 to standing
+  notation named \texttt{epsilonEven}, defusing the reversed-parity trap (E6.6) and the
+  triple $\epsilon$-collision (E6.7).
+  (iii) Invertibility is \emph{defined} by the product-principal condition (N6); the
+  thesis's ``locally principal'' description becomes a proved equivalence.
+  (iv) The norm of an ideal is \emph{defined} as the index (N5); the thesis uses
+  $N(\mathfrak{a})$ and $[\mathcal{O} : \mathfrak{a}]$ interchangeably without comment.
+\end{remark}
+
+\begin{remark}[Index multiplicativity fails for non-invertible ideals]
+  \label{notation-nonmult}
+  \uses{notation}
+  With $N(\mathfrak{a}) = [\mathcal{O}_d : \mathfrak{a}]$,
+  $N(\mathfrak{a}\mathfrak{b}) = N(\mathfrak{a})N(\mathfrak{b})$ holds when one factor is
+  invertible or when $\mathfrak{a} + \mathfrak{b} = \mathcal{O}_d$, but not in general:
+  for $d = -12$ ($D = -3$, $f = 2$, $\mathcal{O}_{-12} = \mathbb{Z}[\sqrt{-3}]$) and
+  $\mathfrak{p} = (2, 1 + \sqrt{-3})$ one has $\mathfrak{p}^2 = 2\mathfrak{p}$, so
+  $[\mathcal{O} : \mathfrak{p}^2] = 8 \neq 4 = [\mathcal{O} : \mathfrak{p}]^2$, and
+  $\mathfrak{p}$ is not invertible. Consequently the Lean index layer defines the index
+  as the raw quotient cardinality (\texttt{Nat.card}, Mathlib's
+  \texttt{Submodule.cardQuot} convention), not through Mathlib's Dedekind-gated
+  \texttt{Ideal.absNorm} API.
+\end{remark}

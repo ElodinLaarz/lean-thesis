@@ -1,0 +1,44 @@
+% Blueprint content — assembled from per-result fragments in results/.
+% Conventions: every result carries \label{<id>} matching its proofs/<id>.md twin,
+% \lean{} listing its Lean declarations, \uses{} for dependency edges, and \leanok
+% only once the Lean proof is sorry-free (flipped by the owning work package).
+% See AGENTS.md for the binding write-up rules.
+
+\chapter{Notation and standing conventions}\label{ch:notation}
+
+\input{results/notation.tex}
+
+\chapter{Infrastructure}\label{ch:infrastructure}
+
+The general-purpose layer beneath the thesis's counting arguments: the index
+layer replacing Mathlib's Dedekind-gated norm API, the invertibility
+interface, and the unit groups of imaginary quadratic orders.
+
+\input{results/infra-index.tex}
+\input{results/infra-invertibility.tex}
+\input{results/infra-units.tex}
+
+\chapter{Ideal counting in imaginary quadratic orders}\label{ch:counting}
+
+Chapter 3 of the thesis, with the corrected statements of \texttt{ERRATA.md}:
+the prime classification, the localization suite, the normal-form keystone,
+the root-counting engine, and the two headline counting theorems, completed
+by the glue results for arbitrary norms.
+
+\input{results/prop-3-2-1.tex}
+\input{results/lem-3-2-6.tex}
+\input{results/lem-3-2-2.tex}
+\input{results/lem-3-2-4.tex}
+\input{results/lem-3-2-7.tex}
+\input{results/lem-3-2-8.tex}
+\input{results/prop-3-1-1.tex}
+\input{results/thm-3-1-2.tex}
+\input{results/cor-3-1-3.tex}
+\input{results/infra-glue.tex}
+
+\chapter{Singular moduli: the statement layer}\label{ch:singular-moduli}
+
+Placeholder for WP-I: the transcribed Gross--Zagier, Dorman, and
+Lauter--Viray statements, the CM axiom layer, and Conjecture~1.7 of
+Lauter--Viray. Fragments land in \texttt{results/} as the transcription pass
+(from \texttt{papers/}) completes; see \texttt{WORKPLAN.md} WP-I.

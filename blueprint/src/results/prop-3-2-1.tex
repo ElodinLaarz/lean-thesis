@@ -1,0 +1,400 @@
+% ---------------------------------------------------------------------------
+% prop-3-2-1: Proposition 3.2.1 + Remark 3.2.3
+% Primes of Z[tau] above p; the split criterion; unique prime above p | f.
+% Ground truth: thesis SS3.2 pp. 14-15, as corrected/completed per ERRATA.md
+% (E6.2, E6.3). Proof route: the quotient isomorphism O/(p) = F_p[X]/(g mod p),
+% following the existing Lean formalization (a deliberate divergence from the
+% thesis argument; see the remarks below).
+% ---------------------------------------------------------------------------
+
+Throughout this section $d$ is a non-square integer with $d \equiv 0, 1
+\pmod 4$, written $d = D f^2$ with $D$ the fundamental discriminant of
+$K = \mathbb{Q}(\sqrt d)$ and $f \geq 1$ the conductor;
+$\tau = (d + \sqrt d)/2$ has minimal polynomial
+$g(X) = X^2 - dX + \tfrac{d^2 - d}{4} \in \mathbb{Z}[X]$, and
+$\mathcal{O} = \mathcal{O}_d = \mathbb{Z}[\tau] = \mathbb{Z} \oplus
+\mathbb{Z}\tau \cong \mathbb{Z}[X]/(g)$ is the order of discriminant $d$,
+with $\mathcal{O}_K = \mathcal{O}_D$ the maximal order. For a prime $p$,
+$\bar g \in \mathbb{F}_p[X]$ denotes the coefficientwise reduction of $g$
+modulo $p$. Negativity of $d$ is nowhere needed in this section.
+
+\begin{definition}[Splitting type in a quadratic order]
+  \label{prop-3-2-1-splitting-def}
+  \uses{notation}
+  Let $p$ be a rational prime and $\mathcal{O} = \mathcal{O}_d$. We say
+  \begin{itemize}
+    \item $p$ is \emph{inert} in $\mathcal{O}$ if $p\mathcal{O}$ is a maximal
+      ideal of $\mathcal{O}$;
+    \item $p$ is \emph{split} in $\mathcal{O}$ if $p\mathcal{O}$ is a radical
+      ideal of $\mathcal{O}$ but not maximal;
+    \item $p$ is \emph{ramified} in $\mathcal{O}$ if $p\mathcal{O}$ is not a
+      radical ideal of $\mathcal{O}$.
+  \end{itemize}
+  Since maximal ideals are prime and prime ideals are radical, exactly one of
+  the three alternatives holds for each $p$. Because $\mathcal{O}$ is not a
+  Dedekind domain when $f > 1$, this ideal-theoretic definition replaces the
+  classical one via factorization of $p\mathcal{O}$ into primes;
+  Theorem~\ref{prop-3-2-1-trichotomy} shows the two agree whenever the
+  classical one applies (in particular in $\mathcal{O}_K$).
+\end{definition}
+
+\begin{lemma}[Quotient presentation of $\mathcal{O}/p\mathcal{O}$]
+  \label{prop-3-2-1-quot-iso}
+  \lean{QuadraticOrder.quadraticOrderModP_equiv_polyModQuot}
+  \uses{notation}
+  For every rational prime $p$ there is a ring isomorphism
+  \[
+    \Phi \colon \mathcal{O}/p\mathcal{O} \xrightarrow{\ \sim\ }
+    \mathbb{F}_p[X]/(\bar g),
+    \qquad
+    \Phi(\tau \bmod p\mathcal{O}) = X \bmod (\bar g),
+    \qquad
+    \Phi(n \bmod p\mathcal{O}) = \bar n \quad (n \in \mathbb{Z}).
+  \]
+\end{lemma}
+
+\begin{proof}
+  \uses{notation}
+  Identify $\mathcal{O} = \mathbb{Z}[X]/(g)$. Let
+  $\pi \colon \mathbb{Z}[X] \to \mathbb{F}_p[X]$ be coefficientwise
+  reduction, a surjective ring homomorphism with kernel $p\mathbb{Z}[X]$.
+
+  \emph{Step 1: $\mathbb{Z}[X]/(p, g) \cong \mathbb{F}_p[X]/(\bar g)$.}
+  The composite $\psi \colon \mathbb{Z}[X] \to \mathbb{F}_p[X]/(\bar g)$ is
+  surjective with kernel $\pi^{-1}\big((\bar g)\big) = p\mathbb{Z}[X] +
+  g\mathbb{Z}[X]$: the inclusion $\supseteq$ holds since $\pi(p) = 0$ and
+  $\pi(g) = \bar g$; conversely if $\pi(h) = \bar g \bar k$, lift $\bar k$ to
+  $k \in \mathbb{Z}[X]$, so $\pi(h - gk) = 0$ and $h \in p\mathbb{Z}[X] +
+  g\mathbb{Z}[X]$. Apply the first isomorphism theorem.
+
+  \emph{Step 2: $\mathcal{O}/p\mathcal{O} \cong \mathbb{Z}[X]/(p, g)$.}
+  The preimage of $p\mathcal{O}$ under the quotient map $\rho \colon
+  \mathbb{Z}[X] \twoheadrightarrow \mathbb{Z}[X]/(g) = \mathcal{O}$ is
+  $(p) + (g)$: if $h(\tau) = p\beta$ with $\beta \in \mathcal{O}$, lift
+  $\beta$ to $b \in \mathbb{Z}[X]$; then $h - pb \in \ker\rho = (g)$. Apply
+  the third isomorphism theorem.
+
+  Composing the two isomorphisms yields $\Phi$; chasing $X$ and the constants
+  gives the stated values. (Primality of $p$ is not used; the Lean statement
+  assumes it only because that is its sole use site.)
+\end{proof}
+
+\begin{proposition}[Primes of $\mathbb{Z}[\tau]$ above $p$ — thesis
+    Proposition 3.2.1]
+  \label{prop-3-2-1}
+  % No standalone Lean declaration yet: the proposition is realized implicitly
+  % through the quotient iso (prop-3-2-1-quot-iso) + the trichotomy files; see
+  % the Lean-correspondence table in proofs/prop-3-2-1.md.
+  \uses{notation}
+  Let $p$ be a rational prime and let $\bar g = \prod_{i=1}^{r}
+  \bar g_i^{\,e_i}$ be the factorization of $\bar g$ into powers of pairwise
+  distinct monic irreducible polynomials $\bar g_i \in \mathbb{F}_p[X]$. For
+  each $i$ choose a lift $g_i \in \mathbb{Z}[X]$ of $\bar g_i$. Then the
+  prime ideals of $\mathcal{O}$ containing $p$ are exactly
+  \[
+    \mathfrak{p}_i = p\mathcal{O} + g_i(\tau)\,\mathcal{O},
+    \qquad i = 1, \dots, r,
+  \]
+  pairwise distinct, independent of the choice of lifts, and all maximal,
+  with residue fields $\mathcal{O}/\mathfrak{p}_i \cong
+  \mathbb{F}_p[X]/(\bar g_i) \cong \mathbb{F}_{p^{\deg \bar g_i}}$. In
+  particular the number of primes of $\mathcal{O}$ above $p$ equals the
+  number $r \in \{1, 2\}$ of distinct monic irreducible factors of $\bar g$.
+\end{proposition}
+
+\begin{proof}
+  \uses{prop-3-2-1-quot-iso}
+  We chain three inclusion-preserving bijections.
+
+  (a) By the correspondence theorem for $\mathcal{O} \twoheadrightarrow
+  \mathcal{O}/p\mathcal{O}$, primes of $\mathcal{O}$ containing $p$
+  (equivalently, containing $p\mathcal{O}$) correspond to primes of
+  $\mathcal{O}/p\mathcal{O}$, preserving inclusions, maximality, and residue
+  rings.
+
+  (b) By Lemma~\ref{prop-3-2-1-quot-iso}, these correspond to primes of
+  $\mathbb{F}_p[X]/(\bar g)$, which by the correspondence theorem again are
+  the primes of $\mathbb{F}_p[X]$ containing $\bar g$.
+
+  (c) $\mathbb{F}_p[X]$ is a PID: its primes are $(0)$ and $(\pi)$ with
+  $\pi$ irreducible, and each nonzero prime has a unique monic generator.
+  Since $\bar g$ is monic, $(0)$ does not contain it, and $\bar g \in (\pi)
+  \iff \pi \mid \bar g \iff \pi \sim \bar g_i$ for some $i$, by unique
+  factorization. So the primes of $\mathbb{F}_p[X]$ containing $\bar g$ are
+  exactly the pairwise distinct $(\bar g_1), \dots, (\bar g_r)$.
+
+  \emph{Explicit pullback.} Let $\chi \colon \mathcal{O} \to
+  \mathbb{F}_p[X]/(\bar g)$ be the composite; for $\alpha = h(\tau)$ one has
+  $\chi(\alpha) = \bar h \bmod (\bar g)$. Fix $i$ and let $\mathfrak{p}_i$ be
+  the pullback of $(\bar g_i)/(\bar g)$. Then $p, g_i(\tau) \in
+  \mathfrak{p}_i$, so $p\mathcal{O} + g_i(\tau)\mathcal{O} \subseteq
+  \mathfrak{p}_i$. Conversely if $\alpha = h(\tau) \in \mathfrak{p}_i$, then
+  $\bar h \equiv \bar k \bar g_i \pmod{\bar g}$; lifting $\bar k$ to $k$ and
+  the cofactor to $l$ gives $h - k g_i - l g \in p\mathbb{Z}[X]$, and
+  evaluating at $\tau$ (where $g(\tau) = 0$) gives $\alpha \in p\mathcal{O} +
+  g_i(\tau)\mathcal{O}$. Two lifts of $\bar g_i$ differ by an element of
+  $p\mathbb{Z}[X]$, so $\mathfrak{p}_i$ is independent of the lift. Finally
+  \[
+    \mathcal{O}/\mathfrak{p}_i \cong
+    \big(\mathbb{F}_p[X]/(\bar g)\big)\big/\big((\bar g_i)/(\bar g)\big)
+    \cong \mathbb{F}_p[X]/(\bar g_i),
+  \]
+  a field with $p^{\deg \bar g_i}$ elements, so each $\mathfrak{p}_i$ is
+  maximal. Since $\deg \bar g = 2$, the factorization is an irreducible
+  quadratic, two distinct monic linear factors, or the square of a monic
+  linear factor; hence $r \in \{1, 2\}$.
+\end{proof}
+
+\begin{theorem}[Trichotomy: inert / split / ramified]
+  \label{prop-3-2-1-trichotomy}
+  \lean{QuadraticOrder.prime_inert_iff,
+        QuadraticOrder.prime_ramified_iff,
+        QuadraticOrder.prime_split_iff,
+        QuadraticOrder.polyMod_discrim_eq,
+        QuadraticOrder.polyMod_eq_X_sq_of_p_dvd_d,
+        QuadraticOrder.quadraticOrderModP_equiv_X_sq_quot}
+  \uses{notation, prop-3-2-1-splitting-def}
+  Let $p$ be a rational prime. Exactly one of the following holds, and
+  within each case all listed conditions are equivalent:
+  \begin{enumerate}
+    \item \textbf{(inert)} $\bar g$ is irreducible in $\mathbb{F}_p[X]$
+      $\iff$ $p\mathcal{O}$ is maximal. Then $\mathcal{O}/p\mathcal{O} \cong
+      \mathbb{F}_{p^2}$ and $p\mathcal{O}$ itself is the unique prime of
+      $\mathcal{O}$ containing $p$.
+    \item \textbf{(split)} $\bar g = (X - \bar r)(X - \bar s)$ with $\bar r
+      \neq \bar s$ $\iff$ $p\mathcal{O}$ is radical but not maximal. Then
+      $\mathcal{O}/p\mathcal{O} \cong \mathbb{F}_p \times \mathbb{F}_p$ and
+      the primes above $p$ are exactly $p\mathcal{O} + (\tau - r)\mathcal{O}$
+      and $p\mathcal{O} + (\tau - s)\mathcal{O}$ for integer lifts $r, s$.
+    \item \textbf{(ramified)} $\bar g = (X - \bar A)^2$ $\iff$
+      $p\mathcal{O}$ is not radical. Then $\mathcal{O}/p\mathcal{O} \cong
+      \mathbb{F}_p[Y]/(Y^2)$ and $\mathfrak{p} = p\mathcal{O} +
+      (\tau - A)\mathcal{O}$ is the unique prime above $p$ (any integer lift
+      $A$), with $\mathfrak{p}^2 \subseteq p\mathcal{O} \subsetneq
+      \mathfrak{p}$.
+  \end{enumerate}
+  Moreover the cases are detected by symbols and congruences: for odd $p$,
+  case (1) $\iff \left(\frac dp\right) = -1$, case (2) $\iff
+  \left(\frac dp\right) = 1$, case (3) $\iff \left(\frac dp\right) = 0
+  \iff p \mid d$; for $p = 2$, case (1) $\iff d \equiv 5 \pmod 8$, case (2)
+  $\iff d \equiv 1 \pmod 8$, case (3) $\iff 2 \mid d$ (equivalently
+  $4 \mid d$).
+\end{theorem}
+
+\begin{proof}
+  \uses{prop-3-2-1, prop-3-2-1-quot-iso}
+  \emph{Step 0 (shapes).} A monic quadratic over $\mathbb{F}_p$ either has
+  no root (hence is irreducible) or factors into two monic linear factors,
+  distinct or equal: exactly one of the three shapes holds.
+
+  \emph{Step 1 (shape $\Rightarrow$ ideal property).}
+  (1) If $\bar g$ is irreducible, $(\bar g)$ is maximal in the PID
+  $\mathbb{F}_p[X]$, so $\mathbb{F}_p[X]/(\bar g)$ is a field with $p^2$
+  elements, i.e. $\mathbb{F}_{p^2}$; by Lemma~\ref{prop-3-2-1-quot-iso},
+  $p\mathcal{O}$ is maximal. By Proposition~\ref{prop-3-2-1} with $r = 1$
+  and lift $g_1 = g$, the unique prime above $p$ is $p\mathcal{O} +
+  g(\tau)\mathcal{O} = p\mathcal{O}$, since $g(\tau) = 0$.
+  (2) If $\bar g = (X - \bar r)(X - \bar s)$ with $\bar r \neq \bar s$, the
+  factors generate comaximal ideals (their difference $\bar s - \bar r$ is a
+  unit), so by the Chinese remainder theorem $\mathbb{F}_p[X]/(\bar g) \cong
+  \mathbb{F}_p \times \mathbb{F}_p$. A product of fields is reduced, and an
+  ideal is radical iff its quotient is reduced; transporting along $\Phi$,
+  $p\mathcal{O}$ is radical. It is not maximal since $\mathbb{F}_p \times
+  \mathbb{F}_p$ is not a domain. Proposition~\ref{prop-3-2-1} with lifts
+  $X - r$, $X - s$ gives the two primes.
+  (3) If $\bar g = (X - \bar A)^2$, comparing coefficients gives
+  $2A \equiv d$ and $A^2 \equiv \tfrac{d^2 - d}{4} \pmod p$, whence
+  $g(A) \equiv A^2 - 2A \cdot A + A^2 = 0 \pmod p$. The identity
+  $g(A + Y) = Y^2 + (2A - d)Y + g(A)$ evaluated at $Y = \tau - A$, together
+  with $g(\tau) = 0$, gives
+  \[
+    (\tau - A)^2 = (d - 2A)(\tau - A) - g(A) \in p\mathcal{O},
+  \]
+  since $p \mid d - 2A$ and $p \mid g(A)$. But $\tau - A \notin p\mathcal{O}
+  = p\mathbb{Z} \oplus p\mathbb{Z}\tau$, as its $\tau$-coordinate is $1$.
+  So $p\mathcal{O}$ is not radical, with witness $\tau - A$. Translating
+  $X \mapsto X + \bar A$ shows $\mathcal{O}/p\mathcal{O} \cong
+  \mathbb{F}_p[Y]/(Y^2)$. Proposition~\ref{prop-3-2-1} ($r = 1$, lift
+  $X - A$) gives the unique prime $\mathfrak{p} = p\mathcal{O} +
+  (\tau - A)\mathcal{O}$; its square is generated by $p^2$, $p(\tau - A)$,
+  $(\tau - A)^2$, all in $p\mathcal{O}$, and $\tau - A \in \mathfrak{p}
+  \setminus p\mathcal{O}$ gives $p\mathcal{O} \subsetneq \mathfrak{p}$.
+
+  \emph{Step 2 (ideal property $\Rightarrow$ shape).} The three shapes
+  partition all possibilities (Step 0), and so do the three ideal properties
+  (radical or not; if radical, maximal or not; maximal $\Rightarrow$
+  radical). Since shape $i$ implies property $i$ for each $i$, disjointness
+  forces the converses.
+
+  \emph{Step 3 (symbols, $p$ odd).} The constant term of $\bar g$ is
+  $(\bar d^2 - \bar d)\bar 4^{-1}$ (as $4 \cdot \tfrac{d^2-d}{4} = d^2 - d$
+  in $\mathbb{Z}$), so completing the square —
+  $\bar g = (X - \bar d/2)^2 - \bar d/4$ — and applying the automorphism
+  $X \mapsto X + \bar d/2$ shows $\bar g$ has the shape of $Y^2 - \bar d/4$.
+  Equivalently, $\operatorname{disc}(\bar g) = \bar d^2 - 4 \cdot
+  \overline{(d^2 - d)/4} = \bar d$. Since $\bar 4$ is a nonzero square,
+  $Y^2 - \bar d/4$ is irreducible / has two distinct roots / has a double
+  root according as $\bar d$ is a nonsquare / a nonzero square / zero, i.e.
+  $\left(\frac dp\right) = -1$, $1$, $0$; and $\left(\frac dp\right) = 0
+  \iff p \mid d$.
+
+  \emph{Step 4 ($p = 2$).} Over $\mathbb{F}_2$, $\bar g = X^2 + \bar d X +
+  \bar q$ with $q = \tfrac{d(d-1)}{4}$. If $d \equiv 0 \pmod 4$ (the only
+  even case for a discriminant) then $\bar d = 0$ and $\bar g = X^2 + \bar q
+  = (X + \bar q)^2$ (Frobenius), shape (3). If $d \equiv 1 \pmod 4$ then
+  $\bar d = 1$ and $\bar q = \overline{(d-1)/4}$ (as $d$ is odd): for
+  $d \equiv 1 \pmod 8$, $\bar q = 0$ and $\bar g = X(X + 1)$, shape (2); for
+  $d \equiv 5 \pmod 8$, $\bar q = 1$ and $\bar g = X^2 + X + 1$ has no root
+  in $\mathbb{F}_2$, shape (1).
+\end{proof}
+
+\begin{lemma}[Split criterion — thesis Remark 3.2.3, promoted]
+  \label{prop-3-2-1-split-criterion}
+  \uses{notation, prop-3-2-1-splitting-def}
+  For every rational prime $p$:
+  \[
+    p \text{ splits in } \mathcal{O}_d
+    \iff
+    p \text{ splits in } \mathcal{O}_K \text{ and } p \nmid f,
+  \]
+  where splitting in $\mathcal{O}_K = \mathcal{O}_D$ is
+  Definition~\ref{prop-3-2-1-splitting-def} applied with $d$ replaced by
+  $D$ (agreeing, by Theorem~\ref{prop-3-2-1-trichotomy}, with the classical
+  notion $p\mathcal{O}_K = \mathfrak{q}\mathfrak{q}'$, $\mathfrak{q} \neq
+  \mathfrak{q}'$).
+\end{lemma}
+
+\begin{proof}
+  \uses{prop-3-2-1-trichotomy}
+  \emph{Claim 1: if $p \mid f$ then $\bar g_d$ is the square of a monic
+  linear polynomial; in particular $p$ is ramified, hence not split, in
+  $\mathcal{O}_d$.} Since $d = Df^2$, $p \mid f$ gives $p^2 \mid d$. For odd
+  $p$: $\bar d = 0$, and from $4 \cdot \tfrac{d^2-d}{4} = d(d-1) \equiv 0
+  \pmod p$ with $p \nmid 4$ also $\overline{(d^2 - d)/4} = 0$, so
+  $\bar g_d = X^2$. For $p = 2$: $4 \mid d$, and Step 4 of
+  Theorem~\ref{prop-3-2-1-trichotomy} gives $\bar g_d = (X + \bar q)^2$.
+  Either way, shape (3).
+
+  \emph{Claim 2: if $p \nmid f$ then $\bar g_d$ and $\bar g_D$ have the same
+  shape, so $p$ has the same splitting type in $\mathcal{O}_d$ and
+  $\mathcal{O}_K$.} Set $c := \tfrac{d - Df}{2} = \tfrac{Df(f-1)}{2} \in
+  \mathbb{Z}$ ($f(f-1)$ is even). Direct expansion verifies the identity in
+  $\mathbb{Z}[X]$:
+  \[
+    g_d(fX + c) = f^2\, g_D(X):
+  \]
+  the linear coefficient of the left side is $f(2c - d) = f(-Df) = f^2(-D)$,
+  and its constant term is
+  $c^2 - dc + \tfrac{d^2-d}{4}
+    = \tfrac{(d - Df)^2 - 2d(d - Df) + d^2 - d}{4}
+    = \tfrac{D^2 f^2 - d}{4}
+    = f^2 \cdot \tfrac{D^2 - D}{4}$.
+  Reducing mod $p$: $\bar g_d(\bar f X + \bar c) = \bar f^{\,2}\bar g_D(X)$.
+  Since $\bar f \in \mathbb{F}_p^\times$, the substitution $h(X) \mapsto
+  h(\bar f X + \bar c)$ is an $\mathbb{F}_p$-algebra automorphism of
+  $\mathbb{F}_p[X]$, preserving degrees, irreducibility and multiplicities;
+  and it carries $\bar g_d$ to a unit multiple of $\bar g_D$. Hence the two
+  reductions have the same shape, and Theorem~\ref{prop-3-2-1-trichotomy}
+  (applied at discriminant $d$ and at discriminant $D$) transfers the
+  splitting type.
+
+  If $p$ splits in $\mathcal{O}_d$, Claim 1 (contrapositive) gives
+  $p \nmid f$ and Claim 2 gives splitting in $\mathcal{O}_K$; the converse
+  is Claim 2 again. (For odd $p$ the symbol shortcut
+  $\left(\frac dp\right) = \left(\frac Dp\right)\left(\frac fp\right)^2 =
+  \left(\frac Dp\right)$ replaces Claim 2; the substitution argument is used
+  because it covers $p = 2$ uniformly.)
+\end{proof}
+
+\begin{proposition}[Unique prime above a conductor prime — corollary of
+    Remark 3.2.3]
+  \label{prop-3-2-1-unique-prime}
+  \lean{QuadraticOrder.existsUnique_isPrime_mem_of_dvd_conductor}
+  \uses{notation}
+  Suppose $p \mid f$. Then $\bar g = (X - \bar A)^2$ is the square of a
+  monic linear polynomial ($A = 0$ works for odd $p$, and $A =
+  \tfrac{d^2 - d}{4}$ for $p = 2$), and there is \emph{exactly one} prime
+  ideal of $\mathcal{O}$ containing $p$, namely
+  \[
+    \mathfrak{p} = p\mathcal{O} + (\tau - A)\mathcal{O}
+    = p\mathbb{Z} \oplus (\tau - A)\mathbb{Z},
+    \qquad [\mathcal{O} : \mathfrak{p}] = p,
+    \qquad \mathcal{O}/\mathfrak{p} \cong \mathbb{F}_p.
+  \]
+  This uniqueness is the standing hypothesis of all of \S\S3.2--3.3 of the
+  thesis (Lemmas 3.2.2, 3.2.4, 3.2.7, 3.2.8), which is unrestated there
+  (ERRATA E6.2).
+\end{proposition}
+
+\begin{proof}
+  \uses{prop-3-2-1, prop-3-2-1-split-criterion, prop-3-2-1-trichotomy}
+  By Claim 1 of Lemma~\ref{prop-3-2-1-split-criterion}, $\bar g =
+  (X - \bar A)^2$ with the stated values of $A$ (for $p = 2$ note
+  $(X + \bar q)^2 = (X - \bar q)^2$ over $\mathbb{F}_2$). So $\bar g$ has
+  exactly one distinct monic irreducible factor $X - \bar A$, and
+  Proposition~\ref{prop-3-2-1} gives exactly one prime above $p$, namely
+  $\mathfrak{p} = p\mathcal{O} + (\tau - A)\mathcal{O}$, with
+  $\mathcal{O}/\mathfrak{p} \cong \mathbb{F}_p[X]/(X - \bar A) \cong
+  \mathbb{F}_p$ and hence $[\mathcal{O} : \mathfrak{p}] = p$.
+
+  For the $\mathbb{Z}$-module form, $\mathfrak{p}$ is generated as a
+  $\mathbb{Z}$-module by $p$, $p\tau$, $\tau - A$, $(\tau - A)\tau$. Now
+  $p\tau = p(\tau - A) + pA$, and by the identity of
+  Theorem~\ref{prop-3-2-1-trichotomy} (Step 1, case 3),
+  $(\tau - A)\tau = (d - A)(\tau - A) - g(A)$ with $g(A) \in p\mathbb{Z}$.
+  So $\mathfrak{p} = p\mathbb{Z} + (\tau - A)\mathbb{Z}$, and the sum is
+  direct because $p$ and $\tau - A$ have coordinates $(p, 0)$ and $(-A, 1)$
+  in the basis $\{1, \tau\}$.
+\end{proof}
+
+\bigskip
+
+\noindent\textbf{Remark (divergence from the thesis: proof route).} The
+thesis proves Proposition 3.2.1 by writing a candidate prime as
+$\mathfrak{p} = (p) + I$ and asserting that, for $\mathcal{O}/\mathfrak{p}
+\cong \big(\mathbb{Z}/p[x]/(\prod_i \bar g_i)\big)/\bar I$ to be a domain,
+$\bar I$ must contain some $(\bar g_i)$. Following the existing Lean
+formalization, this blueprint instead routes everything through the single
+isomorphism $\Phi$ of Lemma~\ref{prop-3-2-1-quot-iso} and transports the
+ideal-theoretic properties (maximality, radicality, reducedness of the
+quotient) across it, letting the PID structure of $\mathbb{F}_p[X]$ do the
+work. This makes explicit what the thesis leaves implicit: the
+classification of primes of $\mathbb{F}_p[X]/(\bar g)$ behind the "domain"
+step, the pairwise distinctness of the $\mathfrak{p}_i$, the independence of
+the lifts $g_i$, and the maximality of every prime above $p$.
+
+\medskip
+
+\noindent\textbf{Remark (Remark 3.2.3 was unproved and is load-bearing).}
+In the thesis, Remark 3.2.3 is asserted without proof, yet the standing
+hypothesis of \S\S3.2--3.3 ("$p \mid f$, hence a unique prime above $p$")
+depends on it; ERRATA E6.3 flags this and sketches the proof adopted in
+Claim 1 of Lemma~\ref{prop-3-2-1-split-criterion}.
+Proposition~\ref{prop-3-2-1-unique-prime} promotes the uniqueness
+consequence to a standalone statement.
+
+\medskip
+
+\noindent\textbf{Remark (ramified at a conductor prime is not
+$p\mathcal{O} = \mathfrak{p}^2$).} For $p \mid f$ only $\mathfrak{p}^2
+\subseteq p\mathcal{O} \subsetneq \mathfrak{p}$ survives of the Dedekind
+picture. For $d = -27$ ($D = -3$, $f = 3$, $p = 3$) one computes
+$\mathfrak{p} = (3, \tau)$ and $\mathfrak{p}^2 = (9, 3\tau) = 3\mathfrak{p}$
+of index $27$, whereas $[\mathcal{O} : 3\mathcal{O}] = 9$; in particular
+$\mathfrak{p}$ is not invertible ($\mathfrak{p}^2 = 3\mathfrak{p}$ with
+$\mathfrak{p} \neq 3\mathcal{O}$ forbids cancellation).
+
+\medskip
+
+\noindent\textbf{Remark ($p = 2$ and hypotheses in the Lean).} The
+structural statements (Lemma~\ref{prop-3-2-1-quot-iso},
+Proposition~\ref{prop-3-2-1}, the shape trichotomy, and
+Proposition~\ref{prop-3-2-1-unique-prime}) hold for all $p$, including
+$p = 2$; the Legendre-symbol form is stated for odd $p$ and becomes
+$p$-uniform with the Kronecker symbol $\left(\frac d2\right)$. The current
+Lean declarations \texttt{prime\_inert\_iff}, \texttt{prime\_ramified\_iff},
+\texttt{prime\_split\_iff} carry a $p \neq 2$ hypothesis throughout
+(Mathlib's \texttt{legendreSym} requires odd $p$); the equivalence
+"$p\mathcal{O}$ not radical $\iff p \mid d$" is in fact true for $p = 2$ as
+well (Step 4 of the trichotomy proof), a possible future strengthening.
+Nothing in this section uses $d < 0$.

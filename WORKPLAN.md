@@ -66,6 +66,13 @@ Parallel waves: **wave 1** = WP-0, WP-B, WP-E (independent) · **wave 2** = WP-A
    files feeding an assembly file.
 5. **Don't trust the thesis text** where ERRATA.md overrides it; don't trust the thesis
    PDF's Chapter 2 rendering at all (glyphs lost) — WP-I transcribes from `papers/`.
+6. **The three-layer write-up rule is binding** — see [AGENTS.md](AGENTS.md). Every
+   result has a Markdown proof (`proofs/<id>.md`), a LaTeX blueprint fragment
+   (`blueprint/src/results/<id>.tex`), and documented Lean, kept in sync **doc-first**:
+   prose is updated before Lean proof work starts. A package is not done until its
+   proof documents' Lean-correspondence tables are current and its blueprint fragments
+   carry `\leanok`. The WP-0 pass seeded all Chapter-3 documents; packages maintain
+   them.
 
 ---
 

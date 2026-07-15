@@ -1,0 +1,296 @@
+% Lemma 3.2.4 (+ Remark 3.2.5 + bridge lemma E6.4b): the normal-form bijection.
+% Blueprint fragment; \input from the results chapter. No preamble here.
+%
+% Ground truth: thesis §3.2 as corrected by ERRATA.md (E6.4b: minimality clause
+% added to the converse; E6.9: sign slips in the two-generator reduction and in
+% Remark 3.2.5, fixed silently in the proofs below).
+
+Throughout this node: $d < 0$ is an integer with $d \equiv 0, 1 \pmod 4$, written
+$d = D f^2$ with $D$ a fundamental discriminant and $f \ge 1$ the conductor;
+$\mathcal{O} = \mathcal{O}_d = \mathbb{Z}[\tau]$ with $\tau = (d + \sqrt d)/2$, so that
+$\mathcal{O} \cong \mathbb{Z}[x]/(g)$ for
+$g(x) = x^2 - dx + \tfrac{d^2 - d}{4} \in \mathbb{Z}[x]$ (integral since
+$4 \mid d^2 - d$), a free $\mathbb{Z}$-module with basis $(1, \tau)$ and
+$\tau^2 = d\tau - q$, $q := \tfrac{d^2-d}{4}$. For $A \in \mathbb{Z}$ one has
+$N(\tau - A) = g(A)$. The index of a finite-index ideal is
+$[\mathcal{O} : \mathfrak{a}] := \#(\mathcal{O}/\mathfrak{a})$. We fix a rational
+prime $p \mid f$ and $m \ge 0$; $\mathfrak{p}$ denotes the unique prime of
+$\mathcal{O}$ above $p$ (unique because $g \bmod p$ is the square of a linear
+polynomial when $p \mid f$; see the prime-classification node).
+
+\begin{definition}[Canonical ideal; admissible pair]
+  \label{lem-3-2-4-def}
+  \lean{QuadraticOrder.canonicalIdeal, QuadraticOrder.CanonicalAdmissible, QuadraticOrder.canonicalZSpan}
+  \uses{notation}
+  For integers $k \ge 0$ and $A$, the \emph{canonical ideal} attached to
+  $(p, m, k, A)$ is
+  \[
+    \mathfrak{a}_{k,A} \;:=\; \bigl(p^k,\; p^{m-k}(\tau - A)\bigr) \subseteq \mathcal{O}.
+  \]
+  The pair $(k, A)$ is \emph{admissible} (for $p$, $m$) if
+  \[
+    \lceil m/2 \rceil \le k \le m
+    \qquad\text{and}\qquad
+    p^{2k-m} \mid g(A).
+  \]
+  For integer $k$ the bound $\lceil m/2\rceil \le k$ is equivalent to $m \le 2k$;
+  together with $k \le m$ this makes both exponents $2k - m$ and $m - k$
+  nonnegative. Whether $p^{2k-m} \mid g(A)$
+  depends only on the class $[A] \in \mathbb{Z}/p^{2k-m}\mathbb{Z}$, since
+  $g(A + tp^{2k-m}) \equiv g(A) \pmod{p^{2k-m}}$. We also write
+  $L_{k,A} := \mathbb{Z}\,p^k + \mathbb{Z}\,p^{m-k}(\tau - A)$ for the
+  $\mathbb{Z}$-span of the two generators.
+\end{definition}
+
+\begin{lemma}[$\mathbb{Z}$-spans suffice (Remark 3.2.5)]
+  \label{lem-3-2-4-zspan}
+  \lean{QuadraticOrder.canonicalIdeal_eq_zSpan}
+  \uses{lem-3-2-4-def}
+  Let $(k, A)$ be admissible. Then $\mathfrak{a}_{k,A} = L_{k,A}$: every element
+  of the ideal is a $\mathbb{Z}$-linear combination of the two generators.
+\end{lemma}
+
+\begin{proof}
+  \uses{lem-3-2-4-def, notation}
+  Clearly $L_{k,A} \subseteq \mathfrak{a}_{k,A}$; conversely it suffices to show
+  $L_{k,A}$ is an ideal, and since $\mathcal{O} = \mathbb{Z} + \mathbb{Z}\tau$ and
+  $L_{k,A}$ is an additive subgroup, it is enough that $\tau L_{k,A} \subseteq L_{k,A}$,
+  checked on the two generators. Write $g(A) = C\,p^{2k-m}$, $C \in \mathbb{Z}$
+  (admissibility). First,
+  \[
+    \tau \cdot p^k \;=\; A\,p^k + p^{2k-m}\cdot\bigl[p^{m-k}(\tau - A)\bigr],
+  \]
+  since the right side is $Ap^k + p^k(\tau - A) = p^k\tau$; both coefficients are
+  integers because $2k - m \ge 0$. Second, using $\tau^2 = d\tau - q$ and
+  $(d - A)\tau - q = (d-A)(\tau - A) - g(A)$ (as $g(A) = q - (d-A)A$),
+  \[
+    \tau \cdot p^{m-k}(\tau - A)
+    \;=\; p^{m-k}\bigl((d - A)\tau - q\bigr)
+    \;=\; (d - A)\cdot\bigl[p^{m-k}(\tau - A)\bigr] \;-\; C\,p^k,
+  \]
+  where $p^{m-k}g(A) = C\,p^{m-k}p^{2k-m} = C\,p^k$. Both are $\mathbb{Z}$-combinations
+  of the generators. (These are the two identities proved in the existing Lean
+  scaffolding; the thesis's Remark 3.2.5 carries a sign slip in this computation,
+  ERRATA E6.9, fixed here.)
+\end{proof}
+
+\begin{lemma}[Index of the canonical ideal]
+  \label{lem-3-2-4-index}
+  \lean{QuadraticOrder.idealIndex_canonicalIdeal}
+  \uses{lem-3-2-4-def, lem-3-2-4-zspan, infra-index}
+  Let $(k, A)$ be admissible. Then $[\mathcal{O} : \mathfrak{a}_{k,A}] = p^m$.
+\end{lemma}
+
+\begin{proof}
+  \uses{lem-3-2-4-zspan, infra-index}
+  By Lemma~\ref{lem-3-2-4-zspan}, $\mathfrak{a}_{k,A}$ is the subgroup of
+  $\mathcal{O} \cong \mathbb{Z}^2$ spanned by the vectors with coordinates
+  $(p^k, 0)$ and $(-Ap^{m-k}, p^{m-k})$ in the basis $(1, \tau)$, i.e.\ by the
+  columns of
+  $M = \begin{pmatrix} p^k & -Ap^{m-k} \\ 0 & p^{m-k}\end{pmatrix}$
+  with $\det M = p^m \ne 0$. Since $M$ is triangular the index is computed
+  directly: $(x, y) = a\,(p^k, 0) + b\,(-Ap^{m-k}, p^{m-k})$ for some
+  $a, b \in \mathbb{Z}$ iff $p^{m-k} \mid y$ and $p^k \mid x + Ay$
+  (necessarily $b = y/p^{m-k}$, and the first coordinate then reads
+  $x + Ay = a\,p^k$). Hence $\mathfrak{a}_{k,A}$ is the kernel of the
+  surjective group homomorphism
+  $\mathbb{Z}^2 \to \mathbb{Z}/p^k\mathbb{Z} \times \mathbb{Z}/p^{m-k}\mathbb{Z}$,
+  $(x, y) \mapsto (x + Ay,\, y)$ — surjective because
+  $(x, y) \mapsto (x + Ay, y)$ is a bijection of $\mathbb{Z}^2$ — and
+  $[\mathcal{O} : \mathfrak{a}_{k,A}] = p^k \cdot p^{m-k} = p^m
+  = \lvert \det M\rvert$. (The index infrastructure supplies the definition
+  of the index as an additive-subgroup index; the determinant formulation is
+  how the Lean proof phrases the computation.)
+\end{proof}
+
+\begin{lemma}[Minimal $p$-power; bridge lemma E6.4b]
+  \label{lem-3-2-4-minpow}
+  \lean{QuadraticOrder.canonicalIdeal_minimal_pow}
+  \uses{lem-3-2-4-def, lem-3-2-4-zspan}
+  Let $(k, A)$ be admissible. Then $\mathfrak{a}_{k,A} \cap \mathbb{Z} = p^k\mathbb{Z}$.
+  In particular $p^k \in \mathfrak{a}_{k,A}$ and, if $k \ge 1$,
+  $p^{k-1} \notin \mathfrak{a}_{k,A}$; that is,
+  $k = \min\{\, j \ge 0 : p^j \in \mathfrak{a}_{k,A} \,\}$.
+\end{lemma}
+
+\begin{proof}
+  \uses{lem-3-2-4-zspan}
+  By Lemma~\ref{lem-3-2-4-zspan} a general element of $\mathfrak{a}_{k,A}$ is
+  $a\,p^k + b\,p^{m-k}(\tau - A)
+   = (a\,p^k - Ab\,p^{m-k}) + (b\,p^{m-k})\,\tau$ with $a, b \in \mathbb{Z}$.
+  By uniqueness of coordinates in the basis $(1, \tau)$ it lies in $\mathbb{Z}$
+  iff $b\,p^{m-k} = 0$, i.e.\ $b = 0$; hence
+  $\mathfrak{a}_{k,A} \cap \mathbb{Z} = p^k\mathbb{Z}$, and $p^j \in \mathfrak{a}_{k,A}$
+  forces $k \le j$.
+
+  This is the clause missing from the thesis's converse (ERRATA E6.4b): without
+  it, ideals could be double-counted across different values of $k$ in the
+  decomposition $r(p^m) = \sum_k r_k(p^m)$ of \S 3.3.
+\end{proof}
+
+\begin{proposition}[Existence of the normal form]
+  \label{lem-3-2-4-exists}
+  \lean{QuadraticOrder.exists_canonicalIdeal_eq}
+  \uses{lem-3-2-4-def, infra-index}
+  Every ideal $\mathfrak{a} \subseteq \mathcal{O}$ with
+  $[\mathcal{O} : \mathfrak{a}] = p^m$ equals $\mathfrak{a}_{k,A}$ for some
+  admissible pair $(k, A)$, where necessarily
+  $k = \min\{\, j \ge 0 : p^j \in \mathfrak{a}\,\}$.
+\end{proposition}
+
+\begin{proof}
+  \uses{lem-3-2-4-def, infra-index}
+  If $m = 0$ then $\mathfrak{a} = \mathcal{O} = (1, \tau) = \mathfrak{a}_{0,0}$,
+  the pair $(0, 0)$ is admissible, and
+  $\min\{j \ge 0 : p^j \in \mathcal{O}\} = 0 = k$. Assume $m \ge 1$.
+
+  \emph{Step 1 ($p^m \in \mathfrak{a}$).} The additive group
+  $\mathcal{O}/\mathfrak{a}$ has order $p^m$, so $p^m\cdot(1 + \mathfrak{a}) = 0$,
+  i.e.\ $p^m \in \mathfrak{a}$ (Lagrange; packaged in the index infrastructure).
+
+  \emph{Step 2 (definition of $k$; $1 \le k \le m$).}
+  $\mathfrak{a} \cap \mathbb{Z}$ is an ideal of $\mathbb{Z}$ containing
+  $p^m\mathbb{Z}$, hence equals $p^k\mathbb{Z}$ for some $0 \le k \le m$, and
+  $k = \min\{j : p^j \in \mathfrak{a}\}$. If $k = 0$ then $\mathfrak{a} = \mathcal{O}$,
+  contradicting $[\mathcal{O}:\mathfrak{a}] > 1$; so $k \ge 1$.
+
+  \emph{Step 3 (reduction mod $p^k$).} Let
+  $R_k := (\mathbb{Z}/p^k\mathbb{Z})[x]/(\bar g)$. Since $\bar g$ is monic of
+  degree $2$, Euclidean division shows every class of $R_k$ has unique coordinates
+  $c_1\bar x + c_0$ with $c_i \in \mathbb{Z}/p^k\mathbb{Z}$; thus
+  $\# R_k = p^{2k}$ and the constants $\mathbb{Z}/p^k\mathbb{Z} \hookrightarrow R_k$
+  embed. The map $\pi : \mathcal{O} \cong \mathbb{Z}[x]/(g) \twoheadrightarrow R_k$,
+  $\tau \mapsto \bar x$, has kernel $p^k\mathcal{O} \subseteq \mathfrak{a}$. Set
+  $\mathfrak{b} := \pi(\mathfrak{a})$; then $\mathfrak{a} = \pi^{-1}(\mathfrak{b})$,
+  $R_k/\mathfrak{b} \cong \mathcal{O}/\mathfrak{a}$, hence
+  $\#\mathfrak{b} = p^{2k-m}$; in particular $m \le 2k$, i.e.\ $\lceil m/2\rceil \le k$.
+
+  \emph{Step 4 (no nonzero constants).} For $c \in \mathbb{Z}$:
+  $\pi(c) \in \mathfrak{b}$ iff $c \in \mathfrak{a} + p^k\mathcal{O} = \mathfrak{a}$
+  iff $c \in p^k\mathbb{Z}$ iff $\pi(c) = 0$. So
+  $\mathfrak{b} \cap (\mathbb{Z}/p^k\mathbb{Z})\cdot 1 = 0$.
+
+  \emph{Step 5 (principal normal form in $R_k$).} We claim: any ideal
+  $\mathfrak{b} \subseteq R_k$ with no nonzero constants equals
+  $(\mathbb{Z}/p^k\mathbb{Z})\cdot\xi$ with $\xi = p^a(\bar x - \bar A)$ for some
+  $0 \le a \le k$ and $A \in \mathbb{Z}$ satisfying $g(A) \equiv 0 \bmod p^{k-a}$,
+  and then $\#\mathfrak{b} = p^{k-a}$. If $\mathfrak{b} = 0$ take $a = k$, $A = 0$
+  ($\xi = 0$). Otherwise: some element has nonzero $\bar x$-coordinate (else all
+  elements are constants, so $\mathfrak{b} = 0$). Each nonzero
+  $c \in \mathbb{Z}/p^k\mathbb{Z}$ can be written $u\,p^{v(c)}$ with $u$ a unit
+  and the exponent $v(c) \in \{0, \dots, k-1\}$ uniquely determined. Pick
+  $\eta_0 \in \mathfrak{b}$ with nonzero
+  $\bar x$-coordinate minimizing $a := v(c_1(\eta_0))$, and normalize by a unit so
+  that $\xi_0 = p^a\bar x + c_0' \in \mathfrak{b}$. Then
+  $p^{k-a}\xi_0 = p^{k-a}c_0'\cdot 1 \in \mathfrak{b}$ is a constant, hence zero,
+  so $c_0' = -p^a\bar A$ for some $A \in \mathbb{Z}$, and
+  $\xi := p^a(\bar x - \bar A) \in \mathfrak{b}$. Next, from
+  $\bar x^2 = \bar d\bar x - \bar q$,
+  \[
+    \bar x\,\xi = (\bar d - \bar A)\,\xi - p^a\,\bar g(\bar A)\cdot 1,
+  \]
+  so $p^a \bar g(\bar A)\cdot 1 \in \mathfrak{b}$ is a constant, hence zero:
+  $g(A) \equiv 0 \bmod p^{k-a}$. For $\mathfrak{b} \subseteq
+  (\mathbb{Z}/p^k\mathbb{Z})\xi$: given $\eta \in \mathfrak{b}$, if
+  $c_1(\eta) = 0$ then $\eta = 0$; else $b := v(c_1(\eta)) \ge a$ by minimality,
+  and subtracting the appropriate unit multiple $u'p^{b-a}\xi$ kills the
+  $\bar x$-coordinate, leaving a constant of $\mathfrak{b}$, which is zero — so
+  $\eta = u'p^{b-a}\xi$. Finally
+  $\#\mathfrak{b} = p^k/\#\mathrm{Ann}(\xi) = p^{k-a}$, since $c\,\xi = 0$ iff
+  $c\,p^a = 0$ iff $p^{k-a} \mid c$.
+
+  \emph{Step 6 (match and pull back).} Comparing cardinalities,
+  $p^{k-a} = p^{2k-m}$ gives $a = m - k$, and the root condition becomes
+  $g(A) \equiv 0 \bmod p^{2k-m}$: the pair $(k, A)$ is admissible. Since
+  $\mathfrak{a} \supseteq \ker\pi$,
+  \[
+    \mathfrak{a} = \pi^{-1}(\mathfrak{b})
+     = p^k\mathcal{O} + p^{m-k}(\tau - A)\,\mathcal{O}
+     = \mathfrak{a}_{k,A}. \qedhere
+  \]
+\end{proof}
+
+\begin{proposition}[Uniqueness of the parameters]
+  \label{lem-3-2-4-inj}
+  \lean{QuadraticOrder.canonicalIdeal_inj}
+  \uses{lem-3-2-4-def, lem-3-2-4-zspan, lem-3-2-4-minpow}
+  Let $(k, A)$ and $(k', A')$ be admissible (same $p$, $m$). Then
+  \[
+    \mathfrak{a}_{k,A} = \mathfrak{a}_{k',A'}
+    \iff
+    k = k' \ \text{ and } \ A \equiv A' \pmod{p^{2k-m}}.
+  \]
+\end{proposition}
+
+\begin{proof}
+  \uses{lem-3-2-4-zspan, lem-3-2-4-minpow}
+  ($\Leftarrow$) If $A' = A + t\,p^{2k-m}$ then
+  $p^{m-k}(\tau - A') = p^{m-k}(\tau - A) - t\,p^k$, so each generator of either
+  ideal lies in the other and the ideals agree.
+
+  ($\Rightarrow$) Suppose $\mathfrak{a} := \mathfrak{a}_{k,A} = \mathfrak{a}_{k',A'}$.
+  By Lemma~\ref{lem-3-2-4-minpow} applied to both presentations,
+  $k = \min\{j : p^j \in \mathfrak{a}\} = k'$. By Lemma~\ref{lem-3-2-4-zspan},
+  $p^{m-k}(\tau - A') \in \mathbb{Z}p^k + \mathbb{Z}p^{m-k}(\tau - A)$; write
+  $p^{m-k}(\tau - A') = a_1 p^k + a_2 p^{m-k}(\tau - A)$ with
+  $a_1, a_2 \in \mathbb{Z}$. Comparing $\tau$-coordinates gives $a_2 = 1$;
+  comparing constant coordinates gives $p^{m-k}(A - A') = a_1 p^k$, hence
+  $A - A' = a_1 p^{2k-m}$.
+\end{proof}
+
+\begin{theorem}[Lemma 3.2.4: normal-form bijection and counting formula]
+  \label{lem-3-2-4}
+  \lean{QuadraticOrder.idealCount_prime_pow_eq_sum_rootCount}
+  \uses{lem-3-2-4-def, lem-3-2-4-index, lem-3-2-4-minpow, lem-3-2-4-exists, lem-3-2-4-inj, prop-3-2-1, infra-index}
+  Fix $p \mid f$ and $m \ge 0$. The assignment $(k, [A]) \mapsto \mathfrak{a}_{k,A}$
+  is a bijection
+  \[
+    \bigl\{\, (k, [A]) \;:\; \lceil m/2\rceil \le k \le m,\
+      [A] \in \mathbb{Z}/p^{2k-m}\mathbb{Z},\ g(A) \equiv 0 \bmod p^{2k-m} \,\bigr\}
+    \;\xrightarrow{\ \sim\ }\;
+    \bigl\{\, \mathfrak{a} \subseteq \mathcal{O} \;:\;
+      [\mathcal{O} : \mathfrak{a}] = p^m \,\bigr\},
+  \]
+  under which $k$ is the minimal exponent with
+  $p^k \in \mathfrak{a}_{k,A}$. Consequently
+  \[
+    \#\bigl\{\mathfrak{a} \subseteq \mathcal{O} :
+        [\mathcal{O} : \mathfrak{a}] = p^m\bigr\}
+    \;=\;
+    \sum_{k = \lceil m/2\rceil}^{m}
+      \#\bigl\{\, A \in \mathbb{Z}/p^{2k-m}\mathbb{Z} \;:\;
+        g(A) \equiv 0 \bmod p^{2k-m} \,\bigr\}.
+  \]
+  Moreover, for $m \ge 1$ the target set is exactly the set of
+  $\mathfrak{p}$-primary ideals of norm $p^m$, where $\mathfrak{p}$ is the unique
+  prime of $\mathcal{O}$ above $p$.
+\end{theorem}
+
+\begin{proof}
+  \uses{lem-3-2-4-index, lem-3-2-4-minpow, lem-3-2-4-exists, lem-3-2-4-inj, prop-3-2-1, infra-index}
+  The map is well defined on classes and lands in the target by
+  Proposition~\ref{lem-3-2-4-inj}($\Leftarrow$) and
+  Lemma~\ref{lem-3-2-4-index}; it is injective by
+  Proposition~\ref{lem-3-2-4-inj}($\Rightarrow$) — whose reduction to a common
+  $k$ is Lemma~\ref{lem-3-2-4-minpow}, the bridge clause E6.4b — and surjective
+  by Proposition~\ref{lem-3-2-4-exists}. The source is a finite disjoint union
+  over $k$ of root sets in finite rings, whence the displayed cardinality
+  identity.
+
+  For the last sentence: an ideal of index $p^m$ ($m \ge 1$) is
+  $\mathfrak{p}$-primary by bridge lemma (a) of the index infrastructure, whose
+  proof rests on the uniqueness of the prime above $p \mid f$
+  (prime-classification node); conversely a $\mathfrak{p}$-primary ideal of norm
+  $p^m$ has index $p^m$ by definition. (For $m = 0$ the target is
+  $\{\mathcal{O}\}$, matched by the single parameter $(0, [0])$; $\mathcal{O}$
+  itself is not a primary ideal, which is why the primary-ideal phrasing is
+  restricted to $m \ge 1$ — a hygiene correction to the thesis statement.)
+
+  Refinement: with the \S 3.3 notation
+  $r_k(p^m) = \#\{\mathfrak{a} : [\mathcal{O}:\mathfrak{a}] = p^m,\
+  p^k \in \mathfrak{a},\ p^{k-1}\notin\mathfrak{a}\}$, the bijection restricts on
+  each stratum $k$ (by Lemma~\ref{lem-3-2-4-minpow} and
+  Proposition~\ref{lem-3-2-4-exists}) to
+  $r_k(p^m) = \#\{A \in \mathbb{Z}/p^{2k-m}\mathbb{Z} : g(A) \equiv 0\}$,
+  the per-$k$ identity consumed by the proof of Theorem 3.1.2.
+\end{proof}

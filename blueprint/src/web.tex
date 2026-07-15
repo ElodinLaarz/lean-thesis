@@ -1,0 +1,27 @@
+% plasTeX entry point (leanblueprint web build).
+% Build is CI/WSL-only on this project (PLAN.md decision D5): native-Windows
+% pygraphviz is not supported. `pip install leanblueprint`, then
+% `leanblueprint web` from the repo root (after `lake build`).
+\documentclass{report}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{hyperref}
+
+% The repository root has a documentation-only Lake workspace requiring the
+% nested `singular_moduli` package.  This keeps source layout decision D6 while
+% satisfying leanblueprint's Git-root project convention.
+\usepackage[showmore, dep_graph, project=../..]{blueprint}
+
+\input{macros/common.tex}
+\input{macros/web.tex}
+
+\title{Singular Moduli and the Ideal Class Group \\ \large A Lean 4 formalization blueprint}
+\author{Caleb Geiger}
+
+\home{http://localhost:3000/laarz/lean-thesis}
+\github{http://localhost:3000/laarz/lean-thesis}
+
+\begin{document}
+\maketitle
+\input{content.tex}
+\end{document}

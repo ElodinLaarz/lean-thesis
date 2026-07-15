@@ -1,0 +1,19 @@
+name = "lean_thesis"
+version = "0.1.0"
+packagesDir = "singular_moduli/.lake/packages"
+defaultTargets = ["LeanThesisBlueprint"]
+
+# Documentation-only workspace wrapper.  The formalization remains in the
+# nested package (WORKPLAN decision D6); leanblueprint requires the Git root
+# itself to be a Lake project when checking `\lean{}` declarations.
+[[require]]
+name = "singular_moduli"
+path = "singular_moduli"
+
+[[require]]
+name = "checkdecls"
+git = "https://github.com/PatrickMassot/checkdecls.git"
+
+[[lean_lib]]
+name = "LeanThesisBlueprint"
+srcDir = "singular_moduli"

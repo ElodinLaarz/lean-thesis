@@ -1,0 +1,341 @@
+% infra-glue — Glue: counts for arbitrary norm n (beyond the thesis)
+%
+% Prose twin: proofs/infra-glue.md. Ground truth for the per-prime inputs is
+% ERRATA.md (E4 corrected Thm 3.1.2, E5 corrected Cor 3.1.3). Nothing in this
+% file is stated in the thesis itself: the thesis counts only prime-power norms.
+%
+% Standing notation (restated from \ref{notation}): $d < 0$, $d \equiv 0, 1
+% \pmod 4$, $d = Df^2$ with $D$ fundamental and $f \geq 1$ the conductor;
+% $K = \mathbb{Q}(\sqrt d)$; $\tau_d = (d + \sqrt d)/2$; $\mathcal{O}_d =
+% \mathbb{Z}[\tau_d] = \mathbb{Z} + f\mathcal{O}_K$; $\mathcal{O}_K =
+% \mathcal{O}_D$ the maximal order. The norm of a nonzero ideal is the index
+% $N(\mathfrak{a}) = [\mathcal{O}_d : \mathfrak{a}]$. We write
+% $r_d(n)$ (resp.\ $r_d^{\times}(n)$) for the number of ideals (resp.\
+% invertible ideals) of index $n$ in $\mathcal{O}_d$, and $r_D(n)$ for the
+% count in $\mathcal{O}_K$; $w = v_p(f)$; $v = v_p(d/4)$ means $v_p(d)$ for
+% odd $p$ and $v_2(d) - 2$ for $p = 2$; $\varepsilon(m) = 1$ if $m$ is even,
+% $0$ if $m$ is odd (thesis convention); split/inert/ramified always refers to
+% the behavior of $p$ in $\mathcal{O}_K$, i.e.\ to the Kronecker symbol
+% $\chi_D(p)$.
+
+\begin{proposition}[Prime-power factorization of ideal counts]
+  \label{infra-glue-primary}
+  \lean{QuadraticOrder.idealCount_eq_prod_primeFactors,
+        QuadraticOrder.invertibleIdealCount_eq_prod_primeFactors}
+  \uses{notation, infra-index}
+  Let $d$ be an imaginary quadratic discriminant, $\mathcal{O} = \mathcal{O}_d$,
+  and $n \geq 1$. Sending an ideal to its family of primary components is a
+  bijection
+  \[
+    \{\mathfrak{a} \subseteq \mathcal{O} : [\mathcal{O} : \mathfrak{a}] = n\}
+    \;\longleftrightarrow\;
+    \prod_{p \mid n}
+    \{\mathfrak{b} \subseteq \mathcal{O} : [\mathcal{O} : \mathfrak{b}] = p^{v_p(n)}\},
+  \]
+  under which $\mathfrak{a}$ is invertible if and only if every component is
+  invertible. Consequently
+  \[
+    r_d(n) = \prod_{p \mid n} r_d\bigl(p^{v_p(n)}\bigr),
+    \qquad
+    r_d^{\times}(n) = \prod_{p \mid n} r_d^{\times}\bigl(p^{v_p(n)}\bigr).
+  \]
+\end{proposition}
+
+\begin{proof}
+  \uses{notation, infra-index}
+  We use the following index facts from the index layer, each elementary:
+  (0.1) an ideal of finite index $N$ contains $N$ (Lagrange in
+  $\mathcal{O}/\mathfrak{a}$);
+  (0.2) if $\mathfrak{b} \subseteq \mathfrak{c}$ then
+  $[\mathcal{O} : \mathfrak{c}] \mid [\mathcal{O} : \mathfrak{b}]$;
+  (0.3) ideals of coprime finite indices are comaximal (by (0.2), the index of
+  the sum divides both indices);
+  (0.4) $[\mathcal{O} : \mathfrak{b}\mathfrak{c}]$ is finite and divides
+  $N_{\mathfrak{b}}^2 N_{\mathfrak{c}}$, since
+  $N_{\mathfrak{b}}\mathfrak{c} \subseteq \mathfrak{b}\mathfrak{c}$ by (0.1)
+  and $[\mathcal{O} : N_{\mathfrak{b}}\mathfrak{c}] =
+  N_{\mathfrak{b}}^2 N_{\mathfrak{c}}$;
+  (0.5) comaximal ideals satisfy
+  $\mathfrak{b} \cap \mathfrak{c} = \mathfrak{b}\mathfrak{c}$
+  (write $1 = b + c$ and expand $x = xb + xc$);
+  (0.6) the Chinese remainder theorem for finitely many pairwise comaximal
+  ideals.
+
+  \emph{Components.} Let $[\mathcal{O} : \mathfrak{a}] = n$ and
+  $M := \mathcal{O}/\mathfrak{a}$, a finite $\mathcal{O}$-module of cardinality
+  $n$. As a finite abelian group, $M = \bigoplus_{p \mid n} M_p$ with $M_p$ the
+  $p$-primary component, of order $p^{v_p(n)}$. Each $M_p$ is an
+  $\mathcal{O}$-submodule: multiplication by $y \in \mathcal{O}$ is an additive
+  endomorphism, and $p^k x = 0$ implies $p^k(yx) = y(p^k x) = 0$. Hence the
+  projections $\pi_p : M \to M_p$ are $\mathcal{O}$-linear, and
+  \[
+    \mathfrak{a}_p := \ker\bigl(\mathcal{O} \twoheadrightarrow M
+      \xrightarrow{\pi_p} M_p\bigr)
+  \]
+  is an ideal containing $\mathfrak{a}$ with
+  $\mathcal{O}/\mathfrak{a}_p \cong M_p$, so
+  $[\mathcal{O} : \mathfrak{a}_p] = p^{v_p(n)}$; and
+  $\bigcap_{p \mid n} \mathfrak{a}_p = \ker(\mathcal{O} \to \bigoplus_p M_p
+  = M) = \mathfrak{a}$.
+
+  \emph{Inverse map.} Given ideals $\mathfrak{b}_p$ with
+  $[\mathcal{O} : \mathfrak{b}_p] = p^{v_p(n)}$, they are pairwise comaximal by
+  (0.3), so by (0.6) the intersection
+  $\mathfrak{b} := \bigcap_p \mathfrak{b}_p$ satisfies
+  $\mathcal{O}/\mathfrak{b} \cong \prod_p \mathcal{O}/\mathfrak{b}_p$ and has
+  index $n$. The $p$-primary component of the product is the factor
+  $\mathcal{O}/\mathfrak{b}_p$ (a $p$-group; the other factors have order prime
+  to $p$), so the component construction applied to $\mathfrak{b}$ returns
+  exactly the $\mathfrak{b}_p$. The two constructions are therefore mutually
+  inverse, and counting gives the product formula for $r_d$.
+
+  \emph{Invertibility.} By (0.5) and induction,
+  $\mathfrak{a} = \bigcap_p \mathfrak{a}_p = \prod_p \mathfrak{a}_p$. If each
+  $\mathfrak{a}_p$ has a fractional inverse $\mathfrak{c}_p$, then
+  $\mathfrak{a} \cdot \prod_p \mathfrak{c}_p = \mathcal{O}$. Conversely, if
+  $\mathfrak{a}\mathfrak{c} = \mathcal{O}$, then for each $p$,
+  $\mathfrak{a}_p \cdot \bigl(\mathfrak{c}\prod_{q \neq p}
+  \mathfrak{a}_q\bigr) = \mathcal{O}$. So the bijection restricts to invertible
+  ideals on both sides, giving the product formula for $r_d^{\times}$.
+\end{proof}
+
+\begin{lemma}[Conductor-avoiding extension and contraction]
+  \label{infra-glue-avoid}
+  \uses{notation, infra-index}
+  Let $d = Df^2$ and let $N \geq 1$ with $\gcd(N, f) = 1$. Then:
+  \begin{enumerate}
+    \item $\mathcal{O}_d \cap N\mathcal{O}_K = N\mathcal{O}_d$, and the
+      inclusion $\mathcal{O}_d \hookrightarrow \mathcal{O}_K$ induces a ring
+      isomorphism
+      $\mathcal{O}_d/N\mathcal{O}_d \xrightarrow{\ \sim\ }
+       \mathcal{O}_K/N\mathcal{O}_K$;
+    \item for every ideal $\mathfrak{c} \subseteq \mathcal{O}_d$ of index $N$:
+      $\mathfrak{c}\mathcal{O}_K = \mathfrak{c} + N\mathcal{O}_K$,
+      \quad
+      $\mathfrak{c}\mathcal{O}_K \cap \mathcal{O}_d = \mathfrak{c}$,
+      \quad and \quad
+      $[\mathcal{O}_K : \mathfrak{c}\mathcal{O}_K] = N$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  \uses{notation, infra-index}
+  Fix $\alpha, \beta \in \mathbb{Z}$ with $1 = \alpha N + \beta f$, and recall
+  $f\mathcal{O}_K \subseteq \mathcal{O}_d = \mathbb{Z} + f\mathcal{O}_K$.
+
+  (1) If $x = Ny \in \mathcal{O}_d$ with $y \in \mathcal{O}_K$, then
+  $y = \alpha Ny + \beta fy = \alpha x + \beta(fy) \in \mathcal{O}_d$ since
+  $fy \in f\mathcal{O}_K \subseteq \mathcal{O}_d$; hence
+  $x \in N\mathcal{O}_d$, proving
+  $\mathcal{O}_d \cap N\mathcal{O}_K \subseteq N\mathcal{O}_d$ (the reverse
+  inclusion is clear). The composite
+  $\mathcal{O}_d \hookrightarrow \mathcal{O}_K \to
+  \mathcal{O}_K/N\mathcal{O}_K$ is a ring homomorphism with kernel
+  $\mathcal{O}_d \cap N\mathcal{O}_K = N\mathcal{O}_d$, so the induced map is
+  injective; it is surjective because every $z \in \mathcal{O}_K$ satisfies
+  $z = \alpha Nz + \beta fz \equiv \beta fz \pmod{N\mathcal{O}_K}$ with
+  $\beta fz \in \mathcal{O}_d$.
+
+  (2) First, $N \in \mathfrak{c}$ (Lagrange), so
+  $N\mathcal{O}_K \subseteq \mathfrak{c}\mathcal{O}_K$ and
+  $\mathfrak{c} + N\mathcal{O}_K \subseteq \mathfrak{c}\mathcal{O}_K$;
+  conversely each generator $cz$ ($c \in \mathfrak{c}$, $z \in \mathcal{O}_K$)
+  satisfies $cz = \alpha N(cz) + \beta c(fz) \in N\mathcal{O}_K + \mathfrak{c}$
+  because $fz \in \mathcal{O}_d$ makes $c(fz) \in \mathfrak{c}$. This proves
+  $\mathfrak{c}\mathcal{O}_K = \mathfrak{c} + N\mathcal{O}_K$.
+  Next, if $x \in \mathfrak{c}\mathcal{O}_K \cap \mathcal{O}_d$, write
+  $x = c + Ny$ with $c \in \mathfrak{c}$, $y \in \mathcal{O}_K$; then
+  $Ny = x - c \in \mathcal{O}_d \cap N\mathcal{O}_K = N\mathcal{O}_d
+  \subseteq \mathfrak{c}$ by (1) and Lagrange, so $x \in \mathfrak{c}$, proving
+  $\mathfrak{c}\mathcal{O}_K \cap \mathcal{O}_d = \mathfrak{c}$.
+  Finally, under the isomorphism of (1) the image of
+  $\mathfrak{c}/N\mathcal{O}_d$ is
+  $(\mathfrak{c} + N\mathcal{O}_K)/N\mathcal{O}_K =
+  \mathfrak{c}\mathcal{O}_K/N\mathcal{O}_K$, so
+  $[\mathcal{O}_K : \mathfrak{c}\mathcal{O}_K] =
+   [\mathcal{O}_d/N\mathcal{O}_d : \mathfrak{c}/N\mathcal{O}_d] = N$.
+\end{proof}
+
+\begin{theorem}[Conductor-avoiding correspondence]
+  \label{infra-glue-coprime}
+  \lean{QuadraticOrder.idealCount_eq_of_coprime_conductor}
+  \uses{notation, infra-index}
+  Let $d = Df^2$ and let $n \geq 1$ with $\gcd(n, f) = 1$. Then extension
+  $\mathfrak{a} \mapsto \mathfrak{a}\mathcal{O}_K$ and contraction
+  $\mathfrak{A} \mapsto \mathfrak{A} \cap \mathcal{O}_d$ are mutually inverse,
+  index-preserving bijections
+  \[
+    \{\mathfrak{a} \subseteq \mathcal{O}_d :
+      [\mathcal{O}_d : \mathfrak{a}] = n\}
+    \;\longleftrightarrow\;
+    \{\mathfrak{A} \subseteq \mathcal{O}_K :
+      [\mathcal{O}_K : \mathfrak{A}] = n\},
+  \]
+  and every ideal of $\mathcal{O}_d$ of index coprime to $f$ is invertible.
+  In particular
+  \[
+    r_d(n) = r_d^{\times}(n) = r_D(n) = r_D^{\times}(n).
+  \]
+\end{theorem}
+
+\begin{proof}
+  \uses{infra-glue-avoid, notation, infra-index}
+  \emph{Bijection.} Every ideal of index $n$ contains $n$ (Lagrange), so ideals
+  of index $n$ in $\mathcal{O}_d$ (resp.\ $\mathcal{O}_K$) correspond to ideals
+  of $\mathcal{O}_d/n\mathcal{O}_d$ (resp.\ $\mathcal{O}_K/n\mathcal{O}_K$)
+  with quotient of cardinality $n$. The ring isomorphism of
+  Lemma~\ref{infra-glue-avoid}(1) (with $N = n$) matches the two collections
+  bijectively, preserving indices. By Lemma~\ref{infra-glue-avoid}(2) the
+  forward map is $\mathfrak{a} \mapsto \mathfrak{a}\mathcal{O}_K$ (of index
+  $n$), and the inverse is
+  $\mathfrak{A} \mapsto \mathfrak{A} \cap \mathcal{O}_d$ (the preimage of
+  $\mathfrak{A}/n\mathcal{O}_K$ in $\mathcal{O}_d$, using
+  $n\mathcal{O}_K \subseteq \mathfrak{A}$); mutual inversion is
+  $\mathfrak{c}\mathcal{O}_K \cap \mathcal{O}_d = \mathfrak{c}$ together with
+  bijectivity of the mod-$n$ isomorphism.
+
+  \emph{Invertibility.} Let $[\mathcal{O}_d : \mathfrak{a}] = n$ and
+  $\mathfrak{A} := \mathfrak{a}\mathcal{O}_K$. In the maximal order,
+  $\mathfrak{A}\bar{\mathfrak{A}} = N(\mathfrak{A})\mathcal{O}_K =
+  n\mathcal{O}_K$ (standard; by multiplicativity this reduces to prime ideals,
+  where it is checked in each splitting case — cf.\ Cox, Lemma~7.14).
+  Conjugation is a ring automorphism of $\mathcal{O}_d$
+  ($\bar\tau_d = d - \tau_d$), so $\bar{\mathfrak{a}}$ is an ideal of index
+  $n$, and $[\mathcal{O}_d : \mathfrak{a}\bar{\mathfrak{a}}]$ is finite and
+  divides $n^3$, hence is coprime to $f$. Applying
+  Lemma~\ref{infra-glue-avoid}(2) to
+  $\mathfrak{c} = \mathfrak{a}\bar{\mathfrak{a}}$, and using that extension is
+  multiplicative and commutes with conjugation,
+  \[
+    \mathfrak{a}\bar{\mathfrak{a}}
+    = \bigl(\mathfrak{a}\bar{\mathfrak{a}}\bigr)\mathcal{O}_K \cap \mathcal{O}_d
+    = \mathfrak{A}\bar{\mathfrak{A}} \cap \mathcal{O}_d
+    = n\mathcal{O}_K \cap \mathcal{O}_d
+    = n\mathcal{O}_d,
+  \]
+  the last step by Lemma~\ref{infra-glue-avoid}(1). Hence
+  $\mathfrak{a} \cdot \frac{1}{n}\bar{\mathfrak{a}} = \mathcal{O}_d$ and
+  $\mathfrak{a}$ is invertible.
+
+  \emph{Counts.} The bijection gives $r_d(n) = r_D(n)$; invertibility of every
+  ideal in sight gives $r_d^{\times}(n) = r_d(n)$, and $\mathcal{O}_K$ is
+  Dedekind, so $r_D^{\times}(n) = r_D(n)$.
+\end{proof}
+
+\begin{theorem}[Ideal counts for arbitrary norm: assembled closed form]
+  \label{infra-glue}
+  \uses{notation}
+  Let $d = Df^2$ be an imaginary quadratic discriminant. For a prime $p$ and
+  $m \geq 0$ define local factors as follows. If $p \nmid f$:
+  \[
+    t_p(m) = u_p(m) =
+    \begin{cases}
+      m + 1 & p \text{ split in } \mathcal{O}_K,\\
+      \varepsilon(m) & p \text{ inert in } \mathcal{O}_K,\\
+      1 & p \mid D.
+    \end{cases}
+  \]
+  If $p \mid f$, with $w = v_p(f)$ and $v = v_p(d/4)$:
+  \[
+    t_p(m) =
+    \begin{cases}
+      \dfrac{p^{\lfloor m/2 \rfloor + 1} - 1}{p - 1} & m \leq v,\\[2ex]
+      \dfrac{p^{w+1} - 1}{p - 1} & m > v,\ p \mid D,\\[2ex]
+      \dfrac{p^{w+\varepsilon(m)} - 1}{p - 1} & m > v,\ p \text{ inert},\\[2ex]
+      \dfrac{p^{w+\varepsilon(m)} - 1}{p - 1}
+        + p^w\bigl(m + 1 - 2w - \varepsilon(m)\bigr) & m > v,\ p \text{ split},
+    \end{cases}
+  \]
+  \[
+    u_p(m) =
+    \begin{cases}
+      \varepsilon(m)\, p^{m/2}
+        & m < v,\ \text{or } m = v = 2w - 2,\\
+      p^w
+        & (m > v \text{ or } m = v \geq 2w),\ p \mid D,\\
+      \varepsilon(m)\bigl(p^w + p^{w-1}\bigr)
+        & (m > v \text{ or } m = v \geq 2w),\ p \text{ inert},\\
+      \bigl(p^w - p^{w-1}\bigr)\bigl(m + 1 - 2w\bigr)
+        & (m > v \text{ or } m = v \geq 2w),\ p \text{ split}.
+    \end{cases}
+  \]
+  (Read $\varepsilon(m)\,p^{m/2}$ as $p^{m/2}$ for $m$ even and $0$ for $m$
+  odd. For $p \mid f$ one has $v \in \{2w, 2w+1\}$ for $p$ odd and
+  $v \in \{2w-2, 2w, 2w+1\}$ for $p = 2$, with $v = 2w-2$ iff $D$ odd; so the
+  two regimes of $u_p$ are exhaustive and mutually exclusive.)
+  Then for every $n \geq 1$,
+  \[
+    r_d(n) = \prod_{p \mid n} t_p\bigl(v_p(n)\bigr),
+    \qquad
+    r_d^{\times}(n) = \prod_{p \mid n} u_p\bigl(v_p(n)\bigr);
+  \]
+  equivalently the products may run over all primes, since
+  $t_p(0) = u_p(0) = 1$.
+\end{theorem}
+
+\begin{proof}
+  \uses{infra-glue-primary, infra-glue-coprime, prop-3-1-1, thm-3-1-2,
+        cor-3-1-3}
+  Write $m_p := v_p(n)$. Proposition~\ref{infra-glue-primary} factors both
+  counts over the primes dividing $n$:
+  $r_d(n) = \prod_{p \mid n} r_d(p^{m_p})$ and
+  $r_d^{\times}(n) = \prod_{p \mid n} r_d^{\times}(p^{m_p})$.
+
+  For $p \nmid f$, $\gcd(p^{m_p}, f) = 1$, so
+  Theorem~\ref{infra-glue-coprime} gives
+  $r_d(p^{m_p}) = r_d^{\times}(p^{m_p}) = r_D(p^{m_p})$, and
+  Proposition~\ref{prop-3-1-1} evaluates $r_D(p^m)$ as $m+1$ ($p$ split),
+  $\varepsilon(m)$ ($p$ inert), $1$ ($p$ ramified); this is
+  $t_p(m_p) = u_p(m_p)$.
+
+  For $p \mid f$, the corrected Theorem~\ref{thm-3-1-2} (statement per
+  ERRATA~E4, $p$-uniform) evaluates $r_d(p^{m_p}) = t_p(m_p)$, and the
+  corrected Corollary~\ref{cor-3-1-3} (regime per ERRATA~E5) evaluates
+  $r_d^{\times}(p^{m_p}) = u_p(m_p)$. The parenthetical trichotomy of $v$
+  follows from $d = Df^2$ with $D$ fundamental: for odd $p \mid f$,
+  $v = 2w + v_p(D)$ with $v_p(D) \in \{0,1\}$; for $p = 2 \mid f$,
+  $v = 2w - 2 + v_2(D)$ with $v_2(D) \in \{0, 2, 3\}$; in particular
+  $v = 2w - 1$ never occurs, so at $m = v$ exactly one of $v = 2w-2$,
+  $v \geq 2w$ holds.
+
+  Finally, $t_p(0) = u_p(0) = 1$ for every prime $p$: if $p \nmid f$ all three
+  cases give $1$ at $m = 0$; if $p \mid f$ then $0 = m \leq v$ gives
+  $t_p(0) = (p - 1)/(p - 1) = 1$, and for $u_p$ either $v > 0$ (trivial branch,
+  value $\varepsilon(0)p^0 = 1$) or $v = 0$, which forces $p = 2$, $D$ odd,
+  $w = 1$, i.e.\ $m = v = 2w - 2$ (again the trivial branch, value $1$).
+  Substituting the factor evaluations completes the proof.
+\end{proof}
+
+\begin{remark}
+  \label{infra-glue-remarks}
+  \uses{infra-glue}
+  (i) \emph{Divergence from the thesis.} None of the above is stated in the
+  thesis, which counts only prime-power norms; and the local factors at
+  $p \mid f$ are the ERRATA-corrected statements (E1--E4 for
+  Theorem~\ref{thm-3-1-2}, E5 for Corollary~\ref{cor-3-1-3}), not the thesis's
+  originals, two of whose $2$-adic branches are provably false. The thesis's
+  Corollary~3.1.3 display also reads like a total count but means
+  \emph{invertible} ideals (ERRATA E6.1); the notation $r_d$ vs.\
+  $r_d^{\times}$ removes the ambiguity.
+  (ii) \emph{Index is not multiplicative in $\mathcal{O}_d$.} For $d = -12$,
+  $\mathfrak{p} = (2, 1 + \sqrt{-3})$ has index $2$ but $\mathfrak{p}^2$ has
+  index $8$; hence Proposition~\ref{infra-glue-primary} is proved via comaximal
+  CRT decomposition, never via norm multiplicativity of products (and Mathlib's
+  Dedekind-gated \texttt{Ideal.absNorm} API is unusable here).
+  (iii) \emph{Coprimality is necessary} in
+  Theorem~\ref{infra-glue-coprime}: $r_{-12}(2) = 1$ while $r_{-3}(2) = 0$.
+  (iv) \emph{Lean route.} The mod-$N$ comparison of
+  Lemma~\ref{infra-glue-avoid} is where Mathlib's conductor machinery applies
+  (\texttt{conductor},
+  \texttt{Localization.localRingHom\_bijective\_of\_not\_conductor\_le},
+  \texttt{comap\_map\_eq\_map\_adjoin\_of\_coprime\_conductor}); a per-prime
+  localization proof is a viable alternative to the elementary mod-$N$
+  argument given here.
+  (v) For $\gcd(n, f) = 1$ the closed form collapses to the classical divisor
+  sum $r_d(n) = \sum_{c \mid n} \chi_D(c)$.
+  (vi) \emph{Role.} This theorem is the counting instrument for the
+  Question~3.0.1 falsification loop: candidate reformulations of the
+  Lauter--Viray count $A(N)$ for $\gcd(m, f_1) > 1$ are tested numerically
+  against $v_\ell(F(m))$, which requires exact invertible-ideal counts of
+  arbitrary composite norm, including norms meeting the conductor.
+\end{remark}
