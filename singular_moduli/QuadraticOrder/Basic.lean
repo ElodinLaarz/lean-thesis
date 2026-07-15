@@ -6,7 +6,9 @@ import Mathlib.RingTheory.AdjoinRoot
 **Thesis.** §1.2 (Notation) and §3.2, the order
 `O = O_d = ℤ[(d + √d)/2] ≅ ℤ[x]/(x² − dx + (d² − d)/4)`.
 
-**This file defines the core object** and its most basic structure:
+**Human-readable companion.** `proofs/notation.md`.
+
+**This file states/proves** the core object and its most basic structure:
 
 * `poly d`            — the defining polynomial `X² − dX + (d² − d)/4`
 * `QuadraticOrder d`  — the order, as `AdjoinRoot (poly d)`
@@ -14,11 +16,17 @@ import Mathlib.RingTheory.AdjoinRoot
 * `tau_minimal_poly`  — `τ` satisfies its defining polynomial
 * `basis`             — the rank-2 `ℤ`-power basis `{1, τ}`, with the
   `basis_repr_*` coordinate-extraction helpers
+* the free, finite, and nontrivial instances for the rank-two order
 * `dvd_four_of_valid_disc` — `4 ∣ d² − d` under `d ≡ 0, 1 (mod 4)` (shared by
   the discriminant computations downstream)
 
 The norm form lives in `Norm.lean`; the discriminant identity `(τ − τ̄)² = d`
 in `Discriminant.lean`.
+
+**Proof strategy.** Use the universal `AdjoinRoot` construction for the
+quotient presentation. Monicity and degree two give the power basis and module
+instances; coefficient extraction is performed through the canonical
+remainder modulo the defining polynomial.
 
 **Divergence from thesis.** The thesis works over an honest discriminant `d`
 (so `d ≡ 0, 1 (mod 4)`). Here `QuadraticOrder d` is *defined for every* `d : ℤ`
@@ -26,6 +34,9 @@ via Euclidean division in the constant term; the congruence hypothesis is
 introduced only where it is actually needed (see `Discriminant.lean`). For
 `d ≢ 0, 1 (mod 4)` the object is still a well-defined quadratic `ℤ`-algebra but
 no longer matches the order of discriminant `d`.
+
+**Status.** Foundational infrastructure proved; the added nontrivial instance
+is part of WP-A.
 -/
 
 open scoped Polynomial
@@ -119,6 +130,10 @@ instance : Module.Free ℤ (QuadraticOrder d) :=
 /-- `QuadraticOrder d` is a finite `ℤ`-module. -/
 instance : Module.Finite ℤ (QuadraticOrder d) :=
   (poly_monic d).finite_adjoinRoot
+
+/-- The quadratic order is nontrivial: its monic defining polynomial has degree two. -/
+instance : Nontrivial (QuadraticOrder d) :=
+  AdjoinRoot.nontrivial _ (by rw [poly_degree]; norm_num)
 
 /-- For an honest discriminant (`d ≡ 0 ∨ 1 (mod 4)`), `4 ∣ d² − d`. This is the
 shared arithmetic fact underlying the discriminant computations in

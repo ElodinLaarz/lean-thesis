@@ -198,7 +198,7 @@ with $g(A) \in p\mathbb{Z}$ (shape 3). So all four generators lie in $p\mathbb{Z
 | Theorem 4, case 2 (split) | `QuadraticOrder.prime_split_iff` | `singular_moduli/QuadraticOrder/Prime/Split.lean` | **Proved** (odd $p$). |
 | Theorem 4, $p = 2$ congruence form (Step 4) | — | — | **Not formalized.** Needs either a direct mod-8 case analysis or a Kronecker symbol (PLAN.md D1). |
 | Lemma 5 (split criterion, Rem 3.2.3) | no declaration yet; derivable from `prime_split_iff` at $d$ and at $D$ plus Legendre multiplicativity (odd $p$) | — | **Not started.** Should be added alongside the conductor-prime stub. |
-| Corollary 6 (unique prime above $p \mid f$) | `QuadraticOrder.existsUnique_isPrime_mem_of_dvd_conductor` | `singular_moduli/QuadraticOrder/Prime/ConductorPrime.lean` | **Stub** (`sorry`; statement frozen by WP-0). Stated as `∃! P : Ideal (QuadraticOrder d), P.IsPrime ∧ (p : QuadraticOrder d) ∈ P` under the bundled standing hypotheses `[ConductorPrimeSetup d D f p]` of `Defs/Setup.lean` ($d < 0$, $d = Df^2$ with $D$ fundamental, $f > 0$, $p$ prime, $p \mid f$); negativity of $d$ enters only through that shared setup class, not through the proof below. |
+| Corollary 6 (unique prime above $p \mid f$) | `QuadraticOrder.existsUnique_isPrime_mem_of_dvd_conductor` | `singular_moduli/QuadraticOrder/Prime/ConductorPrime.lean` | **Proved** (WP-A; sorry-free, including $p=2$). The proof realizes the unique prime as the kernel of evaluation at the repeated root modulo $p$. |
 
 ## References
 
