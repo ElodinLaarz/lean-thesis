@@ -18,6 +18,14 @@ jobs:
           # otherwise lake would compile all of Mathlib from source.
           lake exe cache get
           lake build
+
+  docs:
+    needs: ci
+    runs-on: ubuntu-latest  # node:20-bookworm; supports actions and package installation
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Lean and build the declaration-check workspace
+        uses: leanprover/lean-action@v1
       - name: Check and build the proof blueprint
         run: |
           apt-get update
