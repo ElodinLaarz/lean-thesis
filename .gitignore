@@ -8,6 +8,7 @@ lean-toolchain
 
 # Other
 *.pdf
+!/docs/blueprint.pdf
 blueprint/web/
 blueprint/print/
 blueprint/src/web/

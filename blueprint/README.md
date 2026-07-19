@@ -26,3 +26,19 @@ The generated sites are build artifacts and are not committed.
 `singular_moduli/LeanThesisBlueprint.lean` is a documentation-only import shim.
 The actual project remains the nested `singular_moduli` package; the shim gives
 the root workspace one Lean library for `checkdecls` to import.
+
+## Printable PDF (`docs/blueprint.pdf`)
+
+A self-contained, end-to-end PDF of the blueprint — every chapter, statement,
+and proof — with each `\lean{}` annotation rendered as clickable links into the
+Lean sources on the GitHub mirror and `\leanok` as a green "Lean-verified"
+badge (statements without the badge are stated in Lean but their proofs may
+still be pending). To rebuild:
+
+    cd blueprint && python3 gen_leandecls.py     # refresh decl -> URL map
+    cd src && tectonic print.tex                 # or pdflatex/latexmk
+    cp print.pdf ../../docs/blueprint.pdf
+
+`gen_leandecls.py` writes `src/macros/leandecls.tex` (committed, so the PDF
+builds without a Lean toolchain); regenerate it whenever declarations move or
+new `\lean{}` annotations land.
