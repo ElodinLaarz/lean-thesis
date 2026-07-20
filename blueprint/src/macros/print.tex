@@ -21,8 +21,8 @@
 \ExplSyntaxOn
 \NewDocumentCommand{\LeanDeclName}{m}
  {\group_begin:\ttfamily
-  \tl_set:Nn \l_tmpa_tl {#1}
-  \tl_replace_all:Nnn \l_tmpa_tl {_} {\textunderscore\allowbreak}
+  \tl_set:Nx \l_tmpa_tl {\tl_to_str:n {#1}}
+  \tl_replace_all:Nnn \l_tmpa_tl {\c_underscore_str} {\c_underscore_str\allowbreak}
   \tl_replace_all:Nnn \l_tmpa_tl {.} {.\allowbreak}
   \tl_use:N \l_tmpa_tl
   \group_end:}
@@ -34,35 +34,49 @@
     \LeanDeclName{#1}%
   \fi}
 
+\ExplSyntaxOn
+% Emit one metadata line on its OWN line, never as a continuation of the
+% theorem's run-in head.  amsthm defers the head via \everypar, so at the time
+% the first metadata command runs we are still in vertical mode with the head
+% pending; in that case we force the head out (\mode_leave_vertical:) and end
+% its line, so the metadata always starts flush left on the next line.
+\NewDocumentCommand{\BlueprintMetaLine}{m}
+ {\group_begin:\raggedright
+  \tl_set:No \l_tmpa_tl {\the\everypar}
+  \tl_if_empty:NTF \l_tmpa_tl
+   {\mode_if_horizontal:TF {\par}{}\noindent}
+   {\mode_leave_vertical:\nobreak\newline}
+  {\small #1\par}
+  \group_end:\ignorespaces}
+
 % Status badges.  \leanok appears in a fragment only once the corresponding
 % Lean proof is sorry-free; a statement without \leanok is stated in Lean but
 % its proof may still be pending.
-\newcommand{\leanok}{\par\noindent{\small\textcolor{leanok}{\checkmark~Lean-verified}}\par\ignorespaces}
-\newcommand{\notready}{\par\noindent{\small\textcolor{leanpending}{$\circ$~Lean proof pending}}\par\ignorespaces}
+\NewDocumentCommand{\leanok}{}
+ {\BlueprintMetaLine{\textcolor{leanok}{\checkmark~Lean-verified}}}
+\NewDocumentCommand{\notready}{}
+ {\BlueprintMetaLine{\textcolor{leanpending}{$\circ$~Lean~proof~pending}}}
 
-\ExplSyntaxOn
 % \lean{a, b, c} -> "Lean: a, b, c" with each name hyperlinked.
 \NewDocumentCommand{\lean}{m}
- {\par\noindent\begingroup\small\raggedright
-  \emph{Lean:}~
-  \bool_set_true:N \l_tmpa_bool
-  \clist_map_inline:nn{#1}
-   {\bool_if:NTF \l_tmpa_bool
-     {\bool_set_false:N \l_tmpa_bool}
-     {,~}%
-    \LeanDecl{##1}}%
-  \par\endgroup\ignorespaces}
+ {\BlueprintMetaLine
+   {\emph{Lean:}~
+    \bool_set_true:N \l_tmpa_bool
+    \clist_map_inline:nn{#1}
+     {\bool_if:NTF \l_tmpa_bool
+       {\bool_set_false:N \l_tmpa_bool}
+       {,~}%
+      \LeanDecl{##1}}}}
 % \uses{l1, l2} -> "Uses: (S)1.2, (S)3.4" via the fragments' labels.
 \NewDocumentCommand{\uses}{m}
- {\par\noindent\begingroup\small
-  \emph{Uses:}~
-  \bool_set_true:N \l_tmpa_bool
-  \clist_map_inline:nn{#1}
-   {\bool_if:NTF \l_tmpa_bool
-     {\bool_set_false:N \l_tmpa_bool}
-     {,~}%
-    \S\ref{##1}}%
-  \par\endgroup\ignorespaces}
+ {\BlueprintMetaLine
+   {\emph{Uses:}~
+    \bool_set_true:N \l_tmpa_bool
+    \clist_map_inline:nn{#1}
+     {\bool_if:NTF \l_tmpa_bool
+       {\bool_set_false:N \l_tmpa_bool}
+       {,~}%
+      \S\ref{##1}}}}
 \NewDocumentCommand{\proves}{m}
  {\clist_map_inline:nn{#1}{\vphantom{\ref{##1}}}%
   \ignorespaces}
